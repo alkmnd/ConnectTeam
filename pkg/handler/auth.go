@@ -31,14 +31,37 @@ type signInWithEmailInput struct {
   	Password string `json:"password" binding "required"`
 }
 
-func (h *Handler) signIn(c *gin.Context) {
+type signInWithPhoneNumInput struct {
+	PhoneNumber string `json:"phone_number" binding "required"` 
+  	Password string `json:"password" binding "required"`
+}
+
+func (h *Handler) signInWithEmail(c *gin.Context) {
 	var input signInWithEmailInput
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return 
 	}
-	token, err := h.services.Authorization.GenerateToken(input.Email, input.Password)
+	token, err := h.services.Authorization.GenerateToken(input.Email, input.Password, true)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"token": token,
+	})
+}
+
+func (h *Handler) signInWithPhoneNumber(c *gin.Context) {
+	var input signInWithPhoneNumInput
+
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return 
+	}
+	token, err := h.services.Authorization.GenerateToken(input.PhoneNumber, input.Password, false)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

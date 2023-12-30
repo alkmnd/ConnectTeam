@@ -24,10 +24,16 @@ func (r *AuthPostgres) CreateUser(user connectteam.User) (int, error) {
 	}
 	return id, nil
 }
-func (r *AuthPostgres) GetUser(email, password string) (connectteam.User, error) {
+func (r *AuthPostgres) GetUserWithEmail(email, password string) (connectteam.User, error) {
 	var user connectteam.User
 	query := fmt.Sprintf("SELECT id FROM %s WHERE email=$1 AND password_hash=$2", usersTable)
 	err := r.db.Get(&user, query, email, password)
+	return user, err
+}
 
+func (r *AuthPostgres) GetUserWithPhone(phoneNumber, password string) (connectteam.User, error) {
+	var user connectteam.User
+	query := fmt.Sprintf("SELECT id FROM %s WHERE phone_number=$1 AND password_hash=$2", usersTable)
+	err := r.db.Get(&user, query, phoneNumber, password)
 	return user, err
 }

@@ -33,13 +33,19 @@ func (s *AuthService) CreateUser(user connectteam.User) (int, error) {
 	return s.repo.CreateUser(user)
 }
 
-func (s *AuthService) GenerateToken(email, password string) (string, error) {
-	println(password)
-	println("hash:", generatePasswordHash(password), "\n", "pass:", password)
-	user, err := s.repo.GetUser(email, generatePasswordHash(password))
+func (s *AuthService) GenerateToken(login, password string, isEmail bool) (string, error) {
+	var user connectteam.User
+	var err error 
+	if isEmail {
+		user, err = s.repo.GetUserWithEmail(login, generatePasswordHash(password))
+	} else {
+		user, err = s.repo.GetUserWithPhone(login, generatePasswordHash(password))
+	}
 	if err !=nil {
 		return "", err
 	}
+
+
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 		jwt.StandardClaims{

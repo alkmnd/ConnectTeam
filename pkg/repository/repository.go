@@ -8,7 +8,8 @@ import (
 
 type Authorization interface {
 	CreateUser(user connectteam.User) (int, error)
-	GetUser(email, password string) (connectteam.User, error)
+	GetUserWithEmail(email, password string) (connectteam.User, error)
+	GetUserWithPhone(phoneNumber,  password string) (connectteam.User, error)
 }
 
 type Repository struct {
