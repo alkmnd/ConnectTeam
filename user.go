@@ -12,6 +12,7 @@ type User struct {
   	FirstName string `json:"first_name" binding "required"`
   	SecondName string `json:"second_name" binding "required"`
   	Password string `json:"password" binding "required"`
+	Is_verified bool `json:"-" db:"is_verified"`
 }
 
 type VerifyPhone struct {

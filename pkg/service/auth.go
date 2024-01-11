@@ -44,7 +44,13 @@ func (s *AuthService) GenerateToken(login, password string, isEmail bool) (strin
 	} else {
 		user, err = s.repo.GetUserWithPhone(login, generatePasswordHash(password))
 	}
-	if err !=nil {
+
+	if !user.Is_verified {
+		println("meow")
+		return "", errors.New("User is not verified")
+	}
+
+	if err != nil {
 		return "", err
 	}
 
@@ -102,7 +108,7 @@ func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (string, 
 
 	if err != nil {
 		log.Printf("smtp error: %s", err)
-		return "", err
+		return "", errors.New("The recipient address <blvantоывail.com> is not a valid")
 	}
    return confirmationCode, err
 }
@@ -114,7 +120,7 @@ func (s *AuthService) VerifyUser(verifyUser connectteam.VerifyUser) error {
 func (s *AuthService) ParseToken(accessToken string) (int, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("invalid signing method")
+			return nil, errors.New("Invalid signing method")
 		}
 
 		return []byte(signingKey), nil
@@ -125,7 +131,7 @@ func (s *AuthService) ParseToken(accessToken string) (int, error) {
 
 	claims, ok := token.Claims.(*tokenClaims)
 	if !ok {
-		return 0, errors.New("token claims are not of type *tokenClaims")
+		return 0, errors.New("Token claims are not of type *tokenClaims")
 	}
 
 	return claims.UserId, nil
