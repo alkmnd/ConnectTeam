@@ -6,7 +6,10 @@ import (
 	"crypto/sha1"
 	"errors"
 	"fmt"
+	"os"
 	"time"
+	"log"
+	"net/smtp"
 	"github.com/dgrijalva/jwt-go"
 )
 const (
@@ -63,8 +66,45 @@ func generatePasswordHash(password string) string {
 	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
 }
 
+func generateConfirmationCode() string {
+	code := ""
+
+	for i := 0; i < 4; i++ {
+		code += fmt.Sprint(randomCrypto())
+	}
+
+	return code
+	
+} 
+
 func (s *AuthService) VerifyPhone(verifyPhone connectteam.VerifyPhone) (string, error) {
 	return "1234", nil
+}
+
+
+
+
+func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (string, error) {
+	from := os.Getenv("EMAIL")
+   	password := os.Getenv("EMAIL_PASSWORD")
+	println(password)
+	println(from)
+	to := verifyEmail.Email
+	confirmationCode := generateConfirmationCode()
+
+	msg := "From: " + from + "\n" +
+		"To: " + to + "\n" +
+		"Subject: Код подтверждения\n\n" +
+		confirmationCode
+	err := smtp.SendMail("smtp.gmail.com:587",
+	smtp.PlainAuth("", from, password, "smtp.gmail.com"),
+	from, []string{to}, []byte(msg))
+
+	if err != nil {
+		log.Printf("smtp error: %s", err)
+		return "", err
+	}
+   return confirmationCode, err
 }
 
 func (s *AuthService) VerifyUser(verifyUser connectteam.VerifyUser) error {

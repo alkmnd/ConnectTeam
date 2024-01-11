@@ -19,7 +19,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		{
 			verify.POST("/verify-user", h.verifyUser)			
 			verify.POST("/phone", h.verifyPhone)
-			// verify.POST("/email")
+			verify.POST("/email", h.verifyEmail)
 		}
 		auth.POST("/sign-up", h.signUp)
 		signIn := auth.Group("sign-in") 

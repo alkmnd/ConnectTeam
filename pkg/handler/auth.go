@@ -47,6 +47,26 @@ func (h *Handler) verifyPhone(c *gin.Context) {
 	})
 }
 
+func (h *Handler) verifyEmail(c *gin.Context) {
+	var input connectteam.VerifyEmail
+
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return 
+	}
+
+	confirmationCode, err := h.services.Authorization.VerifyEmail(input)
+	
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"confirmationCode":confirmationCode,
+	})
+}
+
 func (h *Handler) verifyUser(c *gin.Context) {
 	var input connectteam.VerifyUser
 

@@ -18,6 +18,10 @@ type VerifyPhone struct {
 	PhoneNumber string `json:"phone_number" binding required`
 }
 
+type VerifyEmail struct {
+	Email string `json:"email" binding required`
+}
+
 type VerifyUser struct {
 	Id int `json:"id,string" binding required`
 }
