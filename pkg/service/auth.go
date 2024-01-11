@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"time"
-
 	"github.com/dgrijalva/jwt-go"
 )
 const (
@@ -62,6 +61,14 @@ func generatePasswordHash(password string) string {
 	hash := sha1.New()
 	hash.Write([]byte(password))
 	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
+}
+
+func (s *AuthService) VerifyPhone(verifyPhone connectteam.VerifyPhone) (string, error) {
+	return "1234", nil
+}
+
+func (s *AuthService) VerifyUser(verifyUser connectteam.VerifyUser) error {
+	return s.repo.VerifyUser(verifyUser)
 }
 
 func (s *AuthService) ParseToken(accessToken string) (int, error) {

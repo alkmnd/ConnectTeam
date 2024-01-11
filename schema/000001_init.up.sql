@@ -1,3 +1,5 @@
+CREATE TYPE user_role AS ENUM ('user', 'admin', 'plan_user');
+
 CREATE TABLE users 
 (
   id serial not null PRIMARY KEY,
@@ -5,5 +7,8 @@ CREATE TABLE users
   phone_number varchar(256),
   first_name varchar(256),
   second_name varchar(256),
-  password_hash varchar(256)
-);
+  password_hash varchar(256), 
+  role user_role,
+  is_verified boolean DEFAULT false
+); 
+

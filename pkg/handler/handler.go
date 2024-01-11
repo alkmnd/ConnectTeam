@@ -15,9 +15,18 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 	auth := router.Group("/auth") 
 	{
+		verify := auth.Group("/verify") 
+		{
+			verify.POST("/verify-user", h.verifyUser)			
+			verify.POST("/phone", h.verifyPhone)
+			// verify.POST("/email")
+		}
 		auth.POST("/sign-up", h.signUp)
-		auth.POST("/sign-in-email", h.signInWithEmail)
-		auth.POST("/sign-in-phone", h.signInWithPhoneNumber)
+		signIn := auth.Group("sign-in") 
+		{
+			signIn.POST("/email", h.signInWithEmail)
+			signIn.POST("/phone", h.signInWithPhoneNumber)
+		}
 
 	}
 

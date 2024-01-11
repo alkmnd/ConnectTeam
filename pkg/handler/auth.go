@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+
 func (h *Handler) signUp(c *gin.Context) {
 	var input connectteam.User
 
@@ -24,6 +25,53 @@ func (h *Handler) signUp(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"id":id,
 	})
+}
+
+func (h *Handler) verifyPhone(c *gin.Context) {
+	var input connectteam.VerifyPhone
+
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return 
+	}
+
+	confirmationCode, err := h.services.Authorization.VerifyPhone(input)
+	
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"confirmationCode":confirmationCode,
+	})
+}
+
+func (h *Handler) verifyUser(c *gin.Context) {
+	var input connectteam.VerifyUser
+
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err := h.services.Authorization.VerifyUser(input)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"id":input.Id,
+	})
+}
+
+func (h *Handler) signUpWithPhone(c *gin.Context) {
+	var input connectteam.User
+
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+	}
 }
 
 type signInWithEmailInput struct {

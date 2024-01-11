@@ -7,9 +7,17 @@ var ErrNoRecord = errors.New("models: подходящей записи не н�
  
 type User struct {
 	Id int `json:"-" db:"id"`
-  	Email string `json:"email" binding "required"` 
-  	PhoneNumber string `json:"phone_number" binding "required"`
+  	Email string `json:"email"` 
+  	PhoneNumber string `json:"phone_number"`
   	FirstName string `json:"first_name" binding "required"`
   	SecondName string `json:"second_name" binding "required"`
   	Password string `json:"password" binding "required"`
+}
+
+type VerifyPhone struct {
+	PhoneNumber string `json:"phone_number" binding required`
+}
+
+type VerifyUser struct {
+	Id int `json:"id,string" binding required`
 }
