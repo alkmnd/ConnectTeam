@@ -9,6 +9,8 @@ import (
 const (
 	authorizationHeader = "Authorization"
 	userCtx = "userId"
+	accessCtx = "access"
+
 )
 func (h* Handler) userIdentity(c *gin.Context) {
 	header := c.GetHeader(authorizationHeader)
@@ -25,6 +27,7 @@ func (h* Handler) userIdentity(c *gin.Context) {
 
 	userId, err := h.services.Authorization.ParseToken(headerParts[1])
 	if err != nil {
+		println("gavno")
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}

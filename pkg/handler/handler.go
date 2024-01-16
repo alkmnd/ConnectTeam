@@ -30,7 +30,10 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	}
 
-	// api := router.Group("/api", h.userIdentity)
+	api := router.Group("/api", h.userIdentity)
+	{
+		api.GET("me", h.getCurrentUser)
+	}
 
 	return router
 }

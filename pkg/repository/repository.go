@@ -10,15 +10,21 @@ type Authorization interface {
 	CreateUser(user connectteam.User) (int, error)
 	GetUserWithEmail(email, password string) (connectteam.User, error)
 	GetUserWithPhone(phoneNumber,  password string) (connectteam.User, error)
-	VerifyUser(verifyUser connectteam.VerifyUser)  error
-	
+	VerifyUser(verifyUser connectteam.VerifyUser)  error	
 }
+
+type UserInterface interface {
+	GetUserById(id int) (connectteam.User, error)
+}
+
 
 type Repository struct {
 	Authorization
+	UserInterface
 }
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
+		UserInterface: NewUserPostgres(db),
 	}
 }

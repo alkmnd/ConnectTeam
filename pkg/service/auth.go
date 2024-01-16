@@ -45,6 +45,7 @@ func (s *AuthService) GenerateToken(login, password string, isEmail bool) (strin
 		user, err = s.repo.GetUserWithPhone(login, generatePasswordHash(password))
 	}
 
+	println(user.FirstName)
 	if !user.Is_verified {
 		println("meow")
 		return "", errors.New("User is not verified")
@@ -93,8 +94,6 @@ func (s *AuthService) VerifyPhone(verifyPhone connectteam.VerifyPhone) (string, 
 func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (string, error) {
 	from := os.Getenv("EMAIL")
    	password := os.Getenv("EMAIL_PASSWORD")
-	println(password)
-	println(from)
 	to := verifyEmail.Email
 	confirmationCode := generateConfirmationCode()
 
@@ -108,7 +107,7 @@ func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (string, 
 
 	if err != nil {
 		log.Printf("smtp error: %s", err)
-		return "", errors.New("The recipient address <blvantоывail.com> is not a valid")
+		return "", errors.New("The recipient address is not a valid")
 	}
    return confirmationCode, err
 }
