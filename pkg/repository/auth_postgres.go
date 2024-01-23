@@ -1,7 +1,7 @@
 package repository
 
 import (
-	connectteam "ConnectTeam"
+	"ConnectTeam"
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
@@ -41,15 +41,8 @@ func (r *AuthPostgres) GetUserWithEmail(email, password string) (connectteam.Use
 func (r *AuthPostgres) GetUserWithPhone(phoneNumber, password string) (connectteam.User, error) {
 	var user connectteam.User
 	println(password)
-	// query := fmt.Sprintf("SELECT id, email, phone_number, first_name, second_name, role, is_verified FROM %s WHERE phone_number=$1 AND password_hash=$2 LIMIT 1", usersTable)
-	// if err := r.db.Select(&user, query, phoneNumber, password); err != nil {
-	// 	println(err.Error())
-	// 	return user, err
-	// 
 	query := fmt.Sprintf("SELECT id, email, phone_number, first_name, second_name, is_verified, role FROM %s WHERE phone_number=$1 AND password_hash=$2", usersTable)
 	err := r.db.Get(&user, query, phoneNumber, password)
-	println(user.Id)
-	println(user.Email)
 	return user, err
 }
 

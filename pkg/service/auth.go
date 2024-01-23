@@ -1,15 +1,16 @@
 package service
 
 import (
-	connectteam "ConnectTeam"
+	"ConnectTeam"
 	"ConnectTeam/pkg/repository"
 	"crypto/sha1"
 	"errors"
 	"fmt"
-	"os"
-	"time"
 	"log"
 	"net/smtp"
+	"os"
+	"time"
+
 	"github.com/dgrijalva/jwt-go"
 )
 const (

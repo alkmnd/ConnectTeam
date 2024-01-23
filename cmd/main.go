@@ -5,12 +5,17 @@ import (
 	"ConnectTeam/pkg/handler"
 	"ConnectTeam/pkg/repository"
 	"ConnectTeam/pkg/service"
+	"net/http"
+
 	"os"
 
+	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
+
+var upgrader = websocket.Upgrader{}
 
 func main() {
 	if err := initConfig(); err != nil {
@@ -38,14 +43,24 @@ func main() {
 	repos := repository.NewRepository(db)
 	services := service.NewService(repos)
 	handlers := handler.NewHandler(services)
+	
+	http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
+        handlers.Echo(w, r)
+    })
+    go http.ListenAndServe(":8080", nil)
+
 	srv := new(connectteam.Server)
 	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
 		logrus.Fatalf("error %s", err.Error())
 	}
 }
 
+
 func initConfig() error {
 	viper.AddConfigPath("configs")
 	viper.SetConfigName("config")
 	return viper.ReadInConfig()
 }
+
+
+

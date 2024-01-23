@@ -2,6 +2,10 @@ package handler
 
 import (
 	"ConnectTeam/pkg/service"
+    "fmt"
+    "net/http"
+
+    "github.com/gorilla/websocket"
 
 	"github.com/gin-gonic/gin"
 )
@@ -33,7 +37,37 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	api := router.Group("/api", h.userIdentity)
 	{
 		api.GET("me", h.getCurrentUser)
+		// game := api.Group("/game") 
+		// {
+		// 	game.GET("/start", func(c *gin.Context){
+		// 		h.echo(c.Writer, c.Request)
+		// 	})
+		// }
 	}
 
 	return router
 }
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true // Пропускаем любой запрос
+	},
+}
+func (h *Handler) Echo(w http.ResponseWriter, r *http.Request) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+        if err != nil {
+			print(err.Error())
+            return
+        }
+        defer conn.Close()
+
+	for {
+		_, message, _ := conn.ReadMessage()
+
+    conn.WriteMessage(websocket.TextMessage, message)
+		go messageHandler(message)
+	}
+}
+
+func messageHandler(message []byte)  {
+	fmt.Println(string(message))
+  }
