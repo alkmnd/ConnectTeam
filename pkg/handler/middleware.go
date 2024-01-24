@@ -25,12 +25,13 @@ func (h* Handler) userIdentity(c *gin.Context) {
 		return 
 	}
 
-	userId, err := h.services.Authorization.ParseToken(headerParts[1])
+	userId, access, err := h.services.Authorization.ParseToken(headerParts[1])
 	if err != nil {
-		println("gavno")
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-
 	c.Set("userId", userId)
+	c.Set("access", access)
 }
+
+// func userAccess(c *gin)

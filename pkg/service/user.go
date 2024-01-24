@@ -16,3 +16,10 @@ func (s *UserService) GetUserById(id int) (connectteam.User, error) {
 	user, err := s.repo.GetUserById(id)
 	return user, err 
 }
+
+func (s *UserService) ChangeAccessById(id int, access string) (error) {
+	if err := s.repo.ChangeAccessById(id, access); err != nil {
+		return err
+	}
+	return nil
+}

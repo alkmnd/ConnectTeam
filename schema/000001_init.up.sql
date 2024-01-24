@@ -8,7 +8,7 @@ CREATE TABLE users
   first_name varchar(256),
   second_name varchar(256),
   password_hash varchar(256), 
-  role user_role,
+  access varchar(256),
   is_verified boolean DEFAULT false
 ); 
 

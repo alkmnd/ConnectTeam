@@ -8,7 +8,7 @@ import (
 type Authorization interface {
 	CreateUser(user connectteam.User) (int, error)
 	GenerateToken(login, password string, isEmail bool) (string, error)
-	ParseToken(token string) (int, error)
+	ParseToken(token string) (int, string, error)
 	VerifyPhone(verifyPhone connectteam.VerifyPhone) (string, error)
 	VerifyUser(verifyUser connectteam.VerifyUser)  error
 	VerifyEmail(verifyEmail connectteam.VerifyEmail) (string, error)
@@ -16,6 +16,7 @@ type Authorization interface {
 
 type UserInterface interface {
 	GetUserById(id int) (connectteam.User, error)
+	ChangeAccessById(id int, access string) (error)
 }
 
 

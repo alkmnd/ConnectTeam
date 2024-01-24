@@ -10,7 +10,7 @@ func (h *Handler) getCurrentUser(c *gin.Context) {
 	id, _ := c.Get(userCtx)
 	assert_id, ok := id.(int)
 	if !ok {
-		newErrorResponse(c, http.StatusBadRequest, "Incorrect id")
+		newErrorResponse(c, http.StatusBadRequest, "Incorrect auth header")
 		return
 	}
 
@@ -28,6 +28,33 @@ func (h *Handler) getCurrentUser(c *gin.Context) {
 		"phone_number": user.PhoneNumber, 
 		"first_name": user.FirstName, 
 		"second_name": user.SecondName, 
-		"role": user.Role,
+		"access": user.Access,
 	})
+}
+
+type changeAccessInput struct {
+	Id int `json:"id,string" binding "required"` 
+	NewAccess string `json:"access" binding "required"`
+}
+
+func (h *Handler) changeAccessById(c *gin.Context) {
+	var input changeAccessInput
+	access, _ := c.Get(accessCtx)
+	assert_access, ok := access.(string)
+
+	if !ok {
+		newErrorResponse(c, http.StatusBadRequest, "Incorrect auth header")
+		return
+	}
+
+	if assert_access == "admin" {
+		if err := c.BindJSON(&input); err != nil {
+			newErrorResponse(c, http.StatusBadRequest, err.Error())
+		}
+
+		if err := h.services.UserInterface.ChangeAccessById(input.Id, input.NewAccess); err != nil{
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		} 
+	}
 }

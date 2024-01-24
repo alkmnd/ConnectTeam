@@ -13,7 +13,7 @@ type User struct {
   	SecondName string `json:"second_name" db:"second_name" binding "required"`
   	Password string `json:"password" binding "required"`
 	Is_verified bool `json:"-" db:"is_verified"`
-	Role string `json:"_" db:"role"`
+	Access string `json:"_" db:"access"`
 }
 
 type VerifyPhone struct {
@@ -21,9 +21,10 @@ type VerifyPhone struct {
 }
 
 type VerifyEmail struct {
-	Email string `json:"email" binding required`
+	Email string `json:"email" binding "required"`
 }
 
 type VerifyUser struct {
-	Id int `json:"id,string" binding required`
+	Id int `json:"id,string" binding "required"`
 }
+
