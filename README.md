@@ -143,7 +143,7 @@ Note: Use confirmation code to verificate user
 
 **Description:** Authorizes the user and returns a token for api requests.
 
-**Request** Parameters:
+**Request Parameters:**
 
 * `email` (string, required)
 * `password` (string, required)
