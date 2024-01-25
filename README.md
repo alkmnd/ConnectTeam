@@ -106,6 +106,7 @@ Endpoint: `auth/verify/user`
 Description: Verificates user. When the email is confirmed, you need to notify the server to update the user's status in the database to verified.
 
 Request Parameters:
+
 *`id`(string, required)
 
 Example Request:
