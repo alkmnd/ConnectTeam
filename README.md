@@ -114,7 +114,7 @@ All requests require a valid authorization token in the header.
 Note: Use confirmation code to verificate user 
 
 <a id="verify-user"></a>
-#### 1.3 User verification {#verify-user}
+#### 1.3 User verification
 
 **Method:** `POST`
 
@@ -133,7 +133,7 @@ Note: Use confirmation code to verificate user
 }
 ```
 <a id="sign-in"></a>
-#### 1.4 User Authentication {#sign-in}
+#### 1.4 User Authentication 
 
 **Method:** `POST`
 
