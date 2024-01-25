@@ -20,6 +20,18 @@ go run cmd/main.go
 ```
 ## API Documentation
 
+### Содержание
+
+1. [Authentification](#auth)
+   
+   1.1. [Sign-Up](#sign-up)
+
+   1.2. [Email verification](#verify-email)
+   
+   1.3. [User verification](#verify-user)
+   
+   1.4. [Sign-In](#sign-in)
+
 **Note:**
 
 For all REST Api authenticated requests, ensure to include the Authorization header with the value Bearer 
@@ -27,8 +39,8 @@ your_access_token. This token is obtained through the user authentication proces
 first section.
 All requests require a valid authorization token in the header.
 
-### 1. Authentication 
-#### 1.1 User Sign-Up 
+### 1. Authentication {#auth}
+#### 1.1 Sign-Up{#sign-up}
 
 **Method:** `POST`
 
@@ -69,7 +81,7 @@ All requests require a valid authorization token in the header.
     "id": 3
 }
 ```
-#### 1.2 Email verification
+#### 1.2 Email verification {#verify-email}
 
 **Method:** `POST`
 
@@ -98,7 +110,7 @@ All requests require a valid authorization token in the header.
 ```
 Note: Use confirmation code to verificate user 
 
-#### 1.3 User verification 
+#### 1.3 User verification {#verify-user}
 
 **Method:** `POST`
 
@@ -116,7 +128,7 @@ Note: Use confirmation code to verificate user
     "id": "3"
 }
 ```
-#### 1.4 User Authentication
+#### 1.4 User Authentication {#sign-in}
 
 **Method:** `POST`
 
