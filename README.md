@@ -20,7 +20,7 @@ go run cmd/main.go
 ```
 ## API Documentation
 
-Note:
+**Note:**
 
 For all REST Api authenticated requests, ensure to include the Authorization header with the value Bearer 
 your_access_token. This token is obtained through the user authentication process described in the
@@ -30,28 +30,29 @@ All requests require a valid authorization token in the header.
 ### 1. Authentication 
 #### 1.1 User Sign-Up 
 
-Method: `POST`
+**Method:** `POST`
 
-Endpoint: `/auth/sign-up`
+**Endpoint:** `/auth/sign-up`
 
-Description: Registrates user
+**Description:** Registrates user
 
-Request Parameters:  
+**Request Parameters:**
 
-*`email` (string, required): User email  
+* `email` (string, required): User email  
 
-*`phone_number` (string, required): User phone number 
+* `phone_number` (string, required): User phone number 
 
-*`first_name` (string, required)
+* `first_name` (string, required)
 
-*`second_name` (string, required)
+* `second_name` (string, required)
 
-*`password` (string required)
+* `password` (string required)
 
-Response: 
+**Response:**
+
 * `id` (string): Signed-up user id
 
-Example body: 
+**Example body:**
 ``` bash
 {
     "email": "dkhfлg@gmail.com",
@@ -62,7 +63,7 @@ Example body:
 }
 ```
 
-Example Response:
+**Example Response:**
 ``` bash
 {
     "id": 3
@@ -70,26 +71,26 @@ Example Response:
 ```
 #### 1.2 Email verification
 
-Method: `POST`
+**Method:** `POST`
 
-Endpoint: `auth/verify/email`
+**Endpoint:** `auth/verify/email`
 
-Description: Verificates email. After user signed-up, it is required to verificate their email. (Users with non-verified emails cannot sign-in).
+**Description:** Verificates email. After user signed-up, it is required to verificate their email. (Users with non-verified emails cannot sign-in).
 
-Request Parameters:
+**Request Parameters:**
 * `email` (string, requiered)
 
-Response:
+**Response:**
 * `confirmation code` (string)
 
-Example Request:
+**Example Request:**
 ``` bash
 {
     "email":"dkhfлg@gmail.com"
 }
 ```
 
-Example Response:
+**Example Response:**
 ``` bash
 {
     "confirmationCode": "2266"
@@ -97,21 +98,45 @@ Example Response:
 ```
 Note: Use confirmation code to verificate user 
 
-#### 1.3. User verification 
+#### 1.3 User verification 
 
-Method: `POST`
+**Method:** `POST`
 
-Endpoint: `auth/verify/user`
+**Endpoint:** `auth/verify/user`
 
-Description: Verificates user. When the email is confirmed, you need to notify the server to update the user's status in the database to verified.
+**Description:** Verificates user. When the email is confirmed, you need to notify the server to update the user's status in the database to verified.
 
-Request Parameters:
+**Request Parameters:**
 
 * `id`(string, required)
 
-Example Request:
+**Example Request:**
 ``` bash
 {
     "id": "3"
 }
 ```
+#### 1.4 User Authentication
+
+**Method:** `POST`
+
+**Endpoint:** `/auth/sign-in/email`
+
+**Description:** Authorizes the user and returns a token for api requests.
+
+**Request** Parameters:
+
+* `email` (string, required)
+* `password` (string, required)
+
+**Response:**
+* token (string)
+
+**Example Request:**
+``` bash
+{
+    "email": "admin@gmail.com",
+    "password": "qwert1y"
+}
+```
+
