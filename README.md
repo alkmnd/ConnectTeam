@@ -130,7 +130,7 @@ Note: Use confirmation code to verificate user
 * `password` (string, required)
 
 **Response:**
-* token (string)
+* `token` (string)
 
 **Example Request:**
 ``` bash
