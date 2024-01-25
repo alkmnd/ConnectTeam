@@ -107,7 +107,7 @@ Description: Verificates user. When the email is confirmed, you need to notify t
 
 Request Parameters:
 
-*`id`(string, required)
+* `id`(string, required)
 
 Example Request:
 ``` bash
