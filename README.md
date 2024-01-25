@@ -32,6 +32,8 @@ go run cmd/main.go
    
    1.4. [Sign-In](#sign-in)
 
+2. [User](#user)
+
 **Note:**
 
 For all REST Api authenticated requests, ensure to include the Authorization header with the value Bearer 
@@ -156,4 +158,5 @@ Note: Use confirmation code to verificate user
     "password": "qwert1y"
 }
 ```
-
+<a id="user"></a>
+### 2. User 
