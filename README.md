@@ -33,6 +33,8 @@ go run cmd/main.go
    1.4. [Sign-In](#sign-in)
 
 2. [User](#user)
+   
+   2.1. [Current user](#get-me)
 
 **Note:**
 
@@ -160,3 +162,24 @@ Note: Use confirmation code to verificate user
 ```
 <a id="user"></a>
 ### 2. User 
+
+<a id="get-me"></a>
+#### 2.1. Current user 
+
+**Method:** `GET`
+
+**Endpoint:** `/user/me`
+
+**Description:** `Returns information about the user.`
+
+**Example Response:**
+```bash
+{
+    "access": "admin",
+    "email": "admin@gmail.com",
+    "first_name": "q",
+    "id": 2,
+    "phone_number": "89918765423",
+    "second_name": "q"
+}
+```
