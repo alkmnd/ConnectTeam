@@ -31,8 +31,6 @@ func (r *AuthPostgres) CreateUser(user connectteam.User) (int, error) {
 }
 func (r *AuthPostgres) GetUserWithEmail(email, password string) (connectteam.User, error) {
 	var user connectteam.User
-	println(email)
-	println(password)
 	query := fmt.Sprintf("SELECT id, email, phone_number, first_name, second_name, access, is_verified  FROM %s WHERE email=$1 AND password_hash=$2", usersTable)
 	if err := r.db.Get(&user, query, email, password); err != nil {
 		print(err.Error())

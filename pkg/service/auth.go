@@ -47,10 +47,8 @@ func (s *AuthService) GenerateToken(login, password string, isEmail bool) (strin
 		user, err = s.repo.GetUserWithPhone(login, generatePasswordHash(password))
 	}
 	if err != nil {
-		return "", errors.New("Wrong input data")
+		return "", errors.New("Invalid login data")
 	}
-	println(user.FirstName)
-	println("1")
 	if !user.Is_verified {
 		println("meow")
 		return "", errors.New("User is not verified")
