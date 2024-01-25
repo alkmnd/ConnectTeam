@@ -183,3 +183,23 @@ Note: Use confirmation code to verificate user
     "second_name": "q"
 }
 ```
+
+<a id="change-access"></a>
+2.2. Change access
+**Method:** `POST`
+
+**Endpoint:** `/user/change-access`
+
+**Description:** Changes authenticated user access if current user is admin.
+
+**Request Parameters:** 
+* id (string, required): User id for changing access.
+* access (string, required): One of the user roles in the system that needs to be changed to.
+
+**Example Request:**
+```bash
+{
+    "id": "1", 
+    "access": "admin"
+}
+```
