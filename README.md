@@ -39,8 +39,10 @@ your_access_token. This token is obtained through the user authentication proces
 first section.
 All requests require a valid authorization token in the header.
 
-### 1. Authentication {#auth}
-#### 1.1 Sign-Up{#sign-up}
+<a id="auth"></a>
+### 1. Authentication
+<a id="sign-up"></a>
+#### 1.1 Sign-Up
 
 **Method:** `POST`
 
@@ -81,7 +83,8 @@ All requests require a valid authorization token in the header.
     "id": 3
 }
 ```
-#### 1.2 Email verification {#verify-email}
+<a id="verify-email"></a>
+#### 1.2 Email verification
 
 **Method:** `POST`
 
@@ -110,6 +113,7 @@ All requests require a valid authorization token in the header.
 ```
 Note: Use confirmation code to verificate user 
 
+<a id="verify-user"></a>
 #### 1.3 User verification {#verify-user}
 
 **Method:** `POST`
@@ -128,6 +132,7 @@ Note: Use confirmation code to verificate user
     "id": "3"
 }
 ```
+<a id="sign-in"></a>
 #### 1.4 User Authentication {#sign-in}
 
 **Method:** `POST`
