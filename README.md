@@ -44,6 +44,7 @@ go run cmd/main.go
 
    2.5. [Company Change](#company-change)
 
+
 **Note:**
 
 For all REST Api authenticated requests, ensure to include the Authorization header with the value Bearer 
@@ -252,6 +253,24 @@ Note: Use confirmation code to verificate user
 ```
 <a id="password-change"></a>
 #### Password Change 
+
+**Method:** `PATCH`
+
+**Enpoint:** `/user/change-password`
+
+**Description:** Changes user password.
+
+**Request Parameters:** 
+* new_password (string, required): New password
+* old_password (string, required): Old password
+
+**Example Request Body:** 
+```bash
+{
+    "new_password": "qwerty",
+    "old_password": "qwerty1"
+}
+```
 
 <a id="company-change"></a>
 #### Company Change 
