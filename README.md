@@ -189,7 +189,7 @@ Note: Use confirmation code to verificate user
 <a id="change-access"></a>
 #### 2.2. Change access
 
-**Method:** `GET`
+**Method:** `PATCH`
 
 **Endpoint:** `/user/change-access`
 
