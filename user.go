@@ -23,6 +23,8 @@ type UserPublic struct {
 	FirstName string `json:"first_name" db:"first_name" binding "required"`
 	SecondName string `json:"second_name" db:"second_name" binding "required"`
   	Access string `json:"access" db:"access"`
+	CompanyName string `json:"company_name" db:"company_name"`
+	ProfileImage string `json:"profile_image" db:"profile_image"`
 }
 
 type VerifyPhone struct {

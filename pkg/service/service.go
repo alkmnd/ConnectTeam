@@ -15,7 +15,7 @@ type Authorization interface {
 }
 
 type UserInterface interface {
-	GetUserById(id int) (connectteam.User, error)
+	GetUserById(id int) (connectteam.UserPublic, error)
 	ChangeAccessById(id int, access string) (error)
 	GetUsersList() ([] connectteam.UserPublic, error)
 }

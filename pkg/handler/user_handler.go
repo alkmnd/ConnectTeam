@@ -28,12 +28,14 @@ func (h *Handler) getCurrentUser(c *gin.Context) {
 
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"id":id,
+		"id": id,
 		"email": user.Email, 
 		"phone_number": user.PhoneNumber, 
 		"first_name": user.FirstName, 
 		"second_name": user.SecondName, 
 		"access": user.Access,
+		"comppany_name": user.CompanyName, 
+		"image": user.ProfileImage,
 	})
 }
 

@@ -12,7 +12,7 @@ func NewUserService(repo repository.UserInterface) *UserService {
 	return &UserService{repo: repo}
 }
 
-func (s *UserService) GetUserById(id int) (connectteam.User, error) {
+func (s *UserService) GetUserById(id int) (connectteam.UserPublic, error) {
 	user, err := s.repo.GetUserById(id)
 	return user, err 
 }

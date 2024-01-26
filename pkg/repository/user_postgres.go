@@ -16,9 +16,9 @@ func NewUserPostgres(db *sqlx.DB) *UserPostgres {
 }
 
 
-func (r *UserPostgres) GetUserById(id int) (connectteam.User, error) {
-	var user connectteam.User
-	query := fmt.Sprintf("SELECT id, email, phone_number, first_name, second_name, is_verified, access FROM %s WHERE id=$1", usersTable)
+func (r *UserPostgres) GetUserById(id int) (connectteam.UserPublic, error) {
+	var user connectteam.UserPublic
+	query := fmt.Sprintf("SELECT id, email, phone_number, first_name, second_name, access, company_name, profile_image FROM %s WHERE id=$1", usersTable)
 	err := r.db.Get(&user, query, id)
 	return user, err
 }
@@ -34,7 +34,7 @@ func (r *UserPostgres) ChangeAccessById(id int, access string) (error) {
 func (r *UserPostgres) GetUsersList() ([]connectteam.UserPublic, error) {
 	var usersList []connectteam.UserPublic
 
-	query := fmt.Sprintf("SELECT id, email, phone_number, first_name, second_name, access FROM %s", usersTable)
+	query := fmt.Sprintf("SELECT id, email, phone_number, first_name, second_name, access, company_name, profile_image FROM %s", usersTable)
 	err := r.db.Select(&usersList, query)
 	return usersList, err
 }

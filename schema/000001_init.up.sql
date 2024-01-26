@@ -9,6 +9,8 @@ CREATE TABLE users
   second_name varchar(256),
   password_hash varchar(256), 
   access varchar(256),
-  is_verified boolean DEFAULT false
+  is_verified boolean DEFAULT false,
+  company_name varchar(256),
+  profile_image varchar(256)
 ); 
 
