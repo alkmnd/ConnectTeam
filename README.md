@@ -40,6 +40,10 @@ go run cmd/main.go
 
    2.3. [Users list](#users-list)
 
+   2.4. [Password Change](#password-change)
+
+   2.5. [Company Change](#company-change)
+
 **Note:**
 
 For all REST Api authenticated requests, ensure to include the Authorization header with the value Bearer 
@@ -246,3 +250,8 @@ Note: Use confirmation code to verificate user
     ]
 }
 ```
+<a id="password-change"></a>
+#### Password Change 
+
+<a id="company-change"></a>
+#### Company Change 
