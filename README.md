@@ -38,6 +38,8 @@ go run cmd/main.go
    
    2.2. [Change access](#change-access)
 
+   2.3. [Users list](#users-list)
+
 **Note:**
 
 For all REST Api authenticated requests, ensure to include the Authorization header with the value Bearer 
@@ -72,7 +74,7 @@ All requests require a valid authorization token in the header.
 
 * `id` (string): Signed-up user id
 
-**Example body:**
+**Example Body:**
 ``` bash
 {
     "email": "dkhfлg@gmail.com",
@@ -104,7 +106,7 @@ All requests require a valid authorization token in the header.
 **Response:**
 * `confirmation code` (string)
 
-**Example Request:**
+**Example Request Body:**
 ``` bash
 {
     "email":"dkhfлg@gmail.com"
@@ -132,7 +134,7 @@ Note: Use confirmation code to verificate user
 
 * `id`(string, required)
 
-**Example Request:**
+**Example Request Body:**
 ``` bash
 {
     "id": "3"
@@ -155,7 +157,7 @@ Note: Use confirmation code to verificate user
 **Response:**
 * `token` (string)
 
-**Example Request:**
+**Example Request body:**
 ``` bash
 {
     "email": "admin@gmail.com",
@@ -199,10 +201,42 @@ Note: Use confirmation code to verificate user
 * id (string, required): User id for changing access.
 * access (string, required): One of the user roles in the system that needs to be changed to.
 
-**Example Request:**
+**Example Request body:**
 ```bash
 {
     "id": "1", 
     "access": "admin"
+}
+```
+<a id="users-list"></a>
+#### Users list 
+
+**Method:** `GET`
+
+**Endpoint:** `user/list`
+
+**Description:** Returns list of users.
+
+**Example Response:**
+```bash
+{
+    "data": [
+        {
+            "id": 2,
+            "email": "admin@gmail.com",
+            "phone_number": "",
+            "first_name": "q",
+            "second_name": "q",
+            "access": "admin"
+        },
+        {
+            "id": 1,
+            "email": "b@gmail.com",
+            "phone_number": "",
+            "first_name": "fg",
+            "second_name": "cdvf",
+            "access": "admin"
+        }
+    ]
 }
 ```
