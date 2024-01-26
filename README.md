@@ -35,6 +35,7 @@ go run cmd/main.go
 2. [User](#user)
    
    2.1. [Current user](#get-me)
+   
    2.2. [Change access](#change-access)
 
 **Note:**
