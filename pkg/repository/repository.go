@@ -17,6 +17,9 @@ type UserInterface interface {
 	GetUserById(id int) (connectteam.UserPublic, error)
 	ChangeAccessById(id int, access string) (error)
 	GetUsersList() ([]connectteam.UserPublic, error)
+	GetPassword(id int) (string, error)
+	ChangePassword(new_password string, id int) (error)
+
 }
 
 

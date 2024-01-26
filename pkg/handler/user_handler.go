@@ -90,3 +90,26 @@ func (h *Handler) getUsersList(c *gin.Context) {
 		Data: list,
 	})
 } 
+
+type changePasswordInput struct {
+	OldPassword string `json:"old_password" binding required`
+	NewPassword string `json:"new_password" binding required`
+}
+func (h *Handler) changePassword(c *gin.Context) {
+	var input changePasswordInput
+	id, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return 
+	}
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return 
+	}
+
+	err = h.services.UserInterface.ChangePassword(input.OldPassword, input.NewPassword, id)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return 
+	}
+} 
