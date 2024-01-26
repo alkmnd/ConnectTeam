@@ -252,7 +252,7 @@ Note: Use confirmation code to verificate user
 }
 ```
 <a id="password-change"></a>
-#### Password Change 
+#### 2.4. Password Change 
 
 **Method:** `PATCH`
 
@@ -273,4 +273,4 @@ Note: Use confirmation code to verificate user
 ```
 
 <a id="company-change"></a>
-#### Company Change 
+#### 2.5. Company Change 
