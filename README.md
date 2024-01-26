@@ -186,6 +186,7 @@ Note: Use confirmation code to verificate user
 
 <a id="change-access"></a>
 2.2. Change access
+
 **Method:** `POST`
 
 **Endpoint:** `/user/change-access`
