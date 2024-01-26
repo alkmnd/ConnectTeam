@@ -209,7 +209,7 @@ Note: Use confirmation code to verificate user
 }
 ```
 <a id="users-list"></a>
-#### Users list 
+#### 2.3. Users list 
 
 **Method:** `GET`
 
