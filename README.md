@@ -55,7 +55,7 @@ All requests require a valid authorization token in the header.
 <a id="auth"></a>
 ### 1. Authentication
 <a id="sign-up"></a>
-#### 1.1 Sign-Up
+#### 1.1. Sign-Up
 
 **Method:** `POST`
 
@@ -97,7 +97,7 @@ All requests require a valid authorization token in the header.
 }
 ```
 <a id="verify-email"></a>
-#### 1.2 Email verification
+#### 1.2. Email verification
 
 **Method:** `POST`
 
@@ -127,7 +127,7 @@ All requests require a valid authorization token in the header.
 Note: Use confirmation code to verificate user 
 
 <a id="verify-user"></a>
-#### 1.3 User verification
+#### 1.3. User verification
 
 **Method:** `POST`
 
