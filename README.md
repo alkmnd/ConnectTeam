@@ -179,12 +179,14 @@ Note: Use confirmation code to verificate user
 **Example Response:**
 ```bash
 {
-    "access": "admin",
+    "access": "user",
+    "comppany_name": "",
     "email": "admin@gmail.com",
-    "first_name": "q",
-    "id": 2,
-    "phone_number": "89918765423",
-    "second_name": "q"
+    "first_name": "Natasha",
+    "id": 1,
+    "image": "",
+    "phone_number": "89912818155",
+    "second_name": "Belova"
 }
 ```
 
@@ -227,7 +229,9 @@ Note: Use confirmation code to verificate user
             "phone_number": "",
             "first_name": "q",
             "second_name": "q",
-            "access": "admin"
+            "access": "admin",
+            "company_name": "",
+            "profile_image": ""
         },
         {
             "id": 1,
@@ -235,7 +239,9 @@ Note: Use confirmation code to verificate user
             "phone_number": "",
             "first_name": "fg",
             "second_name": "cdvf",
-            "access": "admin"
+            "access": "admin",
+            "company_name": "",
+            "profile_image": ""
         }
     ]
 }
