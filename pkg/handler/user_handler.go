@@ -1,13 +1,18 @@
 package handler
 
 import (
+	connectteam "ConnectTeam"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func (h *Handler) getCurrentUser(c *gin.Context) {
-	id, _ := c.Get(userCtx)
+	id, ok := c.Get(userCtx)
+	if !ok {
+		newErrorResponse(c, http.StatusInternalServerError, "user id not found")
+		return
+	}
 	assert_id, ok := id.(int)
 	if !ok {
 		newErrorResponse(c, http.StatusBadRequest, "Incorrect auth header")
@@ -39,17 +44,21 @@ type changeAccessInput struct {
 
 func (h *Handler) changeAccessById(c *gin.Context) {
 	var input changeAccessInput
-	access, _ := c.Get(accessCtx)
-	assert_access, ok := access.(string)
-
-	if !ok {
-		newErrorResponse(c, http.StatusBadRequest, "Incorrect auth header")
+	_, ok_id := c.Get(userCtx)
+	if !ok_id {
+		newErrorResponse(c, http.StatusInternalServerError, "User id is not found")
 		return
 	}
+	access, err := getUserAccess(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return 
+	}
 
-	if assert_access == "admin" {
+	if access == "admin" {
 		if err := c.BindJSON(&input); err != nil {
 			newErrorResponse(c, http.StatusBadRequest, err.Error())
+			return 
 		}
 
 		if err := h.services.UserInterface.ChangeAccessById(input.Id, input.NewAccess); err != nil{
@@ -59,4 +68,23 @@ func (h *Handler) changeAccessById(c *gin.Context) {
 	}
 }
 
-// func (h *Handler)
+type getUsersListResponse struct {
+	Data []connectteam.UserPublic `json:"data"`
+}
+
+func (h *Handler) getUsersList(c *gin.Context) {
+	_, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	list, err := h.services.UserInterface.GetUsersList()
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return 
+	}
+	c.JSON(http.StatusOK, getUsersListResponse {
+		Data: list,
+	})
+} 

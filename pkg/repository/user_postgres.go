@@ -29,5 +29,12 @@ func (r *UserPostgres) ChangeAccessById(id int, access string) (error) {
 	_, err := r.db.Exec(query, access)
 	
 	return err
-	
+}
+
+func (r *UserPostgres) GetUsersList() ([]connectteam.UserPublic, error) {
+	var usersList []connectteam.UserPublic
+
+	query := fmt.Sprintf("SELECT id, email, phone_number, first_name, second_name, access FROM %s", usersTable)
+	err := r.db.Select(&usersList, query)
+	return usersList, err
 }

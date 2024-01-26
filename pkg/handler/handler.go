@@ -37,7 +37,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	userApi := router.Group("/user", h.userIdentity)
 	{
 		userApi.GET("/me", h.getCurrentUser)
-		userApi.GET("/change-access", h.changeAccessById)
+		userApi.PATCH("/change-access", h.changeAccessById)
+		userApi.GET("/list", h.getUsersList)
 	}
 
 	return router

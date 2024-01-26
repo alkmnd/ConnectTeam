@@ -23,3 +23,7 @@ func (s *UserService) ChangeAccessById(id int, access string) (error) {
 	}
 	return nil
 }
+
+func (s *UserService) GetUsersList() ([]connectteam.UserPublic, error) {
+	return s.repo.GetUsersList()
+}

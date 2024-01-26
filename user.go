@@ -6,14 +6,23 @@ import (
 var ErrNoRecord = errors.New("models: подходящей записи не найдено")
  
 type User struct {
-	Id int `json:"-" db:"id"`
+	Id int `json:"id" db:"id"`
   	Email string `json:"email" db:"email"` 
   	PhoneNumber string `json:"phone_number" db:"phone_number"`
   	FirstName string `json:"first_name" db:"first_name" binding "required"`
   	SecondName string `json:"second_name" db:"second_name" binding "required"`
   	Password string `json:"password" binding "required"`
 	Is_verified bool `json:"-" db:"is_verified"`
-	Access string `json:"_" db:"access"`
+	Access string `json:"access" db:"access"`
+}
+
+type UserPublic struct {
+	Id int `json:"id" db:"id"`
+	Email string `json:"email" db:"email"` 
+	PhoneNumber string `json:"phone_number" db:"phone_number"`
+	FirstName string `json:"first_name" db:"first_name" binding "required"`
+	SecondName string `json:"second_name" db:"second_name" binding "required"`
+  	Access string `json:"access" db:"access"`
 }
 
 type VerifyPhone struct {

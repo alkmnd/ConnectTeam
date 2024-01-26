@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"strings"
 	"github.com/gin-gonic/gin"
@@ -34,4 +35,30 @@ func (h* Handler) userIdentity(c *gin.Context) {
 	c.Set("access", access)
 }
 
-// func userAccess(c *gin)
+func getUserId(c *gin.Context) (int, error) {
+	id, ok := c.Get(userCtx)
+	if !ok {
+		return 0, errors.New("user id not found")
+	}
+
+	idInt, ok := id.(int)
+	if !ok {
+		return 0, errors.New("user id is of invalid type")
+	}
+
+	return idInt, nil
+}
+
+func getUserAccess(c *gin.Context) (string, error) {
+	access, ok := c.Get(accessCtx)
+	if !ok {
+		return "", errors.New("user access not found")
+	}
+
+	access_string, ok := access.(string)
+	if !ok {
+		return "", errors.New("user access is of invalid type")
+	}
+
+	return access_string, nil
+}
