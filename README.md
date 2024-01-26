@@ -20,7 +20,7 @@ go run cmd/main.go
 ```
 ## API Documentation
 
-### Содержание
+### Contents
 
 1. [Authentification](#auth)
    
