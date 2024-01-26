@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"github.com/gin-contrib/cors"
 	"ConnectTeam/pkg/service"
     "fmt"
     "net/http"
+	"time"
 
     "github.com/gorilla/websocket"
 
@@ -17,6 +19,17 @@ func NewHandler(services *service.Service) *Handler {
 }
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5432"},
+		AllowMethods:     []string{"PUT", "PATCH", "POST", "GET", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type", "Accept-Encoding"},
+		ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return origin == "http://localhost:5432"
+		},
+		MaxAge: 12 * time.Hour,
+	}))
 	auth := router.Group("/auth") 
 	{
 		verify := auth.Group("/verify") 
