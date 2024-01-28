@@ -110,6 +110,7 @@ All requests require a valid authorization token in the header.
 
 **Response:**
 * `confirmation code` (string)
+* `id` (int)
 
 **Example Request Body:**
 ``` bash
@@ -121,7 +122,8 @@ All requests require a valid authorization token in the header.
 **Example Response:**
 ``` bash
 {
-    "confirmationCode": "2266"
+    "confirmationCode": "1019",
+    "id": 1
 }
 ```
 Note: Use confirmation code to verificate user 
