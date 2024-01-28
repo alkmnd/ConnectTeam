@@ -3,6 +3,7 @@ package handler
 import (
 	connectteam "ConnectTeam"
 	"net/http"
+	"log"
 
 	"github.com/gin-gonic/gin"
 )
@@ -51,6 +52,7 @@ func (h *Handler) verifyEmail(c *gin.Context) {
 	var input connectteam.VerifyEmail
 
 	if err := c.BindJSON(&input); err != nil {
+		log.Printf("email: %s", input)
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return 
 	}

@@ -94,8 +94,8 @@ func (h *Handler) getUsersList(c *gin.Context) {
 } 
 
 type changePasswordInput struct {
-	OldPassword string `json:"old_password" binding required`
-	NewPassword string `json:"new_password" binding required`
+	OldPassword string `json:"old_password" binding "required"`
+	NewPassword string `json:"new_password" binding "required"`
 }
 func (h *Handler) changePassword(c *gin.Context) {
 	var input changePasswordInput
@@ -116,9 +116,11 @@ func (h *Handler) changePassword(c *gin.Context) {
 	}
 } 
 
-// type changeEmailInput {
-// 	Id int `json:"user_id" bind`
-// }
+type changeEmailInput struct {
+	Id int `json:"user_id" binding "required"`
+	NewEmail string `json:"new_email" binding "required"`
+	Code string `json:"code" binding "required"`
+}
 // func (h *Handler) changePassword(c *gin.Context) {
 
 // }
