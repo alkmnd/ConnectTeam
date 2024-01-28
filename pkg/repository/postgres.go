@@ -11,6 +11,10 @@ const (
 	usersTable = "users"
 )
 
+const (
+	codesTable = "verification_codes"
+)
+
 type Config struct {
 	Host string 
 	Port string 

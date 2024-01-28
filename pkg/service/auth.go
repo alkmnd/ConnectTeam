@@ -95,7 +95,7 @@ func (s *AuthService) VerifyPhone(verifyPhone connectteam.VerifyPhone) (string, 
 
 
 
-func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (int, string, error) {
+func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (int, error) {
 	from := os.Getenv("EMAIL")
    	password := os.Getenv("EMAIL_PASSWORD")
 	to := verifyEmail.Email
@@ -111,21 +111,39 @@ func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (int, str
 
 	if err != nil {
 		log.Printf("smtp error: %s", err)
-		return 0, "", errors.New("The recipient address is not a valid")
+		return 0, errors.New("The recipient address is not a valid")
 	}
+
 
 	id, err := s.repo.GetIdWithEmail(verifyEmail.Email)
 
 	if err != nil {
 		log.Printf("smtp error: %s", err)
-		return 0, "", errors.New("No user with such email")
+		return 0, errors.New("No user with such email")
+	}
+
+	err = s.repo.CreateVerificationCode(id, confirmationCode)
+
+	if err != nil {
+		log.Printf("smtp error: %s", err)
+		return 0, errors.New("Error while generating code")
 	}
 
 
-   return id, confirmationCode, err
+   return id, err
 }
 
 func (s *AuthService) VerifyUser(verifyUser connectteam.VerifyUser) error {
+	code, err := s.repo.GetVerificationCode(verifyUser.Id)
+	if err != nil {
+		return errors.New(err.Error())
+	}
+
+	if code != verifyUser.Code {
+
+		return errors.New("Wrong code")
+	}
+	
 	return s.repo.VerifyUser(verifyUser)
 }
 

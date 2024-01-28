@@ -56,3 +56,10 @@ func (r *UserPostgres) ChangePassword(new_password string, id int) (error) {
 	
 	return err
 }
+
+func (r *UserPostgres) ChangeEmail(email string, id int) (error) {
+	query := fmt.Sprintf("UPDATE %s SET email = $1 WHERE id = %d", usersTable, id)
+	_, err := r.db.Exec(query, email)
+
+	return err
+}

@@ -14,3 +14,8 @@ CREATE TABLE users
   profile_image varchar(256)
 ); 
 
+CREATE TABLE verification_codes 
+(
+    user_id INT UNIQUE,
+    code VARCHAR(10)
+);

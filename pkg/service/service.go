@@ -11,7 +11,8 @@ type Authorization interface {
 	ParseToken(token string) (int, string, error)
 	VerifyPhone(verifyPhone connectteam.VerifyPhone) (string, error)
 	VerifyUser(verifyUser connectteam.VerifyUser)  error
-	VerifyEmail(verifyEmail connectteam.VerifyEmail) (int, string, error)
+	VerifyEmail(verifyEmail connectteam.VerifyEmail) (int, error)
+	
 }
 
 type UserInterface interface {

@@ -37,5 +37,6 @@ type VerifyEmail struct {
 
 type VerifyUser struct {
 	Id int `json:"id,string" binding "required"`
+	Code string `json:"code" binding "required"`
 }
 
