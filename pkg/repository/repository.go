@@ -12,6 +12,8 @@ type Authorization interface {
 	GetIdWithEmail(email string) (int, error)
 	GetUserWithPhone(phoneNumber,  password string) (connectteam.User, error)
 	VerifyUser(verifyUser connectteam.VerifyUser)  error	
+	GetVerificationCode(id int) (string, error)
+	CreateVerificationCode(id int, code string) (error)
 }
 
 type UserInterface interface {

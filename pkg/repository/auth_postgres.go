@@ -29,6 +29,14 @@ func (r *AuthPostgres) CreateUser(user connectteam.User) (int, error) {
 	}
 	return id, nil
 }
+
+func (r *AuthPostgres) CreateVerificationCode(user_id int, code string) (error){
+	query := fmt.Sprintf("INSERT INTO %s (user_id, code) values ($1, $2) ON CONFLICT (user_id) DO UPDATE SET code = $2", codesTable)
+	_, err := r.db.Exec(query, user_id, code)
+	return err
+}
+
+
 func (r *AuthPostgres) GetUserWithEmail(email, password string) (connectteam.User, error) {
 	var user connectteam.User
 	query := fmt.Sprintf("SELECT id, email, phone_number, first_name, second_name, access, is_verified  FROM %s WHERE email=$1 AND password_hash=$2", usersTable)
@@ -54,6 +62,16 @@ func (r *AuthPostgres) GetUserWithPhone(phoneNumber, password string) (connectte
 	query := fmt.Sprintf("SELECT id, email, phone_number, first_name, second_name, is_verified, access FROM %s WHERE phone_number=$1 AND password_hash=$2", usersTable)
 	err := r.db.Get(&user, query, phoneNumber, password)
 	return user, err
+}
+
+
+func (r *AuthPostgres) GetVerificationCode(id int) (string, error) {
+	var code string
+	query := fmt.Sprintf("SELECT code from %s WHERE user_id = $1", codesTable)
+	err := r.db.Get(&code, query, id)
+	println("meow " + code)
+
+	return code, err
 }
 
 func (r *AuthPostgres) VerifyUser(verifyUser connectteam.VerifyUser) error {
