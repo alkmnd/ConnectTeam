@@ -95,7 +95,7 @@ func (s *AuthService) VerifyPhone(verifyPhone connectteam.VerifyPhone) (string, 
 
 
 
-func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (string, error) {
+func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (int, string, error) {
 	from := os.Getenv("EMAIL")
    	password := os.Getenv("EMAIL_PASSWORD")
 	to := verifyEmail.Email
@@ -111,9 +111,18 @@ func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (string, 
 
 	if err != nil {
 		log.Printf("smtp error: %s", err)
-		return "", errors.New("The recipient address is not a valid")
+		return 0, "", errors.New("The recipient address is not a valid")
 	}
-   return confirmationCode, err
+
+	id, err := s.repo.GetIdWithEmail(verifyEmail.Email)
+
+	if err != nil {
+		log.Printf("smtp error: %s", err)
+		return 0, "", errors.New("No user with such email")
+	}
+
+
+   return id, confirmationCode, err
 }
 
 func (s *AuthService) VerifyUser(verifyUser connectteam.VerifyUser) error {

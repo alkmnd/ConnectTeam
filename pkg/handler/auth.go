@@ -55,7 +55,7 @@ func (h *Handler) verifyEmail(c *gin.Context) {
 		return 
 	}
 
-	confirmationCode, err := h.services.Authorization.VerifyEmail(input)
+	id, confirmationCode, err := h.services.Authorization.VerifyEmail(input)
 	
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -64,6 +64,7 @@ func (h *Handler) verifyEmail(c *gin.Context) {
 
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"confirmationCode":confirmationCode,
+		"id": id,
 	})
 }
 

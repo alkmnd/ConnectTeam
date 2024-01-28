@@ -9,6 +9,7 @@ import (
 type Authorization interface {
 	CreateUser(user connectteam.User) (int, error)
 	GetUserWithEmail(email, password string) (connectteam.User, error)
+	GetIdWithEmail(email string) (int, error)
 	GetUserWithPhone(phoneNumber,  password string) (connectteam.User, error)
 	VerifyUser(verifyUser connectteam.VerifyUser)  error	
 }
