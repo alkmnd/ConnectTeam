@@ -30,7 +30,7 @@ func (h *Handler) getCurrentUser(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"id": id,
 		"email": user.Email, 
-		"phone_number": user.PhoneNumber, 
+		// "phone_number": user.PhoneNumber, 
 		"first_name": user.FirstName, 
 		"second_name": user.SecondName, 
 		"access": user.Access,
@@ -57,17 +57,19 @@ func (h *Handler) changeAccessById(c *gin.Context) {
 		return 
 	}
 
-	if access == "admin" {
-		if err := c.BindJSON(&input); err != nil {
-			newErrorResponse(c, http.StatusBadRequest, err.Error())
-			return 
-		}
+	if access != "admin" {
+		newErrorResponse(c, http.StatusInternalServerError, "Access error")
+		return
+	}
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return 
+	}
 
-		if err := h.services.UserInterface.ChangeAccessById(input.Id, input.NewAccess); err != nil{
+	if err := h.services.UserInterface.ChangeAccessById(input.Id, input.NewAccess); err != nil{
 			newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
-		} 
-	}
+	} 
 }
 
 type getUsersListResponse struct {
@@ -113,3 +115,10 @@ func (h *Handler) changePassword(c *gin.Context) {
 		return 
 	}
 } 
+
+// type changeEmailInput {
+// 	Id int `json:"user_id" bind`
+// }
+// func (h *Handler) changePassword(c *gin.Context) {
+
+// }

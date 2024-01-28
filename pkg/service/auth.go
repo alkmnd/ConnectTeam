@@ -129,6 +129,8 @@ func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (int, err
 		return 0, errors.New("Error while generating code")
 	}
 
+	log.Printf("verification code: %s", confirmationCode)
+
 
    return id, err
 }
@@ -136,12 +138,12 @@ func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (int, err
 func (s *AuthService) VerifyUser(verifyUser connectteam.VerifyUser) error {
 	code, err := s.repo.GetVerificationCode(verifyUser.Id)
 	if err != nil {
-		return errors.New(err.Error())
+		return errors.New("Wrong verification code")
 	}
 
 	if code != verifyUser.Code {
 
-		return errors.New("Wrong code")
+		return errors.New("Wrong verification code")
 	}
 	
 	return s.repo.VerifyUser(verifyUser)

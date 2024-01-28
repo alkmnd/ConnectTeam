@@ -8,6 +8,7 @@ import (
 
 type UserService struct {
 	repo repository.UserInterface
+
 }
 func NewUserService(repo repository.UserInterface) *UserService {
 	return &UserService{repo: repo}

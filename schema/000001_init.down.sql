@@ -1,3 +1,3 @@
-DROP TABLE users;
+DROP TABLE IF EXISTS users;
 DROP TYPE user_role;
-DROP TYPE verification_codes;
+DROP TABLE IF EXISTS verification_codes;
