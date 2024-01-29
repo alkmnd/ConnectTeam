@@ -23,7 +23,8 @@ type UserInterface interface {
 	ChangePassword(old_password string, new_password string, id int) (error)
 	ChangeEmail(id int, newEmail string, code string) (error) 
 	DeleteVerificationCode(id int, code string) (error)
-	CheckEmailForChange(id int, email string) (error)
+	CheckEmailOnChange(id int, email string) (error)
+	ChangePersonalData(id int, user connectteam.UserPersonalInfo) (error)
 }
 
 

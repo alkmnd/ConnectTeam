@@ -152,20 +152,43 @@ func (h *Handler) verifyEmailOnChange(c *gin.Context) {
 	var input sendCodeInput 
 	id, err := getUserId(c)
 	if err != nil {
-		println("1")
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return 
 	}
 	if err := c.BindJSON(&input); err != nil {
-		println("2")
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return 
 	}
 
-	err = h.services.CheckEmailForChange(id, input.Email)
+	err = h.services.CheckEmailOnChange(id, input.Email)
 	if err != nil {
-		println("3")
+
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return 
 	}
+}
+
+func (h *Handler) ChangePersonalData(c *gin.Context) {
+	var input connectteam.UserPersonalInfo
+
+	id, err := getUserId(c)
+	if err != nil {
+		println("1")
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return 
+	}
+
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return 
+	}
+
+	err = h.services.ChangePersonalData(id,input)
+	if err != nil {
+
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return 
+	}
+
+
 }

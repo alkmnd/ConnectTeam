@@ -106,3 +106,27 @@ func (r *UserPostgres) CheckIfExist(email string) (bool, error) {
 
 	return count > 0, nil
 }
+
+func (r *UserPostgres) ChangeUserFirstName(id int, firstName string) (error) {
+	query := fmt.Sprintf("UPDATE %s SET first_name = $1 WHERE id = %d", usersTable, id)
+
+	_, err := r.db.Exec(query, firstName)
+	
+	return err
+}
+
+func (r *UserPostgres) ChangeUserSecondName(id int, secondName string) (error) {
+	query := fmt.Sprintf("UPDATE %s SET second_name = $1 WHERE id = %d", usersTable, id)
+
+	_, err := r.db.Exec(query, secondName)
+	
+	return err
+}
+
+func (r *UserPostgres) ChangeUserDescription(id int, description string) (error) {
+	query := fmt.Sprintf("UPDATE %s SET description = $1 WHERE id = %d", usersTable, id)
+
+	_, err := r.db.Exec(query, description)
+	
+	return err
+}

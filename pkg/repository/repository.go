@@ -30,6 +30,9 @@ type UserInterface interface {
 	CreateVerificationCode(id int, code string) (error)
 	DeleteVerificationCode(id int, code string) (error)
 	CheckIfExist(email string) (bool, error)
+	ChangeUserFirstName(id int, firstName string) (error)
+	ChangeUserSecondName(id int, secondName string) (error)
+	ChangeUserDescription(id int, secondName string) (error)
 	
 }
 

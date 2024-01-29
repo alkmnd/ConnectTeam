@@ -44,7 +44,7 @@ func (s *UserService) ChangePassword(old_password string, new_password string, i
 	return s.repo.ChangePassword(generatePasswordHash(new_password), id)
 }
 
-func (s *UserService) CheckEmailForChange(id int, email string) (error) {
+func (s *UserService) CheckEmailOnChange(id int, email string) (error) {
 	ifEmailExist, err := s.repo.CheckIfExist(email)
 	if err != nil {
 		return err
@@ -74,6 +74,9 @@ func (s *UserService) CheckEmailForChange(id int, email string) (error) {
 }
 
 func (s *UserService) ChangeEmail(id int, newEmail string, code string) (error) {
+	if newEmail == "" {
+		return errors.New("Invalid email")
+	}
 	db_code, err := s.repo.GetVerificationCode(id)
 	if err != nil {
 		return errors.New("Verification code is not sent")
@@ -85,8 +88,6 @@ func (s *UserService) ChangeEmail(id int, newEmail string, code string) (error) 
 
 	err = s.repo.DeleteVerificationCode(id, code)
 	if err != nil {
-		println(id)
-		println(code)
 		return errors.New("No such row")
 	}
 
@@ -95,4 +96,22 @@ func (s *UserService) ChangeEmail(id int, newEmail string, code string) (error) 
 
 func (s *UserService) DeleteVerificationCode(id int, code string) (error) {
 	return s.repo.DeleteVerificationCode(id, code)
+}
+
+func (s *UserService) ChangePersonalData(id int, user connectteam.UserPersonalInfo) (error) {
+	if user.FirstName != "" {
+		err := s.repo.ChangeUserFirstName(id, user.FirstName) 
+		if err != nil {
+			return err
+		}
+	}
+
+	if user.SecondName != "" {
+		err := s.repo.ChangeUserSecondName(id, user.SecondName) 
+		if err != nil {
+			return err
+		}
+	}
+
+	return s.repo.ChangeUserDescription(id, user.Description) 
 }
