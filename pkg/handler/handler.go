@@ -33,7 +33,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	auth := router.Group("/auth") 
 	{
 		auth.POST("/verify-user", h.verifyUser)			
-		auth.POST("/verify-email", h.verifyEmail)
+		auth.POST("/verify-email", h.verifyEmailOnRegistration)
 		// verify := auth.Group("/verify") 
 		// {
 		// 	verify.POST("/user", h.verifyUser)			
@@ -55,7 +55,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		userApi.PATCH("/change-access", h.changeAccessWithId)
 		userApi.GET("/list", h.getUsersList)
 		userApi.PATCH("/change-password", h.changePassword)
-		userApi.POST("/verify-email", h.verifyEmailForChange)
+		userApi.POST("/verify-email", h.verifyEmailOnChange)
 		userApi.PATCH("/change-email", h.changeEmail)
 
 	}

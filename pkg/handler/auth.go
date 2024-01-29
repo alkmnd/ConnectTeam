@@ -47,7 +47,7 @@ func (h *Handler) verifyPhone(c *gin.Context) {
 	})
 }
 
-func (h *Handler) verifyEmail(c *gin.Context) {
+func (h *Handler) verifyEmailOnRegistration(c *gin.Context) {
 	var input connectteam.VerifyEmail
 
 	if err := c.BindJSON(&input); err != nil {

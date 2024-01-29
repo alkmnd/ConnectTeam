@@ -148,7 +148,7 @@ func (h *Handler) changeEmail(c *gin.Context) {
 type sendCodeInput struct {
 	Email string `json:"email" binding "required"`
 }
-func (h *Handler) verifyEmailForChange(c *gin.Context) {
+func (h *Handler) verifyEmailOnChange(c *gin.Context) {
 	var input sendCodeInput 
 	id, err := getUserId(c)
 	if err != nil {
