@@ -85,6 +85,11 @@ func (h *Handler) verifyUser(c *gin.Context) {
 		return
 	}
 
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"id":input.Id,
 	})
