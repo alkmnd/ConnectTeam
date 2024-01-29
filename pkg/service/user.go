@@ -44,7 +44,7 @@ func (s *UserService) ChangePassword(old_password string, new_password string, i
 	return s.repo.ChangePassword(generatePasswordHash(new_password), id)
 }
 
-func (s *UserService) CheckEmailOnChange(id int, email string) (error) {
+func (s *UserService) CheckEmailOnChange(id int, email string, password string) (error) {
 	ifEmailExist, err := s.repo.CheckIfExist(email)
 	if err != nil {
 		return err
@@ -53,6 +53,19 @@ func (s *UserService) CheckEmailOnChange(id int, email string) (error) {
 	if ifEmailExist {
 		return errors.New("Email is already taken")
 	}
+
+	db_password, err := s.repo.GetPassword(id)
+	if err != nil {
+		return err
+	}
+
+	if db_password != generatePasswordHash(password) {
+		return errors.New("Wrong password")
+	}
+
+
+	
+
 
 	code, err := CreateVerificationCode(id, email)
 

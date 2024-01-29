@@ -147,6 +147,7 @@ func (h *Handler) changeEmail(c *gin.Context) {
 
 type sendCodeInput struct {
 	Email string `json:"email" binding "required"`
+	Password string `json:"email" binding "required"`
 }
 func (h *Handler) verifyEmailOnChange(c *gin.Context) {
 	var input sendCodeInput 
@@ -160,7 +161,7 @@ func (h *Handler) verifyEmailOnChange(c *gin.Context) {
 		return 
 	}
 
-	err = h.services.CheckEmailOnChange(id, input.Email)
+	err = h.services.CheckEmailOnChange(id, input.Email, input.Password)
 	if err != nil {
 
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
