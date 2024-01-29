@@ -306,7 +306,7 @@ Note: Use confirmation code to verificate user
 <a id="email-change"></a>
 #### 2.6. Email Change
 
-**Method:** `PUTCH`
+**Method:** `PATCH`
 
 **Endpoint:** `users/change-email`
 
@@ -326,9 +326,9 @@ Note: Use confirmation code to verificate user
 <a id="edit-data"></a>
 #### 2.7. Edit Personal Data
 
-**Method:** `PUTCH`
+**Method:** `PATCH`
 
-**Endpoint:** `/users/edit-info`
+**Endpoint:** `/users/info`
 
 **Description:** Changes user's first name, second name, description
 
@@ -352,6 +352,29 @@ Note: Use confirmation code to verificate user
 
 <a id="company-change"></a>
 #### 2.5. Company Change 
+
+**Method:** `PATCH`
+
+**Endpoint:** `/users/company`
+
+**Description:** Changes user's company data (company name, company info, company web-site)
+
+**Request Parameters:**
+
+* company_name(string, required)
+* company_info(string, required)
+* company_url(string, required)
+
+
+**Example Request Body:**
+``` bash
+{
+    "company_name":"Yandex",
+    "company_info": "o_o",
+    "company_url": "0_o"
+}
+
+```
 
 
 
