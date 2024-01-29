@@ -172,6 +172,13 @@ Note: Use confirmation code to verificate user
     "password": "qwert1y"
 }
 ```
+
+**Example Response:**
+```bash
+{  "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY1MTcyNzksImlhdCI6MTcwNjQ3NDA3OSwidXNlcl9pZCI6MSwiYWNjZXNzIoidXNlciJ9.SlEf62NQ84OuXQ6royCsjfZwzzc7iOmJs5HlgtoXAuY"
+}
+```
+
 <a id="user"></a>
 ### 2. User 
 
@@ -193,7 +200,6 @@ Note: Use confirmation code to verificate user
     "first_name": "Natasha",
     "id": 1,
     "image": "",
-    "phone_number": "89912818155",
     "second_name": "Belova"
 }
 ```
@@ -234,7 +240,6 @@ Note: Use confirmation code to verificate user
         {
             "id": 2,
             "email": "admin@gmail.com",
-            "phone_number": "",
             "first_name": "q",
             "second_name": "q",
             "access": "admin",
@@ -244,7 +249,6 @@ Note: Use confirmation code to verificate user
         {
             "id": 1,
             "email": "b@gmail.com",
-            "phone_number": "",
             "first_name": "fg",
             "second_name": "cdvf",
             "access": "admin",
