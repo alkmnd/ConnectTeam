@@ -143,7 +143,7 @@ func (s *UserService) UpdateCompanyData(id int, company connectteam.UserCompanyD
 		return err
 	}
 
-	err = s.repo.UpdateCompanyInfo(id, company.CompanyURL)
+	err = s.repo.UpdateCompanyURL(id, company.CompanyURL)
 	if err != nil {
 		return err
 	}

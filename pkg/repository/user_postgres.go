@@ -140,7 +140,7 @@ func (r *UserPostgres) UpdateCompanyName(id int, companyName string) (error) {
 }
 
 func (r *UserPostgres) UpdateCompanyInfo(id int, info string) (error) {
-	query := fmt.Sprintf("UPDATE %s SET description = $1 WHERE id = %d", usersTable, id)
+	query := fmt.Sprintf("UPDATE %s SET company_info = $1 WHERE id = %d", usersTable, id)
 
 	_, err := r.db.Exec(query, info)
 	
