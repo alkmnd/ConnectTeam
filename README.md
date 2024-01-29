@@ -283,7 +283,7 @@ Note: Use confirmation code to verificate user
 
 **Endpoint:** `user/verify-email`
 
-**Description:** Checks email whem user changes it and send verification code.
+**Description:** Checks email when and password user changes email and send verification code.
 
 **Request Parameters:**
 * email (string, required): User new email.
@@ -291,7 +291,8 @@ Note: Use confirmation code to verificate user
 **Example Request Body:**
 ```bash
 {
-    "email":"ivandoronin22@gmail.com"
+    "email":"ivandoronin22@gmail.com", 
+    "password":"qwerty"
 }
 ```
 
