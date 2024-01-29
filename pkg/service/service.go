@@ -18,13 +18,13 @@ type Authorization interface {
 
 type UserInterface interface {
 	GetUserById(id int) (connectteam.UserPublic, error)
-	ChangeAccessWithId(id int, access string) (error)
+	UpdateAccessWithId(id int, access string) (error)
 	GetUsersList() ([] connectteam.UserPublic, error)
-	ChangePassword(old_password string, new_password string, id int) (error)
-	ChangeEmail(id int, newEmail string, code string) (error) 
+	UpdatePassword(old_password string, new_password string, id int) (error)
+	UpdateEmail(id int, newEmail string, code string) (error) 
 	DeleteVerificationCode(id int, code string) (error)
 	CheckEmailOnChange(id int, email string, password string) (error)
-	ChangePersonalData(id int, user connectteam.UserPersonalInfo) (error)
+	UpdatePersonalData(id int, user connectteam.UserPersonalInfo) (error)
 }
 
 
