@@ -23,7 +23,7 @@ func (r *UserPostgres) GetUserById(id int) (connectteam.UserPublic, error) {
 	return user, err
 }
 
-func (r *UserPostgres) ChangeAccessWithId(id int, access string) (error) {
+func (r *UserPostgres) UpdateAccessWithId(id int, access string) (error) {
 	query := fmt.Sprintf("UPDATE %s SET access = $1 WHERE id = %d", usersTable, id)
 
 	_, err := r.db.Exec(query, access)
@@ -49,7 +49,7 @@ func (r *UserPostgres) GetPassword(id int) (string, error) {
 	return db_password, nil
 }
 
-func (r *UserPostgres) ChangePassword(new_password string, id int) (error) {
+func (r *UserPostgres) UpdatePassword(new_password string, id int) (error) {
 	query := fmt.Sprintf("UPDATE %s SET password_hash = $1 WHERE id = %d", usersTable, id)
 
 	_, err := r.db.Exec(query, new_password)
@@ -57,7 +57,7 @@ func (r *UserPostgres) ChangePassword(new_password string, id int) (error) {
 	return err
 }
 
-func (r *UserPostgres) ChangeEmail(email string, id int) (error) {
+func (r *UserPostgres) UpdateEmail(email string, id int) (error) {
 	query := fmt.Sprintf("UPDATE %s SET email = $1 WHERE id = %d", usersTable, id)
 	_, err := r.db.Exec(query, email)
 
@@ -107,7 +107,7 @@ func (r *UserPostgres) CheckIfExist(email string) (bool, error) {
 	return count > 0, nil
 }
 
-func (r *UserPostgres) ChangeUserFirstName(id int, firstName string) (error) {
+func (r *UserPostgres) UpdateUserFirstName(id int, firstName string) (error) {
 	query := fmt.Sprintf("UPDATE %s SET first_name = $1 WHERE id = %d", usersTable, id)
 
 	_, err := r.db.Exec(query, firstName)
@@ -115,7 +115,7 @@ func (r *UserPostgres) ChangeUserFirstName(id int, firstName string) (error) {
 	return err
 }
 
-func (r *UserPostgres) ChangeUserSecondName(id int, secondName string) (error) {
+func (r *UserPostgres) UpdateUserSecondName(id int, secondName string) (error) {
 	query := fmt.Sprintf("UPDATE %s SET second_name = $1 WHERE id = %d", usersTable, id)
 
 	_, err := r.db.Exec(query, secondName)
@@ -123,7 +123,7 @@ func (r *UserPostgres) ChangeUserSecondName(id int, secondName string) (error) {
 	return err
 }
 
-func (r *UserPostgres) ChangeUserDescription(id int, description string) (error) {
+func (r *UserPostgres) UpdateUserDescription(id int, description string) (error) {
 	query := fmt.Sprintf("UPDATE %s SET description = $1 WHERE id = %d", usersTable, id)
 
 	_, err := r.db.Exec(query, description)

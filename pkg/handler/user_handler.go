@@ -66,7 +66,7 @@ func (h *Handler) changeAccessWithId(c *gin.Context) {
 		return 
 	}
 
-	if err := h.services.UserInterface.ChangeAccessWithId(input.Id, input.NewAccess); err != nil{
+	if err := h.services.UserInterface.UpdateAccessWithId(input.Id, input.NewAccess); err != nil{
 			newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 	} 
@@ -109,7 +109,7 @@ func (h *Handler) changePassword(c *gin.Context) {
 		return 
 	}
 
-	err = h.services.UserInterface.ChangePassword(input.OldPassword, input.NewPassword, id)
+	err = h.services.UserInterface.UpdatePassword(input.OldPassword, input.NewPassword, id)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return 
@@ -132,7 +132,7 @@ func (h *Handler) changeEmail(c *gin.Context) {
 		return 
 	}
 
-	err = h.services.ChangeEmail(id, input.NewEmail, input.Code)
+	err = h.services.UpdateEmail(id, input.NewEmail, input.Code)
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -147,7 +147,7 @@ func (h *Handler) changeEmail(c *gin.Context) {
 
 type sendCodeInput struct {
 	Email string `json:"email" binding "required"`
-	Password string `json:"email" binding "required"`
+	Password string `json:"password" binding "required"`
 }
 func (h *Handler) verifyEmailOnChange(c *gin.Context) {
 	var input sendCodeInput 
@@ -184,7 +184,7 @@ func (h *Handler) ChangePersonalData(c *gin.Context) {
 		return 
 	}
 
-	err = h.services.ChangePersonalData(id,input)
+	err = h.services.UpdatePersonalData(id,input)
 	if err != nil {
 
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())

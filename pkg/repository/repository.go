@@ -20,19 +20,19 @@ type Authorization interface {
 
 type UserInterface interface {
 	GetUserById(id int) (connectteam.UserPublic, error)
-	ChangeAccessWithId(id int, access string) (error)
+	UpdateAccessWithId(id int, access string) (error)
 	GetUsersList() ([]connectteam.UserPublic, error)
 	GetPassword(id int) (string, error)
-	ChangePassword(new_password string, id int) (error)
+	UpdatePassword(new_password string, id int) (error)
 	GetVerificationCode(id int) (string, error)
 	GetEmailWithId(id int) (string, error)
-	ChangeEmail(email string, id int) (error)
+	UpdateEmail(email string, id int) (error)
 	CreateVerificationCode(id int, code string) (error)
 	DeleteVerificationCode(id int, code string) (error)
 	CheckIfExist(email string) (bool, error)
-	ChangeUserFirstName(id int, firstName string) (error)
-	ChangeUserSecondName(id int, secondName string) (error)
-	ChangeUserDescription(id int, secondName string) (error)
+	UpdateUserFirstName(id int, firstName string) (error)
+	UpdateUserSecondName(id int, secondName string) (error)
+	UpdateUserDescription(id int, secondName string) (error)
 	
 }
 
