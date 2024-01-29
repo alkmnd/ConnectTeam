@@ -192,7 +192,7 @@ func (h *Handler) changePersonalData(c *gin.Context) {
 	}
 }
 
-func (h *Handler) changeCompanyInfo(c *gin.Context) {
+func (h *Handler) changeCompanyData(c *gin.Context) {
 	var input connectteam.UserCompanyData
 
 	id, err := getUserId(c)

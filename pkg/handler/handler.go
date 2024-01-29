@@ -57,7 +57,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		userApi.PATCH("/change-password", h.changePassword)
 		userApi.POST("/verify-email", h.verifyEmailOnChange)
 		userApi.PATCH("/change-email", h.changeEmail)
-		userApi.PATCH("/edit-info", h.changePersonalData)
+		userApi.PATCH("/info", h.changePersonalData)
+		userApi.PATCH("/company", h.changeCompanyData)
 
 	}
 
