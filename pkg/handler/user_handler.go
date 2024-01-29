@@ -147,25 +147,49 @@ func (h *Handler) changeEmail(c *gin.Context) {
 
 type sendCodeInput struct {
 	Email string `json:"email" binding "required"`
+	Password string `json:"email" binding "required"`
 }
 func (h *Handler) verifyEmailOnChange(c *gin.Context) {
 	var input sendCodeInput 
+	id, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return 
+	}
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return 
+	}
+
+	err = h.services.CheckEmailOnChange(id, input.Email, input.Password)
+	if err != nil {
+
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return 
+	}
+}
+
+func (h *Handler) ChangePersonalData(c *gin.Context) {
+	var input connectteam.UserPersonalInfo
+
 	id, err := getUserId(c)
 	if err != nil {
 		println("1")
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return 
 	}
+
 	if err := c.BindJSON(&input); err != nil {
-		println("2")
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return 
 	}
 
-	err = h.services.CheckEmailForChange(id, input.Email)
+	err = h.services.ChangePersonalData(id,input)
 	if err != nil {
-		println("3")
+
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return 
 	}
+
+
 }

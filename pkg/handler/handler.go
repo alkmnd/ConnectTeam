@@ -49,7 +49,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	}
 
-	userApi := router.Group("/user", h.userIdentity)
+	userApi := router.Group("/users", h.userIdentity)
 	{
 		userApi.GET("/me", h.getCurrentUser)
 		userApi.PATCH("/change-access", h.changeAccessWithId)
@@ -57,6 +57,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		userApi.PATCH("/change-password", h.changePassword)
 		userApi.POST("/verify-email", h.verifyEmailOnChange)
 		userApi.PATCH("/change-email", h.changeEmail)
+		userApi.PATCH("/edit-info", h.ChangePersonalData)
 
 	}
 

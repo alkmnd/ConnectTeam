@@ -42,7 +42,13 @@ go run cmd/main.go
 
    2.4. [Password Change](#password-change)
 
-   2.5. [Company Change](#company-change)
+   2.5. [Verify Email On Change](#email-check)
+
+   2.6. [Change Email](#email-change)
+
+   2.7. [Edit Personal Data](#edit-data)
+
+   
 
 
 **Note:**
@@ -79,7 +85,7 @@ All requests require a valid authorization token in the header.
 
 * `id` (string): Signed-up user id
 
-**Example Body:**
+**Example Request Body:**
 ``` bash
 {
     "email": "dkhfлg@gmail.com",
@@ -187,7 +193,7 @@ Note: Use confirmation code to verificate user
 
 **Method:** `GET`
 
-**Endpoint:** `/user/me`
+**Endpoint:** `/users/me`
 
 **Description:** `Returns information about the user.`
 
@@ -209,7 +215,7 @@ Note: Use confirmation code to verificate user
 
 **Method:** `PATCH`
 
-**Endpoint:** `/user/change-access`
+**Endpoint:** `/users/change-access`
 
 **Description:** Changes authenticated user access if current user is admin.
 
@@ -229,7 +235,7 @@ Note: Use confirmation code to verificate user
 
 **Method:** `GET`
 
-**Endpoint:** `user/list`
+**Endpoint:** `users/list`
 
 **Description:** Returns list of users.
 
@@ -263,7 +269,7 @@ Note: Use confirmation code to verificate user
 
 **Method:** `PATCH`
 
-**Enpoint:** `/user/change-password`
+**Enpoint:** `/users/change-password`
 
 **Description:** Changes user password.
 
@@ -281,9 +287,9 @@ Note: Use confirmation code to verificate user
 <a id="email-check">Verify Email On Change<>
 **Method:** `POST`
 
-**Endpoint:** `user/verify-email`
+**Endpoint:** `users/verify-email`
 
-**Description:** Checks email whem user changes it and send verification code.
+**Description:** Checks email when and password user changes email and send verification code.
 
 **Request Parameters:**
 * email (string, required): User new email.
@@ -291,14 +297,16 @@ Note: Use confirmation code to verificate user
 **Example Request Body:**
 ```bash
 {
-    "email":"ivandoronin22@gmail.com"
+    "email":"ivandoronin22@gmail.com", 
+    "password":"qwerty"
 }
 ```
 
 <a id="email-change">Email Change</a>
+
 **Method:** `PUTCH`
 
-**Endpoint:** `user/change-email`
+**Endpoint:** `users/change-email`
 
 **Description:** Changes user email if verification code is valid.
 
@@ -313,6 +321,32 @@ Note: Use confirmation code to verificate user
     "code": "6180"
 }
 ```
+<a id="edit-data"></a>
+#### 2.6. Edit Personal Data
+
+**Method:** `PUTCH`
+
+**Endpoint:** `/users/edit-info`
+
+**Description:** Changes user's first name, second name, description
+
+**Request Parameters:**
+
+* first_name(string, required)
+* second_name(string, required)
+* description(string, required)
+
+
+**Example Request Body:**
+``` bash
+{
+    "first_name":"Natasha",
+    "second_name": "Belova",
+    "description": ""
+}
+
+```
+
 
 <a id="company-change"></a>
 #### 2.5. Company Change 
