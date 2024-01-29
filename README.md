@@ -303,6 +303,7 @@ Note: Use confirmation code to verificate user
 ```
 
 <a id="email-change">Email Change</a>
+
 **Method:** `PUTCH`
 
 **Endpoint:** `users/change-email`
