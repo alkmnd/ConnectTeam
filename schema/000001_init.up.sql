@@ -16,6 +16,6 @@ CREATE TABLE users
 
 CREATE TABLE verification_codes 
 (
-    user_id INT UNIQUE,
+    email varchar(256) UNIQUE,
     code VARCHAR(10)
 );

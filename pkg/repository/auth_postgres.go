@@ -90,3 +90,21 @@ func (r *AuthPostgres) Verify(verifyUser connectteam.VerifyUser) error {
 	
 	return err
 }
+
+func (r *AuthPostgres) CheckIfExist(id int) (bool, error) {
+	var count int
+	query := fmt.Sprintf("SELECT COUNT(*) FROM %s WHERE id = $1", usersTable)
+	err := r.db.Get(&count, query, id)
+
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+}
+
+func (r *AuthPostgres) DeleteVerificationCode(id int, code string) (error) {
+	query := fmt.Sprintf("DELETE FROM %s WHERE user_id = $1 AND code=$2", codesTable)
+	_, err := r.db.Exec(query, id, code)
+	return err
+}

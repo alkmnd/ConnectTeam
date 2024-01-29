@@ -12,14 +12,18 @@ type Authorization interface {
 	VerifyPhone(verifyPhone connectteam.VerifyPhone) (string, error)
 	VerifyUser(verifyUser connectteam.VerifyUser)  error
 	VerifyEmail(verifyEmail connectteam.VerifyEmail) (int, error)
+	DeleteVerificationCode(id int, code string) (error)
 	
 }
 
 type UserInterface interface {
 	GetUserById(id int) (connectteam.UserPublic, error)
-	ChangeAccessById(id int, access string) (error)
+	ChangeAccessWithId(id int, access string) (error)
 	GetUsersList() ([] connectteam.UserPublic, error)
 	ChangePassword(old_password string, new_password string, id int) (error)
+	ChangeEmail(id int, newEmail string, code string) (error) 
+	DeleteVerificationCode(id int, code string) (error)
+	CheckEmailForChange(id int, email string) (error)
 }
 
 

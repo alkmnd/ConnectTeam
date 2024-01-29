@@ -44,7 +44,7 @@ type changeAccessInput struct {
 	NewAccess string `json:"access" binding "required"`
 }
 
-func (h *Handler) changeAccessById(c *gin.Context) {
+func (h *Handler) changeAccessWithId(c *gin.Context) {
 	var input changeAccessInput
 	_, ok_id := c.Get(userCtx)
 	if !ok_id {
@@ -66,7 +66,7 @@ func (h *Handler) changeAccessById(c *gin.Context) {
 		return 
 	}
 
-	if err := h.services.UserInterface.ChangeAccessById(input.Id, input.NewAccess); err != nil{
+	if err := h.services.UserInterface.ChangeAccessWithId(input.Id, input.NewAccess); err != nil{
 			newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 	} 
@@ -117,10 +117,55 @@ func (h *Handler) changePassword(c *gin.Context) {
 } 
 
 type changeEmailInput struct {
-	Id int `json:"user_id" binding "required"`
 	NewEmail string `json:"new_email" binding "required"`
 	Code string `json:"code" binding "required"`
 }
-// func (h *Handler) changePassword(c *gin.Context) {
+func (h *Handler) changeEmail(c *gin.Context) {
+	var input changeEmailInput
+	id, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return 
+	}
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return 
+	}
 
-// }
+	err = h.services.ChangeEmail(id, input.NewEmail, input.Code)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return 
+	}
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return 
+	}
+}
+
+type sendCodeInput struct {
+	Email string `json:"email" binding "required"`
+}
+func (h *Handler) verifyEmailForChange(c *gin.Context) {
+	var input sendCodeInput 
+	id, err := getUserId(c)
+	if err != nil {
+		println("1")
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return 
+	}
+	if err := c.BindJSON(&input); err != nil {
+		println("2")
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return 
+	}
+
+	err = h.services.CheckEmailForChange(id, input.Email)
+	if err != nil {
+		println("3")
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return 
+	}
+}

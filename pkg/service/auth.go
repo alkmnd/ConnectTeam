@@ -17,6 +17,7 @@ const (
 	salt = "hjqrhjqw124617ajfhajs"
 	signingKey = "qrkjk#4#%35FSFJlja#4353KSFjH"
 	tokenTTL = 12 * time.Hour
+	
 )
 
 type tokenClaims struct {
@@ -92,34 +93,43 @@ func (s *AuthService) VerifyPhone(verifyPhone connectteam.VerifyPhone) (string, 
 	return "1234", nil
 }
 
+func CreateVerificationCode(id int, email string) (string, error) {
+	from := os.Getenv("EMAIL")
+	password := os.Getenv("EMAIL_PASSWORD")
+ 	to := email
+ 	confirmationCode := generateConfirmationCode()
 
+ 	msg := "From: " + from + "\n" +
+	 "To: " + to + "\n" +
+	 "Subject: Код подтверждения\n\n" +
+	 confirmationCode
+ 	err := smtp.SendMail("smtp.gmail.com:587",
+ 	smtp.PlainAuth("", from, password, "smtp.gmail.com"),
+ 	from, []string{to}, []byte(msg))
 
+ 	if err != nil {
+	 	log.Printf("smtp error: %s", err)
+		return "", errors.New("The recipient address is not a valid")
+	}
+	return confirmationCode, nil
+
+}
 
 func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (int, error) {
-	from := os.Getenv("EMAIL")
-   	password := os.Getenv("EMAIL_PASSWORD")
-	to := verifyEmail.Email
-	confirmationCode := generateConfirmationCode()
-
-	msg := "From: " + from + "\n" +
-		"To: " + to + "\n" +
-		"Subject: Код подтверждения\n\n" +
-		confirmationCode
-	err := smtp.SendMail("smtp.gmail.com:587",
-	smtp.PlainAuth("", from, password, "smtp.gmail.com"),
-	from, []string{to}, []byte(msg))
-
-	if err != nil {
-		log.Printf("smtp error: %s", err)
-		return 0, errors.New("The recipient address is not a valid")
-	}
-
 
 	id, err := s.repo.GetIdWithEmail(verifyEmail.Email)
 
 	if err != nil {
 		log.Printf("smtp error: %s", err)
 		return 0, errors.New("No user with such email")
+	}
+
+
+	confirmationCode, err := CreateVerificationCode(id, verifyEmail.Email)
+
+	if err != nil {
+		log.Printf("smtp error: %s", err)
+		return 0, err
 	}
 
 	err = s.repo.CreateVerificationCode(id, confirmationCode)
@@ -145,6 +155,11 @@ func (s *AuthService) VerifyUser(verifyUser connectteam.VerifyUser) error {
 
 		return errors.New("Wrong verification code")
 	}
+
+	err = s.repo.DeleteVerificationCode(verifyUser.Id, verifyUser.Code)
+	if err != nil {
+		return errors.New("No such row")
+	}
 	
 	return s.repo.VerifyUser(verifyUser)
 }
@@ -167,4 +182,8 @@ func (s *AuthService) ParseToken(accessToken string) (int, string, error) {
 	}
 
 	return claims.UserId, claims.Role, nil
+}
+
+func (s *AuthService) DeleteVerificationCode(id int, code string) (error) {
+	return s.repo.DeleteVerificationCode(id, code)
 }
