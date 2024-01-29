@@ -101,7 +101,7 @@ All requests require a valid authorization token in the header.
 
 **Method:** `POST`
 
-**Endpoint:** `auth/verify/email`
+**Endpoint:** `auth/verify-email`
 
 **Description:** Verificates email. After user signed-up, it is required to verificate their email. (Users with non-verified emails cannot sign-in).
 
@@ -132,7 +132,7 @@ Note: Use confirmation code to verificate user
 
 **Method:** `POST`
 
-**Endpoint:** `auth/verify/user`
+**Endpoint:** `auth/verify-user`
 
 **Description:** Verificates user. When the email is confirmed, you need to notify the server to update the user's status in the database to verified.
 
@@ -278,6 +278,72 @@ Note: Use confirmation code to verificate user
     "old_password": "qwerty1"
 }
 ```
+<a id="email-check">Verify Email On Change<>
+**Method:** `POST`
+
+**Endpoint:** `user/verify-email`
+
+**Description:** Checks email whem user changes it and send verification code.
+
+**Request Parameters:**
+* email (string, required): User new email.
+
+**Example Request Body:**
+```bash
+{
+    "email":"ivandoronin22@gmail.com"
+}
+```
+
+<a id="email-change">Email Change</a>
+**Method:** `PUTCH`
+
+**Endpoint:** `user/change-email`
+
+**Description:** Changes user email if verification code is valid.
+
+**Request Parameters:**
+* new_email (string, required): User new email.
+* code (string, required): Verification code sent by user
+
+**Example Request Body:**
+```bash
+{
+    "new_email":"ivandoronin22@gmail.com",
+    "code": "6180"
+}
+```
 
 <a id="company-change"></a>
 #### 2.5. Company Change 
+
+
+
+
+
+
+
+
+**Method:** ``
+
+**Endpoint:** `/`
+
+**Description:** 
+
+**Request Parameters:**
+
+* 
+
+**Response:**
+
+* 
+
+**Example Body:**
+``` bash
+
+```
+
+**Example Response:**
+``` bash
+
+```
