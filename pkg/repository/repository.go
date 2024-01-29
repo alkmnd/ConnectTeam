@@ -33,6 +33,9 @@ type UserInterface interface {
 	UpdateUserFirstName(id int, firstName string) (error)
 	UpdateUserSecondName(id int, secondName string) (error)
 	UpdateUserDescription(id int, secondName string) (error)
+	UpdateCompanyName(id int, companyName string) (error)
+	UpdateCompanyInfo(id int, info string) (error)
+	UpdateCompanyURL(id int, companyURL string) (error)
 	
 }
 

@@ -12,6 +12,9 @@ CREATE TABLE users
   access varchar(256),
   is_verified boolean DEFAULT false,
   company_name varchar(256),
+  company_info varchar(256),
+  company_url varchar(256),
+  company_logo varchar(256),
   profile_image varchar(256)
 ); 
 

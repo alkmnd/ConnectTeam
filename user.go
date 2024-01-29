@@ -35,6 +35,11 @@ type UserPersonalInfo struct {
 	SecondName string `json:"second_name" db:"second_name" binding "required"`
 	Description string `json:"description" db:"description"`
 }
+type UserCompanyData struct {
+	CompanyName string `json:"company_name" db:"company_name"`
+	CompanyInfo string `json:"company_info" db:"company_info"`
+	CompanyURL string `json:"company_url" db:"company_url"`
+}
 
 type VerifyPhone struct {
 	PhoneNumber string `json:"phone_number" binding required`
