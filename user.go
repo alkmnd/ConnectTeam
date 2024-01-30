@@ -27,6 +27,7 @@ type UserPublic struct {
 	CompanyName string `json:"company_name" db:"company_name"`
 	CompanyInfo string `json:"company_info" db:"company_info"`
 	CompanyURL string `json:"company_url" db:"company_url"`
+	CompanyLogo string `json:"company_logo" db:"company_logo"`
 	ProfileImage string `json:"profile_image" db:"profile_image"`
 }
 
