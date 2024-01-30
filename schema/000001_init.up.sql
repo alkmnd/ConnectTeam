@@ -7,10 +7,14 @@ CREATE TABLE users
   -- phone_number varchar(256),
   first_name varchar(256),
   second_name varchar(256),
+  description varchar(256),
   password_hash varchar(256), 
   access varchar(256),
   is_verified boolean DEFAULT false,
   company_name varchar(256),
+  company_info varchar(256),
+  company_url varchar(256),
+  company_logo varchar(256),
   profile_image varchar(256)
 ); 
 

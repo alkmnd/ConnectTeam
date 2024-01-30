@@ -131,3 +131,22 @@ func (s *UserService) UpdatePersonalData(id int, user connectteam.UserPersonalIn
 
 	return s.repo.UpdateUserDescription(id, user.Description) 
 }
+
+func (s *UserService) UpdateCompanyData(id int, company connectteam.UserCompanyData) (error) {
+	err := s.repo.UpdateCompanyName(id, company.CompanyName)
+	if err != nil {
+		return err
+	}
+
+	err = s.repo.UpdateCompanyInfo(id, company.CompanyInfo)
+	if err != nil {
+		return err
+	}
+
+	err = s.repo.UpdateCompanyURL(id, company.CompanyURL)
+	if err != nil {
+		return err
+	}
+
+	return err
+}

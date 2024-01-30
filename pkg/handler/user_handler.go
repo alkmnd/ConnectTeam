@@ -169,7 +169,7 @@ func (h *Handler) verifyEmailOnChange(c *gin.Context) {
 	}
 }
 
-func (h *Handler) ChangePersonalData(c *gin.Context) {
+func (h *Handler) changePersonalData(c *gin.Context) {
 	var input connectteam.UserPersonalInfo
 
 	id, err := getUserId(c)
@@ -185,6 +185,29 @@ func (h *Handler) ChangePersonalData(c *gin.Context) {
 	}
 
 	err = h.services.UpdatePersonalData(id,input)
+	if err != nil {
+
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return 
+	}
+}
+
+func (h *Handler) changeCompanyData(c *gin.Context) {
+	var input connectteam.UserCompanyData
+
+	id, err := getUserId(c)
+	if err != nil {
+		println("1")
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return 
+	}
+
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return 
+	}
+
+	err = h.services.UpdateCompanyData(id, input)
 	if err != nil {
 
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())

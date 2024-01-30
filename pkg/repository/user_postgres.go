@@ -18,7 +18,7 @@ func NewUserPostgres(db *sqlx.DB) *UserPostgres {
 
 func (r *UserPostgres) GetUserById(id int) (connectteam.UserPublic, error) {
 	var user connectteam.UserPublic
-	query := fmt.Sprintf("SELECT id, email, first_name, second_name, access, company_name, profile_image FROM %s WHERE id=$1", usersTable)
+	query := fmt.Sprintf("SELECT id, email, first_name, second_name, description, access, company_name, profile_image FROM %s WHERE id=$1", usersTable)
 	err := r.db.Get(&user, query, id)
 	return user, err
 }
@@ -127,6 +127,30 @@ func (r *UserPostgres) UpdateUserDescription(id int, description string) (error)
 	query := fmt.Sprintf("UPDATE %s SET description = $1 WHERE id = %d", usersTable, id)
 
 	_, err := r.db.Exec(query, description)
+	
+	return err
+}
+
+func (r *UserPostgres) UpdateCompanyName(id int, companyName string) (error) {
+	query := fmt.Sprintf("UPDATE %s SET company_name = $1 WHERE id = %d", usersTable, id)
+
+	_, err := r.db.Exec(query, companyName)
+	
+	return err
+}
+
+func (r *UserPostgres) UpdateCompanyInfo(id int, info string) (error) {
+	query := fmt.Sprintf("UPDATE %s SET company_info = $1 WHERE id = %d", usersTable, id)
+
+	_, err := r.db.Exec(query, info)
+	
+	return err
+}
+
+func (r *UserPostgres) UpdateCompanyURL(id int, url string) (error) {
+	query := fmt.Sprintf("UPDATE %s SET company_url = $1 WHERE id = %d", usersTable, id)
+
+	_, err := r.db.Exec(query, url)
 	
 	return err
 }

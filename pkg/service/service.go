@@ -25,6 +25,7 @@ type UserInterface interface {
 	DeleteVerificationCode(id int, code string) (error)
 	CheckEmailOnChange(id int, email string, password string) (error)
 	UpdatePersonalData(id int, user connectteam.UserPersonalInfo) (error)
+	UpdateCompanyData(id int, company connectteam.UserCompanyData) (error)
 }
 
 
