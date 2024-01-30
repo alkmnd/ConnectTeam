@@ -204,12 +204,12 @@ Note: Use confirmation code to verificate user
     "company_info": "o_o",
     "company_logo": "",
     "company_url": "0_o",
-    "comppany_name": "Yandex",
+    "company_name": "Yandex",
     "description": "=)",
     "email": "blvantla@gmail.com",
     "first_name": "Ksusha",
     "id": 1,
-    "image": "",
+    "profile_image": "",
     "second_name": "Belova"
 }
 ```
@@ -254,7 +254,11 @@ Note: Use confirmation code to verificate user
             "second_name": "q",
             "access": "admin",
             "company_name": "",
-            "profile_image": ""
+            "profile_image": "",
+            "company_info": "o_o",
+            "company_logo": "",
+            "company_url": "0_o",
+            "description": "=)",
         },
         {
             "id": 1,
@@ -263,7 +267,11 @@ Note: Use confirmation code to verificate user
             "second_name": "cdvf",
             "access": "admin",
             "company_name": "",
-            "profile_image": ""
+            "profile_image": "",
+            "company_info": "o_o",
+             "company_logo": "",
+             "company_url": "0_o",
+             "description": "=)",
         }
     ]
 }
