@@ -201,9 +201,13 @@ Note: Use confirmation code to verificate user
 ```bash
 {
     "access": "user",
-    "comppany_name": "",
-    "email": "admin@gmail.com",
-    "first_name": "Natasha",
+    "company_info": "o_o",
+    "company_logo": "",
+    "company_url": "0_o",
+    "comppany_name": "Yandex",
+    "description": "=)",
+    "email": "blvantla@gmail.com",
+    "first_name": "Ksusha",
     "id": 1,
     "image": "",
     "second_name": "Belova"
