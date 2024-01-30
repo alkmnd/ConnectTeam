@@ -35,7 +35,7 @@ func (h *Handler) getCurrentUser(c *gin.Context) {
 		"first_name": user.FirstName, 
 		"second_name": user.SecondName, 
 		"access": user.Access,
-		"comppany_name": user.CompanyName, 
+		"company_name": user.CompanyName, 
 		"company_info": user.CompanyInfo,
 		"company_url": user.CompanyURL,
 		"company_logo": user.CompanyLogo,
