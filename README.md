@@ -170,6 +170,7 @@ Note: Use confirmation code to verificate user
 
 **Response:**
 * `token` (string)
+* `access` (string): User access.
 
 **Example Request body:**
 ``` bash
@@ -181,7 +182,8 @@ Note: Use confirmation code to verificate user
 
 **Example Response:**
 ```bash
-{  "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY1MTcyNzksImlhdCI6MTcwNjQ3NDA3OSwidXNlcl9pZCI6MSwiYWNjZXNzIoidXNlciJ9.SlEf62NQ84OuXQ6royCsjfZwzzc7iOmJs5HlgtoXAuY"
+{  "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY1MTcyNzksImlhdCI6MTcwNjQ3NDA3OSwidXNlcl9pZCI6MSwiYWNjZXNzIoidXNlciJ9.SlEf62NQ84OuXQ6royCsjfZwzzc7iOmJs5HlgtoXAuY",
+"access": "user"
 }
 ```
 
