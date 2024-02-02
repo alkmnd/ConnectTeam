@@ -369,7 +369,7 @@ Note: Use confirmation code to verificate user
 
 
 <a id="company-change"></a>
-#### 2.7. Edit Company Data 
+#### 2.8. Edit Company Data 
 
 **Method:** `PATCH`
 
@@ -395,7 +395,7 @@ Note: Use confirmation code to verificate user
 ```
 
 <a id="get-plan"></a>
-#### 2.8. Get User Plan 
+#### 2.9. Get User Plan 
 
 **Method:** `GET`
 
