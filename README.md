@@ -170,6 +170,7 @@ Note: Use confirmation code to verificate user
 
 **Response:**
 * `token` (string)
+* `access` (string): User access.
 
 **Example Request body:**
 ``` bash
@@ -181,7 +182,8 @@ Note: Use confirmation code to verificate user
 
 **Example Response:**
 ```bash
-{  "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY1MTcyNzksImlhdCI6MTcwNjQ3NDA3OSwidXNlcl9pZCI6MSwiYWNjZXNzIoidXNlciJ9.SlEf62NQ84OuXQ6royCsjfZwzzc7iOmJs5HlgtoXAuY"
+{  "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY1MTcyNzksImlhdCI6MTcwNjQ3NDA3OSwidXNlcl9pZCI6MSwiYWNjZXNzIoidXNlciJ9.SlEf62NQ84OuXQ6royCsjfZwzzc7iOmJs5HlgtoXAuY",
+"access": "user"
 }
 ```
 
@@ -201,11 +203,15 @@ Note: Use confirmation code to verificate user
 ```bash
 {
     "access": "user",
-    "comppany_name": "",
-    "email": "admin@gmail.com",
-    "first_name": "Natasha",
+    "company_info": "o_o",
+    "company_logo": "",
+    "company_url": "0_o",
+    "company_name": "Yandex",
+    "description": "=)",
+    "email": "blvantla@gmail.com",
+    "first_name": "Ksusha",
     "id": 1,
-    "image": "",
+    "profile_image": "",
     "second_name": "Belova"
 }
 ```
@@ -250,7 +256,11 @@ Note: Use confirmation code to verificate user
             "second_name": "q",
             "access": "admin",
             "company_name": "",
-            "profile_image": ""
+            "profile_image": "",
+            "company_info": "o_o",
+            "company_logo": "",
+            "company_url": "0_o",
+            "description": "=)",
         },
         {
             "id": 1,
@@ -259,7 +269,11 @@ Note: Use confirmation code to verificate user
             "second_name": "cdvf",
             "access": "admin",
             "company_name": "",
-            "profile_image": ""
+            "profile_image": "",
+            "company_info": "o_o",
+             "company_logo": "",
+             "company_url": "0_o",
+             "description": "=)",
         }
     ]
 }

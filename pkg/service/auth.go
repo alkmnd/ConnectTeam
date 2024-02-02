@@ -39,7 +39,7 @@ func (s *AuthService) CreateUser(user connectteam.User) (int, error) {
 	return s.repo.CreateUser(user)
 }
 
-func (s *AuthService) GenerateToken(login, password string, isEmail bool) (string, error) {
+func (s *AuthService) GenerateToken(login, password string, isEmail bool) (string, string, error) {
 	var user connectteam.User
 	var err error 
 	if isEmail {
@@ -48,15 +48,15 @@ func (s *AuthService) GenerateToken(login, password string, isEmail bool) (strin
 		user, err = s.repo.GetUserWithPhone(login, generatePasswordHash(password))
 	}
 	if err != nil {
-		return "", errors.New("Invalid login data")
+		return "",  "", errors.New("Invalid login data")
 	}
 	if !user.Is_verified {
 		println("meow")
-		return "", errors.New("User is not verified")
+		return "", "", errors.New("User is not verified")
 	}
 
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 
@@ -69,7 +69,13 @@ func (s *AuthService) GenerateToken(login, password string, isEmail bool) (strin
 		user.Id,
 		user.Access,
 	})
-	return token.SignedString([]byte(signingKey))
+	signedString, err := token.SignedString([]byte(signingKey))
+
+	if err != nil {
+		return "", "", err
+	}
+
+	return  user.Access, signedString, nil
 }
 
 func generatePasswordHash(password string) string {

@@ -39,7 +39,7 @@ func (h *Handler) getCurrentUser(c *gin.Context) {
 		"company_info": user.CompanyInfo,
 		"company_url": user.CompanyURL,
 		"company_logo": user.CompanyLogo,
-		"image": user.ProfileImage,
+		"profile_image": user.ProfileImage,
 	})
 }
 
