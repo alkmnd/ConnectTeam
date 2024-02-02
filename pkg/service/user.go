@@ -150,3 +150,7 @@ func (s *UserService) UpdateCompanyData(id int, company connectteam.UserCompanyD
 
 	return err
 }
+
+func (s *UserService) GetUserPlan(user_id int) (connectteam.UserPlan, error) {
+	return s.repo.GetUserPlan(user_id)
+}

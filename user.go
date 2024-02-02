@@ -1,6 +1,8 @@
 package connectteam
+
 import (
 	"errors"
+	"time"
 )
  
 var ErrNoRecord = errors.New("models: подходящей записи не найдено")
@@ -42,6 +44,14 @@ type UserCompanyData struct {
 	CompanyURL string `json:"company_url" db:"company_url"`
 }
 
+type UserPlan struct {
+	PlanType string `json:"plan_type" db:"plan_type"`
+	UserId int `json:"user_id" db:"user_id"`
+	HolderId int `json:"holder_id" db:"holder_id"`
+	ExpiryDate time.Time `json:"expiry_date" db:"expiry_date"`
+	PlanAccess string `json:"plan_access" db:"plan_access"`
+
+}
 type VerifyPhone struct {
 	PhoneNumber string `json:"phone_number" binding required`
 }

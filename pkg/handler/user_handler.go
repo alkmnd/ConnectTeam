@@ -218,5 +218,28 @@ func (h *Handler) changeCompanyData(c *gin.Context) {
 		return 
 	}
 
+}
+
+func (h *Handler) getUserPlan(c *gin.Context) {
+	id, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return 
+	}
+
+	userPlan, err := h.services.GetUserPlan(id)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "User has no plan")
+		return 
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"plan_type":userPlan.PlanType, 
+		"user_id":userPlan.UserId,
+		"holder_id":userPlan.HolderId, 
+		"expiry_date":userPlan.ExpiryDate,
+		"plan_access":userPlan.PlanAccess,
+	})
 
 }

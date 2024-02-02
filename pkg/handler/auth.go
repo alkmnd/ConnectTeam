@@ -43,7 +43,7 @@ func (h *Handler) verifyPhone(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"confirmationCode":confirmationCode,
+		"confirmationCode": confirmationCode,
 	})
 }
 

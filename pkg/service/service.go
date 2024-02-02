@@ -26,6 +26,7 @@ type UserInterface interface {
 	CheckEmailOnChange(id int, email string, password string) (error)
 	UpdatePersonalData(id int, user connectteam.UserPersonalInfo) (error)
 	UpdateCompanyData(id int, company connectteam.UserCompanyData) (error)
+	GetUserPlan(user_id int) (connectteam.UserPlan, error)
 }
 
 

@@ -59,10 +59,14 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		userApi.PATCH("/change-email", h.changeEmail)
 		userApi.PATCH("/info", h.changePersonalData)
 		userApi.PATCH("/company", h.changeCompanyData)
-
+		userApi.GET("/plan", h.getUserPlan)
 	}
 
 	return router
+}
+
+func test(c *gin.Context) {
+
 }
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
