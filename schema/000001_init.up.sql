@@ -1,5 +1,7 @@
 CREATE TYPE user_role AS ENUM ('user', 'admin', 'plan_user');
 
+CREATE TYPE plans AS ENUM ('basic', 'advanced', 'premium');
+
 CREATE TABLE users 
 (
   id serial not null PRIMARY KEY,
@@ -22,4 +24,13 @@ CREATE TABLE verification_codes
 (
     user_id varchar(256) UNIQUE,
     code VARCHAR(10)
+);
+
+CREATE TABLE plans_users 
+(
+  plan_type plans,
+  user_id int PRIMARY KEY,
+  holder_id int,
+  expiry_date timestamp,
+  plan_access varchar(256)
 );

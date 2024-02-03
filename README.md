@@ -48,6 +48,10 @@ go run cmd/main.go
 
    2.7. [Edit Personal Data](#edit-data)
 
+   2.8. [Edit Company Data](#company-change)
+
+   2.9. [Get User Plan](#get-plan)
+
    
 
 
@@ -365,7 +369,7 @@ Note: Use confirmation code to verificate user
 
 
 <a id="company-change"></a>
-#### 2.5. Company Change 
+#### 2.8. Edit Company Data 
 
 **Method:** `PATCH`
 
@@ -390,9 +394,59 @@ Note: Use confirmation code to verificate user
 
 ```
 
+<a id="get-plan"></a>
+#### 2.9. Get User Plan 
+
+**Method:** `GET`
+
+**Endpoint:** `/users/plan`
+
+**Description:** Returns current user's plan
+
+**Response:**
+
+* expiry_date (string): Expiration date of the plan.
+* holder_id (int): User who owns the plan.
+* user_id (int): User who is participant in the plan (for 'basic' and 'advanced' who owns the plan).
+* plan_access (string): User access in the plan ('holder' or 'additional')
+* plan_type (string): Type of the plan.
 
 
+**Example Response:**
+``` bash
+{
+    "expiry_date": "2024-02-01T12:34:56Z",
+    "holder_id": 1,
+    "plan_access": "holder",
+    "plan_type": "basic",
+    "user_id": 1
+}
+```
 
+
+**Method:** ``
+
+**Endpoint:** `/`
+
+**Description:** 
+
+**Request Parameters:**
+
+* 
+
+**Response:**
+
+* 
+
+**Example Body:**
+``` bash
+
+```
+
+**Example Response:**
+``` bash
+
+```
 
 
 

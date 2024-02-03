@@ -36,7 +36,7 @@ type UserInterface interface {
 	UpdateCompanyName(id int, companyName string) (error)
 	UpdateCompanyInfo(id int, info string) (error)
 	UpdateCompanyURL(id int, companyURL string) (error)
-	
+	GetUserPlan(user_id int) (connectteam.UserPlan, error)
 }
 
 

@@ -107,6 +107,18 @@ func (r *UserPostgres) CheckIfExist(email string) (bool, error) {
 	return count > 0, nil
 }
 
+// func (r *AuthPostgres) CheckIfExist(id int) (bool, error) {
+// 	var count int
+// 	query := fmt.Sprintf("SELECT COUNT(*) FROM %s WHERE id = $1", usersTable)
+// 	err := r.db.Get(&count, query, id)
+
+// 	if err != nil {
+// 		return false, err
+// 	}
+
+// 	return count > 0, nil
+// }
+
 func (r *UserPostgres) UpdateUserFirstName(id int, firstName string) (error) {
 	query := fmt.Sprintf("UPDATE %s SET first_name = $1 WHERE id = %d", usersTable, id)
 
@@ -153,4 +165,12 @@ func (r *UserPostgres) UpdateCompanyURL(id int, url string) (error) {
 	_, err := r.db.Exec(query, url)
 	
 	return err
+}
+
+func (r *UserPostgres) GetUserPlan(userId int) (connectteam.UserPlan, error) {
+	var userPlan connectteam.UserPlan
+	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id=$1", plansUsersTable)
+	err := r.db.Get(&userPlan, query, userId)
+
+	return userPlan, err
 }
