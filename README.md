@@ -429,7 +429,7 @@ Note: Use confirmation code to verificate user
 }
 ```
 
-3.2. New Plan 
+#### 3.2. New Plan 
 
 **Method:** `POST`
 
