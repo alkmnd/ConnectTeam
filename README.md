@@ -56,6 +56,8 @@ go run cmd/main.go
    
    3.2. [New Plan](#new-plan)
 
+   3.3. [Get Users Plans List](#users-plans-lists)
+
    
 
 
