@@ -478,7 +478,7 @@ Note: Use confirmation code to verificate user
 
 
 <a id="users-plans-lists"></a>
-#### 4.3. Get Users Plans List 
+#### 3.3. Get Users Plans List 
 
 **Method:** `GET`
 
