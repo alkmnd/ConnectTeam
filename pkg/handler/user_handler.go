@@ -19,7 +19,7 @@ func (h *Handler) getCurrentUser(c *gin.Context) {
 		return
 	}
 
-	user, err := h.services.UserInterface.GetUserById(assert_id) 
+	user, err := h.services.User.GetUserById(assert_id) 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -70,7 +70,7 @@ func (h *Handler) changeAccessWithId(c *gin.Context) {
 		return 
 	}
 
-	if err := h.services.UserInterface.UpdateAccessWithId(input.Id, input.NewAccess); err != nil{
+	if err := h.services.User.UpdateAccessWithId(input.Id, input.NewAccess); err != nil{
 			newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 	} 
@@ -87,7 +87,7 @@ func (h *Handler) getUsersList(c *gin.Context) {
 		return
 	}
 
-	list, err := h.services.UserInterface.GetUsersList()
+	list, err := h.services.User.GetUsersList()
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return 
@@ -113,7 +113,7 @@ func (h *Handler) changePassword(c *gin.Context) {
 		return 
 	}
 
-	err = h.services.UserInterface.UpdatePassword(input.OldPassword, input.NewPassword, id)
+	err = h.services.User.UpdatePassword(input.OldPassword, input.NewPassword, id)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return 
@@ -227,7 +227,7 @@ func (h *Handler) getUserPlan(c *gin.Context) {
 		return 
 	}
 
-	userPlan, err := h.services.GetUserPlan(id)
+	userPlan, err := h.services.Plan.GetUserPlan(id)
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, "User has no plan")
@@ -240,6 +240,7 @@ func (h *Handler) getUserPlan(c *gin.Context) {
 		"holder_id":userPlan.HolderId, 
 		"expiry_date":userPlan.ExpiryDate,
 		"plan_access":userPlan.PlanAccess,
+		"confirmed":userPlan.Confirmed,
 	})
-
 }
+

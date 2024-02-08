@@ -16,7 +16,7 @@ type Authorization interface {
 	
 }
 
-type UserInterface interface {
+type User interface {
 	GetUserById(id int) (connectteam.UserPublic, error)
 	UpdateAccessWithId(id int, access string) (error)
 	GetUsersList() ([] connectteam.UserPublic, error)
@@ -29,14 +29,21 @@ type UserInterface interface {
 	GetUserPlan(user_id int) (connectteam.UserPlan, error)
 }
 
+type Plan interface {
+	GetUserPlan(user_id int) (connectteam.UserPlan, error)
+	CreatePlan(request connectteam.UserPlan) (connectteam.UserPlan, error)
+}
 
 type Service struct {
 	Authorization
-	UserInterface
+	User
+	Plan
 }
+
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos.Authorization),
-		UserInterface: NewUserService(repos.UserInterface),
+		User: NewUserService(repos.User),
+		Plan: NewPlanService(repos.Plan),
 	}
 }

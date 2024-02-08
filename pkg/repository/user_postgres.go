@@ -174,3 +174,15 @@ func (r *UserPostgres) GetUserPlan(userId int) (connectteam.UserPlan, error) {
 
 	return userPlan, err
 }
+
+func (r *UserPostgres) CreatePlanRequest(request connectteam.PlanRequest) (int, error) {
+	var id int
+	query := fmt.Sprintf("INSERT INTO %s (user_id, duration, request_date, plan_type) VALUES ($1, $2, $3, $4) RETURNING id", planRequestsTable)
+
+	row := r.db.QueryRow(query, request.UserId, request.Duration, request.RequestDate, request.PlanType)
+	if err := row.Scan(&id); err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}

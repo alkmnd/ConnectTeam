@@ -32,5 +32,16 @@ CREATE TABLE plans_users
   user_id int PRIMARY KEY,
   holder_id int,
   expiry_date timestamp,
-  plan_access varchar(256)
+  duration int,
+  plan_access varchar(256), 
+  confirmed boolean
+);
+
+CREATE TABLE plan_requests 
+(id serial not null PRIMARY KEY
+  ,
+  user_id int,
+  plan_type plans, 
+  duration int, 
+  request_date timestamp
 );
