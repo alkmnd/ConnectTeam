@@ -32,6 +32,7 @@ type User interface {
 type Plan interface {
 	GetUserPlan(user_id int) (connectteam.UserPlan, error)
 	CreatePlan(request connectteam.UserPlan) (connectteam.UserPlan, error)
+	GetUsersPlans() ([] connectteam.UserPlan, error)
 }
 
 type Service struct {

@@ -43,6 +43,7 @@ type User interface {
 type Plan interface {
 	GetUserPlan(userId int) (connectteam.UserPlan, error)
 	CreatePlan(request connectteam.UserPlan) (connectteam.UserPlan, error)
+	GetUsersPlans() ([] connectteam.UserPlan, error)
 
 }
 
