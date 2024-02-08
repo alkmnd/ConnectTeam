@@ -50,7 +50,10 @@ go run cmd/main.go
 
    2.8. [Edit Company Data](#company-change)
 
-   2.9. [Get User Plan](#get-plan)
+3. [Plan](#plan)
+   
+   3.1. [Get My Plan](#get-plan)
+   3.2. [New Plan](#new-plan)
 
    
 
@@ -394,8 +397,11 @@ Note: Use confirmation code to verificate user
 
 ```
 
+<a id="plan"></a>
+### 3. Plan
+
 <a id="get-plan"></a>
-#### 2.9. Get User Plan 
+#### 3.1. Get My Plan 
 
 **Method:** `GET`
 
@@ -423,16 +429,18 @@ Note: Use confirmation code to verificate user
 }
 ```
 
+3.2. New Plan 
 
-**Method:** ``
+**Method:** `POST`
 
-**Endpoint:** `/`
+**Endpoint:** `/users/plan`
 
-**Description:** 
+**Description:** Adds (or updates) a record about the plan for the user currently in the system (using token).
 
 **Request Parameters:**
 
-* 
+* duration(int, required):  How long  the user wants to use the plan.
+* plan_type(string, required): Type of plan the user wants to use.
 
 **Response:**
 
@@ -440,12 +448,23 @@ Note: Use confirmation code to verificate user
 
 **Example Body:**
 ``` bash
-
+{
+    "duration": 30, 
+    "plan_type": "premium"
+}
 ```
 
 **Example Response:**
 ``` bash
-
+{
+    "confirmed": false,
+    "duration": 30,
+    "expiry_date": "0001-01-01T00:00:00Z",
+    "holder_id": 1,
+    "plan_access": "holder",
+    "plan_type": "basic",
+    "user_id": 1
+}
 ```
 
 
