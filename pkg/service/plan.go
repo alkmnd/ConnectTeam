@@ -21,3 +21,7 @@ func (s *PlanService) CreatePlan(request connectteam.UserPlan) (connectteam.User
 	return s.repo.CreatePlan(request)
 }
 
+func (s *PlanService) GetUsersPlans() ([] connectteam.UserPlan, error) {
+	return s.repo.GetUsersPlans()
+}
+

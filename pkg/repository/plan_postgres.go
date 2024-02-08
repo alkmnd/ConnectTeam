@@ -40,3 +40,11 @@ func (r *PlanPostgres) CreatePlan(request connectteam.UserPlan) (connectteam.Use
 
 	return userPlan, nil
 }
+
+func (r *PlanPostgres) GetUsersPlans() ([] connectteam.UserPlan, error) {
+	var plansUsers []connectteam.UserPlan
+
+	query := fmt.Sprintf("SELECT user_id, holder_id, plan_type, plan_access, expiry_date, duration, confirmed FROM %s", plansUsersTable)
+	err := r.db.Select(&plansUsers, query)
+	return plansUsers, err
+}

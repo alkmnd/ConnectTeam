@@ -66,7 +66,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	plan := router.Group("/plans", h.userIdentity) 
 	{
 		plan.GET("/current", h.getUserPlan)
-		userApi.POST("/purchase", h.sendPlanRequest)
+		plan.POST("/purchase", h.sendPlanRequest)
+		plan.GET("/users-plans", h.getUsersPlans)
 	}
 
 	return router
