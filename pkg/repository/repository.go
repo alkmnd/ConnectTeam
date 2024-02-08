@@ -18,7 +18,7 @@ type Authorization interface {
 	DeleteVerificationCode(id int, code string) (error)
 }
 
-type UserInterface interface {
+type User interface {
 	GetUserById(id int) (connectteam.UserPublic, error)
 	UpdateAccessWithId(id int, access string) (error)
 	GetUsersList() ([]connectteam.UserPublic, error)
@@ -37,16 +37,24 @@ type UserInterface interface {
 	UpdateCompanyInfo(id int, info string) (error)
 	UpdateCompanyURL(id int, companyURL string) (error)
 	GetUserPlan(user_id int) (connectteam.UserPlan, error)
+	CreatePlanRequest(request connectteam.PlanRequest) (int, error)
 }
 
+type Plan interface {
+	GetUserPlan(userId int) (connectteam.UserPlan, error)
+	CreatePlan(request connectteam.UserPlan) (connectteam.UserPlan, error)
+
+}
 
 type Repository struct {
 	Authorization
-	UserInterface
+	User
+	Plan
 }
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
-		UserInterface: NewUserPostgres(db),
+		User: NewUserPostgres(db),
+		Plan: NewPlanPostgres(db),
 	}
 }

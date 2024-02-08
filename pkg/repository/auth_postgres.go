@@ -9,10 +9,7 @@ import (
 
 type Role string
 
-const (
-	Admin Role = "Admin"
-	User = "User"
-)
+
 type AuthPostgres struct {
 	db *sqlx.DB
 }

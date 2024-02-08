@@ -44,13 +44,29 @@ type UserCompanyData struct {
 	CompanyURL string `json:"company_url" db:"company_url"`
 }
 
-type UserPlan struct {
-	PlanType string `json:"plan_type" db:"plan_type"`
-	UserId int `json:"user_id" db:"user_id"`
-	HolderId int `json:"holder_id" db:"holder_id"`
-	ExpiryDate time.Time `json:"expiry_date" db:"expiry_date"`
-	PlanAccess string `json:"plan_access" db:"plan_access"`
+type PlanType string
 
+func (pt *PlanType) Scan(value interface{}) error {
+    if value == nil {
+        *pt = ""
+        return nil
+    }
+    stringValue, ok := value.([]byte)
+    if !ok {
+        return errors.New("unexpected type for PlanType")
+    }
+    *pt = PlanType(string(stringValue))
+    return nil
+}
+
+type UserPlan struct {
+	PlanType    string   `json:"plan_type" db:"plan_type"`
+	UserId      int       `json:"-" db:"user_id"`
+	HolderId    int       `json:"-" db:"holder_id"`
+	ExpiryDate  time.Time `json:"-" db:"expiry_date"`
+	Duration    int       `json:"duration" db:"duration"`
+	PlanAccess  string    `json:"plan_access" db:"plan_access"`
+	Confirmed   bool      `json:"-" db:"confirmed"`
 }
 type VerifyPhone struct {
 	PhoneNumber string `json:"phone_number" binding required`
@@ -65,3 +81,10 @@ type VerifyUser struct {
 	Code string `json:"code" binding "required"`
 }
 
+type PlanRequest struct {
+	Id int `json:"-" db:"id"`
+	UserId int `json:"-" db:"user_id"`
+	Duration time.Duration `json:"duration" db:"duration"`
+	RequestDate time.Time `json:"-" db:"request_date"`
+	PlanType string `json:"plan_type" db:"plan_type"`
+}

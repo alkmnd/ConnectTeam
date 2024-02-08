@@ -14,6 +14,7 @@ const (
 const (
 	codesTable = "verification_codes"
 	plansUsersTable = "plans_users"
+	planRequestsTable = "plan_requests"
 )
 
 type Config struct {

@@ -60,6 +60,13 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		userApi.PATCH("/info", h.changePersonalData)
 		userApi.PATCH("/company", h.changeCompanyData)
 		userApi.GET("/plan", h.getUserPlan)
+		userApi.POST("/plan", h.sendPlanRequest)
+	}
+
+	plan := router.Group("/plans", h.userIdentity) 
+	{
+		plan.GET("/current", h.getUserPlan)
+		userApi.POST("/purchase", h.sendPlanRequest)
 	}
 
 	return router
