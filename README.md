@@ -44,7 +44,7 @@ go run cmd/main.go
 
    2.5. [Verify Email On Change](#email-check)
 
-   2.6. [Change Email](#email-change)
+   2.6. [Email Change](#email-change)
 
    2.7. [Edit Personal Data](#edit-data)
 
@@ -429,7 +429,7 @@ Note: Use confirmation code to verificate user
     "user_id": 1
 }
 ```
-
+<a id="new-plan"></a>
 #### 3.2. New Plan 
 
 **Method:** `POST`
@@ -475,6 +475,37 @@ Note: Use confirmation code to verificate user
 ```
 
 
+<a id="users-plans-lists"></a>
+#### 4.3. Get Users Plans List 
+
+**Method:** `GET`
+
+**Endpoint:** `/plans/users-plans`
+
+**Description:** Returns list of users and their plans.
+
+
+**Response:**
+* data(list)
+
+**Example Response:**
+``` bash
+{
+    "data": [
+        {
+            "plan_type": "premium",
+            "user_id": 1,
+            "holder_id": 1,
+            "expiry_date": "0001-01-01T00:00:00Z",
+            "duration": 30,
+            "plan_access": "holder",
+            "confirmed": false
+        }
+    ]
+}
+```
+
+**Note:** Permit for admins only.
 
 
 **Method:** ``
