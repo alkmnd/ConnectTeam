@@ -406,7 +406,7 @@ Note: Use confirmation code to verificate user
 
 **Method:** `GET`
 
-**Endpoint:** `/users/plan`
+**Endpoint:** `/plans/current`
 
 **Description:** Returns current user's plan
 
@@ -434,7 +434,7 @@ Note: Use confirmation code to verificate user
 
 **Method:** `POST`
 
-**Endpoint:** `/users/plan`
+**Endpoint:** `/plans/purchase`
 
 **Description:** Adds (or updates) a record about the plan for the user currently in the system (using token).
 
@@ -445,7 +445,13 @@ Note: Use confirmation code to verificate user
 
 **Response:**
 
-* 
+* plan_type(string): Type of plan the user uses.
+* user_id(int): User id.
+* holder_id(int): Who owns the plan.
+* plan_access(string): User access in the plan ('holder' or 'additional')
+* duration(int): The number of days the user can use the plan.
+* expiry_date(string):  Expiration date of the plan.
+* confirmed(bool): If admin confirmed the purchase.
 
 **Example Body:**
 ``` bash
