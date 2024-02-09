@@ -549,7 +549,7 @@ Note: Use confirmation code to verificate user
 
 **Endpoint:** `/plans/:user_id`
 
-**Description:** 
+**Description:** Sets new plan to the user by id.
 
 **URL Parameters:**
 
