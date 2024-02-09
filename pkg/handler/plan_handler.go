@@ -124,7 +124,11 @@ func (h *Handler) confirmPlan(c *gin.Context) {
 		return
 	}
 
-	h.services.Plan.ConfirmPlan(id)
+	err = h.services.Plan.ConfirmPlan(id)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	c.JSON(http.StatusOK, statusResponse{"ok"})
 

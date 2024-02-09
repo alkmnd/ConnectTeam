@@ -50,7 +50,7 @@ func (r *PlanPostgres) GetUsersPlans() ([] connectteam.UserPlan, error) {
 }
 
 func (r *PlanPostgres) SetConfirmed(id int) (error) {
-	query := fmt.Sprintf("UPDATE %s SET confirmed = true WHERE id = %d", plansUsersTable, id)
+	query := fmt.Sprintf("UPDATE %s SET confirmed = true, expiry_date = NOW() + interval '1 day' * duration WHERE user_id = %d", plansUsersTable, id)
 
 	_, err := r.db.Exec(query)
 	
