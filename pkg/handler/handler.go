@@ -68,6 +68,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		plan.GET("/current", h.getUserPlan)
 		plan.POST("/purchase", h.sendPlanRequest)
 		plan.GET("/users-plans", h.getUsersPlans)
+		plan.PATCH("/:id", h.confirmPlan)
 	}
 
 	return router

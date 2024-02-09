@@ -167,7 +167,6 @@ func (h *Handler) verifyEmailOnChange(c *gin.Context) {
 
 	err = h.services.CheckEmailOnChange(id, input.Email, input.Password)
 	if err != nil {
-
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return 
 	}

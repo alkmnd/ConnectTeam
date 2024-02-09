@@ -3,6 +3,7 @@ package handler
 import (
 	connectteam "ConnectTeam"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -69,7 +70,6 @@ type getUsersPlansResponse struct {
 	Data []connectteam.UserPlan `json:"data"`
 }
 
-
 func (h *Handler) getUsersPlans(c *gin.Context) {
 	_, err := getUserId(c)
 	if err != nil {
@@ -96,8 +96,36 @@ func (h *Handler) getUsersPlans(c *gin.Context) {
 	c.JSON(http.StatusOK, getUsersPlansResponse {
 		Data: list,
 	})
+}
 
+func (h *Handler) confirmPlan(c *gin.Context) {
+	_, err := getUserId(c)
 
-	
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	access, err := getUserAccess(c)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if access != "admin" {
+		newErrorResponse(c, http.StatusInternalServerError, "Insufficient permissions")
+		return 
+	}
+
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "Invalid id param")
+		return
+	}
+
+	h.services.Plan.ConfirmPlan(id)
+
+	c.JSON(http.StatusOK, statusResponse{"ok"})
 
 }

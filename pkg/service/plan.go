@@ -25,3 +25,6 @@ func (s *PlanService) GetUsersPlans() ([] connectteam.UserPlan, error) {
 	return s.repo.GetUsersPlans()
 }
 
+func (s *PlanService) ConfirmPlan(id int) (error) {
+	return s.repo.SetConfirmed(id)
+}

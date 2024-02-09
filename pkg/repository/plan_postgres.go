@@ -48,3 +48,11 @@ func (r *PlanPostgres) GetUsersPlans() ([] connectteam.UserPlan, error) {
 	err := r.db.Select(&plansUsers, query)
 	return plansUsers, err
 }
+
+func (r *PlanPostgres) SetConfirmed(id int) (error) {
+	query := fmt.Sprintf("UPDATE %s SET confirmed = true WHERE id = %d", plansUsersTable, id)
+
+	_, err := r.db.Exec(query)
+	
+	return err
+}
