@@ -44,8 +44,8 @@ func (h *Handler) getCurrentUser(c *gin.Context) {
 }
 
 type changeAccessInput struct {
-	Id int `json:"id,string" binding "required"` 
-	NewAccess string `json:"access" binding "required"`
+	Id int `json:"id,string" binding:"required"` 
+	NewAccess string `json:"access" binding:"required"`
 }
 
 func (h *Handler) changeAccessWithId(c *gin.Context) {
@@ -98,8 +98,8 @@ func (h *Handler) getUsersList(c *gin.Context) {
 } 
 
 type changePasswordInput struct {
-	OldPassword string `json:"old_password" binding "required"`
-	NewPassword string `json:"new_password" binding "required"`
+	OldPassword string `json:"old_password" binding:"required"`
+	NewPassword string `json:"new_password" binding:"required"`
 }
 func (h *Handler) changePassword(c *gin.Context) {
 	var input changePasswordInput
@@ -121,8 +121,8 @@ func (h *Handler) changePassword(c *gin.Context) {
 } 
 
 type changeEmailInput struct {
-	NewEmail string `json:"new_email" binding "required"`
-	Code string `json:"code" binding "required"`
+	NewEmail string `json:"new_email" binding:"required"`
+	Code string `json:"code" binding:"required"`
 }
 func (h *Handler) changeEmail(c *gin.Context) {
 	var input changeEmailInput
@@ -150,8 +150,8 @@ func (h *Handler) changeEmail(c *gin.Context) {
 }
 
 type sendCodeInput struct {
-	Email string `json:"email" binding "required"`
-	Password string `json:"password" binding "required"`
+	Email string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 func (h *Handler) verifyEmailOnChange(c *gin.Context) {
 	var input sendCodeInput 
