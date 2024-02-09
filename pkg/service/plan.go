@@ -23,6 +23,10 @@ func (s *PlanService) CreatePlan(request connectteam.UserPlan) (connectteam.User
 	return s.repo.CreatePlan(request)
 }
 
+func (s *PlanService) DeletePlan(id int) (error) {
+	return s.repo.DeletePlan(id)
+}
+
 func (s *PlanService) SetPlanByAdmin(user_id int, duration int, plan_type string) (error) {
 	expiryDate := time.Now().Add(time.Duration(duration) * 24 * time.Hour)
 	var userPlan = connectteam.UserPlan{

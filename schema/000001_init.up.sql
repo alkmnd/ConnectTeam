@@ -2,6 +2,8 @@ CREATE TYPE user_role AS ENUM ('user', 'admin', 'plan_user');
 
 CREATE TYPE plans AS ENUM ('basic', 'advanced', 'premium');
 
+CREATE TYPE access AS ENUM ('superadmin', 'admin', 'user');
+
 CREATE TABLE users 
 (
   id serial not null PRIMARY KEY,
@@ -11,7 +13,7 @@ CREATE TABLE users
   second_name varchar(256),
   description varchar(256),
   password_hash varchar(256), 
-  access varchar(256),
+  access access,
   is_verified boolean DEFAULT false,
   company_name varchar(256),
   company_info varchar(256),
@@ -38,8 +40,8 @@ CREATE TABLE plans_users
 );
 
 CREATE TABLE plan_requests 
-(id serial not null PRIMARY KEY
-  ,
+(
+  id serial not null PRIMARY KEY,
   user_id int,
   plan_type plans, 
   duration int, 

@@ -41,6 +41,13 @@ func (r *PlanPostgres) CreatePlan(request connectteam.UserPlan) (connectteam.Use
 	return userPlan, nil
 }
 
+func (r *PlanPostgres) DeletePlan(id int) (error) {
+	query := fmt.Sprintf("DELETE FROM %s WHERE user_id = $1", plansUsersTable)
+	_, err := r.db.Exec(query, id)
+
+	return err
+}
+
 func (r *PlanPostgres) GetUsersPlans() ([] connectteam.UserPlan, error) {
 	var plansUsers []connectteam.UserPlan
 
