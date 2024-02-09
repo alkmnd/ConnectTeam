@@ -235,7 +235,7 @@ Note: Use confirmation code to verificate user
 
 **Method:** `PATCH`
 
-**Endpoint:** `/users/change-access`
+**Endpoint:** `/users/access`
 
 **Description:** Changes authenticated user access if current user is admin.
 
