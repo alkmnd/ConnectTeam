@@ -54,9 +54,13 @@ go run cmd/main.go
    
    3.1. [Get My Plan](#get-plan)
    
-   3.2. [New Plan](#new-plan)
+   3.2. [Select Plan](#new-plan)
 
    3.3. [Get Users Plans List](#users-plans-lists)
+
+   3.4. [Confirm Plan](#confirm-plan)
+
+   3.5. [Set Plan For User](#set-plan)
 
    
 
@@ -432,11 +436,11 @@ Note: Use confirmation code to verificate user
 }
 ```
 <a id="new-plan"></a>
-#### 3.2. New Plan 
+#### 3.2. Select Plan 
 
 **Method:** `POST`
 
-**Endpoint:** `/plans/purchase`
+**Endpoint:** `/plans/`
 
 **Description:** Adds (or updates) a record about the plan for the user currently in the system (using token).
 
@@ -507,29 +511,65 @@ Note: Use confirmation code to verificate user
 }
 ```
 
-**Note:** Permit for admins only.
+**Note:** Allowed for admins only.
 
+<a id="confirm-plan"></a>
+#### 3.4. Confirm Plan 
 
-**Method:** ``
+**Method:** `PATCH`
 
-**Endpoint:** `/`
+**Endpoint:** `/plans/:id`
 
-**Description:** 
+**Description:** Sets field 'confirmed' true, activates user plan.
 
-**Request Parameters:**
-
-* 
+**URL Parameters:**
+* id: Plan id (equal to user id)
 
 **Response:**
 
-* 
+* status (string): Returns status ok if there is no error.
 
-**Example Body:**
-``` bash
-
-```
 
 **Example Response:**
 ``` bash
+{
+    "status": "ok"
+}
 
 ```
+
+**Note:** Allowed for admins only.
+
+<a id='set-plan'></a>
+#### 3.5. Set Plan For User 
+
+**Note**: Allowed for admins only
+
+**Method:** `POSR`
+
+**Endpoint:** `/plans/:user_id`
+
+**Description:** Sets new plan to the user by id.
+
+**URL Parameters:**
+
+* user_id: User Id to which the plan is assigned.
+
+**Request Parameters:**
+
+* duration(int, required)
+* plan_type(string, required): Type of plan the user is assigned.
+
+**Response:**
+
+* status (string): Returns status ok if there is no error.
+
+
+**Example Response:**
+``` bash
+{
+    "status": "ok"
+}
+
+
+

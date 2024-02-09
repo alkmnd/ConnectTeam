@@ -104,13 +104,13 @@ func (h *Handler) signUpWithPhone(c *gin.Context) {
 }
 
 type signInWithEmailInput struct {
-	Email string `json:"email" binding "required"` 
-  	Password string `json:"password" binding "required"`
+	Email string `json:"email" binding:"required"` 
+  	Password string `json:"password" binding:"required"`
 }
 
 type signInWithPhoneNumInput struct {
-	PhoneNumber string `json:"phone_number" binding "required"` 
-  	Password string `json:"password" binding "required"`
+	PhoneNumber string `json:"phone_number" binding:"required"` 
+  	Password string `json:"password" binding:"required"`
 }
 
 func (h *Handler) signInWithEmail(c *gin.Context) {

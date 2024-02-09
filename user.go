@@ -11,9 +11,9 @@ type User struct {
 	Id int `json:"id" db:"id"`
   	Email string `json:"email" db:"email"` 
   	// PhoneNumber string `json:"phone_number" db:"phone_number"`
-  	FirstName string `json:"first_name" db:"first_name" binding "required"`
-  	SecondName string `json:"second_name" db:"second_name" binding "required"`
-  	Password string `json:"password" binding "required"`
+  	FirstName string `json:"first_name" db:"first_name" binding:"required"`
+  	SecondName string `json:"second_name" db:"second_name" binding:"required"`
+  	Password string `json:"password" binding:"required"`
 	Is_verified bool `json:"-" db:"is_verified"`
 	Access string `json:"access" db:"access"`
 }
@@ -22,8 +22,8 @@ type UserPublic struct {
 	Id int `json:"id" db:"id"`
 	Email string `json:"email" db:"email"` 
 	// PhoneNumber string `json:"phone_number" db:"phone_number"`
-	FirstName string `json:"first_name" db:"first_name" binding "required"`
-	SecondName string `json:"second_name" db:"second_name" binding "required"`
+	FirstName string `json:"first_name" db:"first_name" binding:"required"`
+	SecondName string `json:"second_name" db:"second_name" binding:"required"`
 	Description string `json:"description" db:"description"`
   	Access string `json:"access" db:"access"`
 	CompanyName string `json:"company_name" db:"company_name"`
@@ -34,8 +34,8 @@ type UserPublic struct {
 }
 
 type UserPersonalInfo struct {
-	FirstName string `json:"first_name" db:"first_name" binding "required"`
-	SecondName string `json:"second_name" db:"second_name" binding "required"`
+	FirstName string `json:"first_name" db:"first_name" binding:"required"`
+	SecondName string `json:"second_name" db:"second_name" binding:"required"`
 	Description string `json:"description" db:"description"`
 }
 type UserCompanyData struct {
@@ -69,16 +69,16 @@ type UserPlan struct {
 	Confirmed   bool      `json:"confirmed" db:"confirmed"`
 }
 type VerifyPhone struct {
-	PhoneNumber string `json:"phone_number" binding required`
+	PhoneNumber string `json:"phone_number" binding:"required"`
 }
 
 type VerifyEmail struct {
-	Email string `json:"email" binding "required"`
+	Email string `json:"email" binding:"required"`
 }
 
 type VerifyUser struct {
-	Id int `json:"id,string" binding "required"`
-	Code string `json:"code" binding "required"`
+	Id int `json:"id,string" binding:"required"`
+	Code string `json:"code" binding:"required"`
 }
 
 type PlanRequest struct {

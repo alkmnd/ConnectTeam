@@ -59,15 +59,18 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		userApi.PATCH("/change-email", h.changeEmail)
 		userApi.PATCH("/info", h.changePersonalData)
 		userApi.PATCH("/company", h.changeCompanyData)
-		userApi.GET("/plan", h.getUserPlan)
-		userApi.POST("/plan", h.sendPlanRequest)
+		// userApi.GET("/plan", h.getUserPlan)
+		// userApi.POST("/plan", h.sendPlanRequest)
 	}
 
 	plan := router.Group("/plans", h.userIdentity) 
 	{
 		plan.GET("/current", h.getUserPlan)
-		plan.POST("/purchase", h.sendPlanRequest)
+		plan.POST("/", h.selectPlan)
 		plan.GET("/users-plans", h.getUsersPlans)
+		plan.PATCH("/:id", h.confirmPlan)
+		plan.POST("/:user_id", h.setPlan)
+		// Update plan
 	}
 
 	return router
