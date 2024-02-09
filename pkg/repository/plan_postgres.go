@@ -30,7 +30,7 @@ func (r *PlanPostgres) CreatePlan(request connectteam.UserPlan) (connectteam.Use
 		RETURNING *`, plansUsersTable)
 
 	var userPlan connectteam.UserPlan
-	row := r.db.QueryRow(query, request.UserId, request.HolderId, request.ExpiryDate, request.Duration, request.PlanAccess, false, request.PlanType)
+	row := r.db.QueryRow(query, request.UserId, request.HolderId, request.ExpiryDate, request.Duration, request.PlanAccess, request.Confirmed, request.PlanType)
 	if err := row.Scan(&userPlan.PlanType, &userPlan.UserId, &userPlan.HolderId, &userPlan.ExpiryDate, &userPlan.Duration, &userPlan.PlanAccess, &userPlan.Confirmed); err != nil {
 		return request, err
 	}
