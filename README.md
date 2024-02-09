@@ -509,6 +509,32 @@ Note: Use confirmation code to verificate user
 
 **Note:** Permit for admins only.
 
+#### 3.4. Confirm Plan 
+
+**Method:** `PATCH`
+
+**Endpoint:** `/plans/:id`
+
+**Description:** 
+
+**URL Parameters:**
+* id: Plan id (equal to user id)
+
+**Response:**
+
+* status (string): Returns status ok.
+
+
+
+**Example Response:**
+``` bash
+{
+    "status": "ok"
+}
+
+```
+
+
 
 **Method:** ``
 
