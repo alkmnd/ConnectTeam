@@ -440,7 +440,7 @@ Note: Use confirmation code to verificate user
 
 **Method:** `POST`
 
-**Endpoint:** `/plans/`
+**Endpoint:** `/plans/purchase`
 
 **Description:** Adds (or updates) a record about the plan for the user currently in the system (using token).
 
