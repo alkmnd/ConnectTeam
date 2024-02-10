@@ -45,13 +45,13 @@ func (h *Handler) getCurrentUser(c *gin.Context) {
 
 type changeAccessInput struct {
 	Id int `json:"id,string" binding:"required"` 
-	NewAccess string `json:"access" binding:"required"`
+	Access connectteam.AccessLevel `json:"access" binding:"required"`
 }
 
 func (h *Handler) changeAccessWithId(c *gin.Context) {
 	var input changeAccessInput
-	_, ok_id := c.Get(userCtx)
-	if !ok_id {
+ 	id, err := getUserId(c)
+	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, "User id is not found")
 		return
 	}
@@ -61,19 +61,33 @@ func (h *Handler) changeAccessWithId(c *gin.Context) {
 		return 
 	}
 
-	if access != "admin" {
-		newErrorResponse(c, http.StatusInternalServerError, "Access error")
+	if access != string(connectteam.Superadmin) {
+		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
 		return
 	}
+
+	if input.Id == id {
+		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
+		return
+	}
+
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return 
 	}
 
-	if err := h.services.User.UpdateAccessWithId(input.Id, input.NewAccess); err != nil{
+	if err := h.services.User.UpdateAccessWithId(input.Id, input.Access); err != nil{
 			newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 	} 
+
+	if err := h.services.Plan.DeletePlan(input.Id); err != nil{
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+} 
+
+
+
 }
 
 type getUsersListResponse struct {

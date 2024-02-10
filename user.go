@@ -88,3 +88,10 @@ type PlanRequest struct {
 	RequestDate time.Time `json:"-" db:"request_date"`
 	PlanType string `json:"plan_type" db:"plan_type"`
 }
+
+type AccessLevel string
+
+const (
+	Admin      AccessLevel = "admin"
+	Superadmin AccessLevel = "superadmin"
+)

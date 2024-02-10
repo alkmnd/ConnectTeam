@@ -25,9 +25,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type", "Accept-Encoding", "Access-Control-Allow-Origin"},
 		ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods"},
 		AllowCredentials: true,
-		// AllowOriginFunc: func(origin string) bool {
-		// 	return origin == "http://localhost:5173"
-		// },
 		MaxAge: 12 * time.Hour,
 	}))
 	auth := router.Group("/auth") 
@@ -49,10 +46,12 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	}
 
+	// do varification 
+
 	userApi := router.Group("/users", h.userIdentity)
 	{
 		userApi.GET("/me", h.getCurrentUser)
-		userApi.PATCH("/change-access", h.changeAccessWithId)
+		userApi.PATCH("/access", h.changeAccessWithId)
 		userApi.GET("/list", h.getUsersList)
 		userApi.PATCH("/change-password", h.changePassword)
 		userApi.POST("/verify-email", h.verifyEmailOnChange)
@@ -70,7 +69,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		plan.GET("/users-plans", h.getUsersPlans)
 		plan.PATCH("/:id", h.confirmPlan)
 		plan.POST("/:user_id", h.setPlan)
-		// Update plan
+		// delete plan 
 	}
 
 	return router

@@ -30,7 +30,7 @@ func (r *PlanPostgres) CreatePlan(request connectteam.UserPlan) (connectteam.Use
 		RETURNING *`, plansUsersTable)
 
 	var userPlan connectteam.UserPlan
-	row := r.db.QueryRow(query, request.UserId, request.HolderId, request.ExpiryDate, request.Duration, request.PlanAccess, false, request.PlanType)
+	row := r.db.QueryRow(query, request.UserId, request.HolderId, request.ExpiryDate, request.Duration, request.PlanAccess, request.Confirmed, request.PlanType)
 	if err := row.Scan(&userPlan.PlanType, &userPlan.UserId, &userPlan.HolderId, &userPlan.ExpiryDate, &userPlan.Duration, &userPlan.PlanAccess, &userPlan.Confirmed); err != nil {
 		return request, err
 	}
@@ -39,6 +39,13 @@ func (r *PlanPostgres) CreatePlan(request connectteam.UserPlan) (connectteam.Use
 
 
 	return userPlan, nil
+}
+
+func (r *PlanPostgres) DeletePlan(id int) (error) {
+	query := fmt.Sprintf("DELETE FROM %s WHERE user_id = $1", plansUsersTable)
+	_, err := r.db.Exec(query, id)
+
+	return err
 }
 
 func (r *PlanPostgres) GetUsersPlans() ([] connectteam.UserPlan, error) {

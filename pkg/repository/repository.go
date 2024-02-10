@@ -45,6 +45,7 @@ type Plan interface {
 	CreatePlan(request connectteam.UserPlan) (connectteam.UserPlan, error)
 	GetUsersPlans() ([] connectteam.UserPlan, error)
 	SetConfirmed(id int) (error)
+	DeletePlan(id int) (error)
 
 }
 

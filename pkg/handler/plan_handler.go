@@ -85,7 +85,7 @@ func (h *Handler) getUsersPlans(c *gin.Context) {
 		return 
 	}
 
-	if access != "admin" {
+	if access != string(connectteam.Admin) && access != string(connectteam.Superadmin) {
 		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
 		return 
 	}
@@ -115,7 +115,7 @@ func (h *Handler) confirmPlan(c *gin.Context) {
 		return
 	}
 
-	if access != "admin" {
+	if access != string(connectteam.Admin) && access != string(connectteam.Superadmin) {
 		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
 		return 
 	}
@@ -153,7 +153,7 @@ func (h *Handler) setPlan(c *gin.Context) {
 		return
 	}
 
-	if access != "admin" {
+	if access != string(connectteam.Admin) && access != string(connectteam.Superadmin)  {
 		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
 		return
 	}

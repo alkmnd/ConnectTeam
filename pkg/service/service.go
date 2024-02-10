@@ -18,7 +18,7 @@ type Authorization interface {
 
 type User interface {
 	GetUserById(id int) (connectteam.UserPublic, error)
-	UpdateAccessWithId(id int, access string) (error)
+	UpdateAccessWithId(id int, access connectteam.AccessLevel) (error)
 	GetUsersList() ([] connectteam.UserPublic, error)
 	UpdatePassword(old_password string, new_password string, id int) (error)
 	UpdateEmail(id int, newEmail string, code string) (error) 
@@ -34,7 +34,8 @@ type Plan interface {
 	CreatePlan(request connectteam.UserPlan) (connectteam.UserPlan, error)
 	GetUsersPlans() ([] connectteam.UserPlan, error)
 	ConfirmPlan(id int) (error)
-	SetPlanByAdmin(user_id int, durayion int, plan_type string) (error)
+	SetPlanByAdmin(user_id int, duration int, plan_type string) (error)
+	DeletePlan(id int) (error)
 }
 
 type Service struct {

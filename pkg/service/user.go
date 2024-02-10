@@ -7,6 +7,7 @@ import (
 	"log"
 )
 
+
 type UserService struct {
 	repo repository.User
 
@@ -20,8 +21,8 @@ func (s *UserService) GetUserById(id int) (connectteam.UserPublic, error) {
 	return user, err 
 }
 
-func (s *UserService) UpdateAccessWithId(id int, access string) (error) {
-	if err := s.repo.UpdateAccessWithId(id, access); err != nil {
+func (s *UserService) UpdateAccessWithId(id int, access connectteam.AccessLevel) (error) {
+	if err := s.repo.UpdateAccessWithId(id, string(access)); err != nil {
 		return err
 	}
 	return nil
