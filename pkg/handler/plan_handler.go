@@ -200,7 +200,7 @@ func (h *Handler) deleteUserPlan(c *gin.Context) {
 		return
 	}
 
-	id, err := strconv.Atoi(c.Param("user_id"))
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "Invalid id param")
 		return
