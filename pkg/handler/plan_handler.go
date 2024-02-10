@@ -181,3 +181,36 @@ func (h *Handler) setPlan(c *gin.Context) {
 
 	c.JSON(http.StatusOK, statusResponse{"ok"})
 }
+
+func (h *Handler) deleteUserPlan(c *gin.Context) {
+	_, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	} 
+
+	access, err := getUserAccess(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if access != string(connectteam.Admin) && access != string(connectteam.Superadmin)  {
+		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
+		return
+	}
+
+	id, err := strconv.Atoi(c.Param("user_id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "Invalid id param")
+		return
+	}
+
+	err = h.services.DeletePlan(id)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+	}
+
+	c.JSON(http.StatusOK, statusResponse{"ok"})
+}
