@@ -545,7 +545,7 @@ Note: Use confirmation code to verificate user
 
 **Note**: Allowed for admins only
 
-**Method:** `POSR`
+**Method:** `POST`
 
 **Endpoint:** `/plans/:user_id`
 
