@@ -39,10 +39,17 @@ type Plan interface {
 	DeletePlan(id int) (error)
 }
 
+type Topic interface {
+	CreateTopic(topic connectteam.Topic) (int, error)
+	GetAll() ([] connectteam.Topic, error)
+	DeleteTopic(id int) (error)
+}
+
 type Service struct {
 	Authorization
 	User
 	Plan
+	Topic
 }
 
 func NewService(repos *repository.Repository) *Service {
@@ -50,5 +57,6 @@ func NewService(repos *repository.Repository) *Service {
 		Authorization: NewAuthService(repos.Authorization),
 		User: NewUserService(repos.User),
 		Plan: NewPlanService(repos.Plan),
+		Topic: NewTopicService(repos.Topic),
 	}
 }

@@ -50,7 +50,7 @@ go run cmd/main.go
 
    2.8. [Edit Company Data](#company-change)
 
-   2.9. [Restore Password](#restore-password)
+   2.9. [Restore Password (Authorized)](#restore-password) 
 
 4. [Plan](#plan)
    
@@ -64,13 +64,21 @@ go run cmd/main.go
 
    3.5. [Set Plan For User](#set-plan)
 
+5. [Topic](#topic)
+   
+   5.1. [Create Topic](#create-topic)
+
+   5.2. [Get All Topics](#topics)
+
+   5.3. [Delete Topic](#delete-topic)
+
    
 
 
 **Note:**
 
 For all REST Api authenticated requests, ensure to include the Authorization header with the value Bearer 
-your_access_token. This token is obtained through the user authentication process described in the
+<your_access_token>. This token is obtained through the user authentication process described in the
 first section.
 All requests require a valid authorization token in the header.
 
@@ -406,7 +414,7 @@ Note: Use confirmation code to verificate user
 
 ```
 <a id="restore-password"> </a>
-#### 2.9. Restore Password
+#### 2.9. Restore Password (Authorized)
 
 **Method:** `GET`
 
@@ -591,6 +599,85 @@ Note: Use confirmation code to verificate user
 {
     "status": "ok"
 }
+```
+<a id='topic'></a>
+### 5. Topic
 
+<a id='create-topic'></a>
+#### 5.1. Create Topic
 
+**Note**: Allowed for admins only
+
+**Method:** `POST`
+
+**Endpoint:** `/topics/`
+
+**Description:** Creates new topic
+
+**Request Parameters:**
+* title(string, required): The title of a new topic.
+
+**Response:**
+* id(int): Id of the newly created topic.
+
+**Example Request Body:**
+``` bash
+{
+    "title": "New Topic"
+}
+```
+
+**Example Response:**
+``` bash
+{
+   "id": 1
+}
+```
+
+<a id='topics'></a>
+#### 5.2. Get All Topics
+
+**Method:** `GET`
+
+**Endpoint:** `/topics/`
+
+**Description:** Returns list of all topics 
+
+**Response:**
+* data([]): List of items.
+
+**Example Response:**
+``` bash
+{
+    "data": [
+        {
+            "id": 1,
+            "title": "h"
+        }
+    ]
+}
+```
+
+<a id='delete-topic'></a>
+#### 5.3. Delete Topic
+
+**Method:** `DELETE`
+
+**Endpoint:** `/topics/:id`
+
+**Description:** Deletes topic by id.
+
+**URL Parameters:**
+* id(int): Id of the topic.
+
+**Response:**
+status(string): "ok" if there is no error.
+
+**Example Response:**
+
+``` bash
+{
+    "status": "ok"
+}
+```
 

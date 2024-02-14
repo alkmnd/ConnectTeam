@@ -50,15 +50,23 @@ type Plan interface {
 
 }
 
+type Topic interface {
+	CreateTopic(topic connectteam.Topic) (int, error)
+	GetAll() ([]connectteam.Topic, error)
+	DeleteTopic(id int) (error)
+}
+
 type Repository struct {
 	Authorization
 	User
 	Plan
+	Topic
 }
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
 		User: NewUserPostgres(db),
 		Plan: NewPlanPostgres(db),
+		Topic: NewTopicPostgres(db), 
 	}
 }
