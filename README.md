@@ -412,7 +412,7 @@ Note: Use confirmation code to verificate user
 
 **Endpoint:** `/users/password`
 
-**Description:** Resets the user password and sends message on email with new password.
+**Description:** Resets the user password and sends message on the user email with new password.
 
 **Response:**
 
