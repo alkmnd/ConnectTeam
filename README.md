@@ -405,7 +405,7 @@ Note: Use confirmation code to verificate user
 }
 
 ```
-<a id="restore-password">
+<a id="restore-password"> </a>
 #### 2.9. Restore Password
 
 **Method:** `GET`
