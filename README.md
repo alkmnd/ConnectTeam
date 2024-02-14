@@ -64,6 +64,10 @@ go run cmd/main.go
 
    3.5. [Set Plan For User](#set-plan)
 
+5. [Topic](#topic)
+   
+   5.1. [Create Topic](#create-topic)
+
    
 
 
@@ -591,6 +595,37 @@ Note: Use confirmation code to verificate user
 {
     "status": "ok"
 }
+```
+<a id='topic'></a>
+### 5. Topic
 
+<a id='create-topic'></a>
+#### 5.1. Create Topic
 
+**Note**: Allowed for admins only
 
+**Method:** `POST`
+
+**Endpoint:** `/topics/`
+
+**Description:** Creates new topic
+
+**Request Parameters:**
+* title(string, required): The title of a new topic.
+
+**Response:**
+* id(int): Id of the newly created topic.
+
+**Example Request Body:**
+``` bash
+{
+    "title": "New Topic"
+}
+```
+
+**Example Response:**
+``` bash
+{
+   "id": 1
+}
+```
