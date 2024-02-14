@@ -663,7 +663,7 @@ Note: Use confirmation code to verificate user
 
 **Method:** `DELETE`
 
-**Endpoint:** `topics/:id`
+**Endpoint:** `/topics/:id`
 
 **Description:** Deletes topic by id.
 
