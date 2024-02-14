@@ -26,3 +26,7 @@ func (s *TopicService) CreateTopic(topic connectteam.Topic) (int, error) {
 func (s *TopicService) GetAll() ([] connectteam.Topic, error) {
 	return s.repo.GetAll()
 }
+
+func (s *TopicService) DeleteTopic(id int) (error) {
+	return s.repo.DeleteTopic(id)
+}

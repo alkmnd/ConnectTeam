@@ -35,3 +35,10 @@ func (r *TopicPostgres) GetAll() ([]connectteam.Topic, error) {
 	err := r.db.Select(&topics, query)
 	return topics, err
 }
+
+func (r *TopicPostgres) DeleteTopic(id int) (error) {
+	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1", topicsTable)
+	_, err := r.db.Exec(query, id)
+
+	return err
+}

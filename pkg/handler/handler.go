@@ -78,6 +78,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		topic.POST("/", h.createTopic)
 		topic.GET("/", h.getAllTopics)
+		topic.DELETE(":id", h.deleteTopic)
 	}
 
 	return router

@@ -42,6 +42,7 @@ type Plan interface {
 type Topic interface {
 	CreateTopic(topic connectteam.Topic) (int, error)
 	GetAll() ([] connectteam.Topic, error)
+	DeleteTopic(id int) (error)
 }
 
 type Service struct {
