@@ -70,6 +70,8 @@ go run cmd/main.go
 
    5.2. [Get All Topics](#topics)
 
+   5.3. [Delete Topic](#delete-topic)
+
    
 
 
@@ -655,3 +657,27 @@ Note: Use confirmation code to verificate user
     ]
 }
 ```
+
+<a id='delete-topic'></a>
+#### 5.3. Delete Topic
+
+**Method:** `DELETE`
+
+**Endpoint:** `topics/:id`
+
+**Description:** Deletes topic by id.
+
+**URL Parameters:**
+id(int): Id of the topic.
+
+**Response:**
+status(string): "ok" if there is no error.
+
+**Example Response:**
+
+``` bash
+{
+    "status": "ok"
+}
+```
+
