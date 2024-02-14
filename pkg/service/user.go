@@ -5,6 +5,9 @@ import (
 	"ConnectTeam/pkg/repository"
 	"errors"
 	"log"
+	"crypto/rand"
+	"math/big"
+
 )
 
 
@@ -19,6 +22,60 @@ func NewUserService(repo repository.User) *UserService {
 func (s *UserService) GetUserById(id int) (connectteam.UserPublic, error) {
 	user, err := s.repo.GetUserById(id)
 	return user, err 
+}
+const (
+	letterBytes   = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	symbolBytes   = "!@#$%^&*()_-+=<>?"
+	digitBytes    = "0123456789"
+	minPasswordLen = 8
+)
+
+func generatePassword() (string, error) {
+	password := randomCharacter(letterBytes)
+
+	password += randomCharacter(symbolBytes)
+
+	password += randomCharacters(digitBytes + letterBytes + symbolBytes)
+
+	return password, nil
+}
+
+func randomCharacter(characters string) string {
+	index, err := rand.Int(rand.Reader, big.NewInt(int64(len(characters))))
+	if err != nil {
+		panic(err)
+	}
+	return string(characters[index.Int64()])
+}
+
+func randomCharacters(characters string) string {
+	var result string
+	for i := 0; i < minPasswordLen-2; i++ {
+		result += randomCharacter(characters)
+	}
+	return result
+}
+
+func (s *UserService) RestorePassword(id int) (error) {
+	var userCredentials connectteam.UserCredentials
+	userCredentials, err := s.repo.GetUserCredentials(id)
+	if err != nil {
+		return err
+	}
+
+	password, err := generatePassword()
+	if err != nil {
+		return err
+	}
+
+	err = s.repo.UpdatePassword(generatePasswordHash(password), id)
+
+	msg := "Восстановление пароля\n\n" + "Ваш новый пароль: " + password
+	if err := SendMessage(userCredentials.Email, msg); err != nil {
+		return err 
+	}
+
+	return nil
 }
 
 func (s *UserService) UpdateAccessWithId(id int, access connectteam.AccessLevel) (error) {
