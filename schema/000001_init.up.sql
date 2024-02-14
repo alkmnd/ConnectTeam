@@ -24,15 +24,16 @@ CREATE TABLE users
 
 CREATE TABLE verification_codes 
 (
-    user_id varchar(256) UNIQUE,
-    code VARCHAR(10)
+    user_id int REFERENCES users (id) ON DELETE CASCADE,
+    code VARCHAR(10),
+    PRIMARY KEY (user_id)
 );
 
 CREATE TABLE plans_users 
 (
   plan_type plans,
-  user_id int PRIMARY KEY,
-  holder_id int,
+  user_id int PRIMARY KEY references users (id) on delete cascade,
+  holder_id int references users (id) on delete cascade,
   expiry_date timestamp,
   duration int,
   plan_access varchar(256), 
@@ -46,4 +47,10 @@ CREATE TABLE plan_requests
   plan_type plans, 
   duration int, 
   request_date timestamp
+);
+
+CREATE TABLE topics 
+(
+  id serial not null PRIMARY KEY, 
+  title varchar(256)
 );

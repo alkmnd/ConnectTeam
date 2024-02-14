@@ -99,3 +99,8 @@ const (
 	Admin      AccessLevel = "admin"
 	Superadmin AccessLevel = "superadmin"
 )
+
+type Topic struct {
+	Id          int    `json:"id" db:"id"`
+	Title       string `json:"title" db:"title" binding:"required"`
+}

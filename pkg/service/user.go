@@ -31,6 +31,7 @@ const (
 )
 
 func generatePassword() (string, error) {
+
 	password := randomCharacter(letterBytes)
 
 	password += randomCharacter(symbolBytes)
@@ -64,6 +65,7 @@ func (s *UserService) RestorePassword(id int) (error) {
 	}
 
 	password, err := generatePassword()
+	log.Printf("password: %s", password)
 	if err != nil {
 		return err
 	}

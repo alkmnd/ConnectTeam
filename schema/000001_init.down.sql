@@ -4,3 +4,5 @@ DROP TABLE IF EXISTS plans_users;
 DROP TABLE IF EXISTS plan_requests;
 DROP TYPE IF EXISTS plans;
 DROP TABLE IF EXISTS verification_codes;
+DROP TABLE IF EXISTS topics;
+DROP TYPE IF EXISTS access;
