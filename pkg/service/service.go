@@ -27,6 +27,7 @@ type User interface {
 	UpdatePersonalData(id int, user connectteam.UserPersonalInfo) (error)
 	UpdateCompanyData(id int, company connectteam.UserCompanyData) (error)
 	GetUserPlan(user_id int) (connectteam.UserPlan, error)
+	RestorePassword(id int) (error)
 }
 
 type Plan interface {

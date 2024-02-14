@@ -17,6 +17,10 @@ type User struct {
 	Is_verified bool `json:"-" db:"is_verified"`
 	Access string `json:"access" db:"access"`
 }
+type UserCredentials struct {
+	Email string `json:"email" db:"email"`
+	PasswordHash string `json:"password_hash" db:"password_hash"`
+}
 
 type UserPublic struct {
 	Id int `json:"id" db:"id"`

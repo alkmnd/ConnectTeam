@@ -50,7 +50,9 @@ go run cmd/main.go
 
    2.8. [Edit Company Data](#company-change)
 
-3. [Plan](#plan)
+   2.9. [Restore Password](#restore-password)
+
+4. [Plan](#plan)
    
    3.1. [Get My Plan](#get-plan)
    
@@ -402,6 +404,25 @@ Note: Use confirmation code to verificate user
     "company_url": "0_o"
 }
 
+```
+<a id="restore-password"> </a>
+#### 2.9. Restore Password
+
+**Method:** `GET`
+
+**Endpoint:** `/users/password`
+
+**Description:** Resets the user password and sends message on the user email with new password.
+
+**Response:**
+
+* status(string): "ok", if there is no error.
+
+**Example Response:**
+```bash
+{
+    "status": "ok"
+}
 ```
 
 <a id="plan"></a>

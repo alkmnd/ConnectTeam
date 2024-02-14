@@ -23,6 +23,13 @@ func (r *UserPostgres) GetUserById(id int) (connectteam.UserPublic, error) {
 	return user, err
 }
 
+func (r *UserPostgres) GetUserCredentials(id int) (connectteam.UserCredentials, error) {
+	var userCred connectteam.UserCredentials
+	query := fmt.Sprintf("SELECT email, password_hash FROM %s WHERE id=$1", usersTable)
+	err := r.db.Get(&userCred, query, id)
+	return userCred, err
+}
+
 func (r *UserPostgres) UpdateAccessWithId(id int, access string) (error) {
 	query := fmt.Sprintf("UPDATE %s SET access = $1 WHERE id = %d", usersTable, id)
 
@@ -56,6 +63,8 @@ func (r *UserPostgres) UpdatePassword(new_password string, id int) (error) {
 	
 	return err
 }
+
+ 
 
 func (r *UserPostgres) UpdateEmail(email string, id int) (error) {
 	query := fmt.Sprintf("UPDATE %s SET email = $1 WHERE id = %d", usersTable, id)

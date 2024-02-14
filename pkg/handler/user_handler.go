@@ -43,6 +43,24 @@ func (h *Handler) getCurrentUser(c *gin.Context) {
 	})
 }
 
+func (h *Handler) restorePassword(c *gin.Context) {
+	id, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	err = h.services.RestorePassword(id)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, statusResponse{"ok"})
+
+}
+
 type changeAccessInput struct {
 	Id int `json:"id,string" binding:"required"` 
 	Access connectteam.AccessLevel `json:"access" binding:"required"`
@@ -132,6 +150,8 @@ func (h *Handler) changePassword(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return 
 	}
+
+	c.JSON(http.StatusOK, statusResponse{"ok"})
 } 
 
 type changeEmailInput struct {

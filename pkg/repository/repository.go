@@ -38,6 +38,7 @@ type User interface {
 	UpdateCompanyURL(id int, companyURL string) (error)
 	GetUserPlan(user_id int) (connectteam.UserPlan, error)
 	CreatePlanRequest(request connectteam.PlanRequest) (int, error)
+	GetUserCredentials(id int) (connectteam.UserCredentials, error)
 }
 
 type Plan interface {
