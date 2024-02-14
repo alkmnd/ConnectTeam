@@ -668,7 +668,7 @@ Note: Use confirmation code to verificate user
 **Description:** Deletes topic by id.
 
 **URL Parameters:**
-id(int): Id of the topic.
+* id(int): Id of the topic.
 
 **Response:**
 status(string): "ok" if there is no error.
