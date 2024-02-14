@@ -132,6 +132,8 @@ func (h *Handler) changePassword(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return 
 	}
+	
+	c.JSON(http.StatusOK, statusResponse{"ok"})
 } 
 
 type changeEmailInput struct {
