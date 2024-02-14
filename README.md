@@ -50,7 +50,7 @@ go run cmd/main.go
 
    2.8. [Edit Company Data](#company-change)
 
-   2.9. [Restore Password](#restore-password)
+   2.9. [Restore Password (Authorized)](#restore-password) 
 
 4. [Plan](#plan)
    
@@ -406,7 +406,7 @@ Note: Use confirmation code to verificate user
 
 ```
 <a id="restore-password"> </a>
-#### 2.9. Restore Password
+#### 2.9. Restore Password (Authorized)
 
 **Method:** `GET`
 
