@@ -22,3 +22,7 @@ func (s *TopicService) CreateTopic(topic connectteam.Topic) (int, error) {
 
 	return s.repo.CreateTopic(topic)
 }
+
+func (s *TopicService) GetAll() ([] connectteam.Topic, error) {
+	return s.repo.GetAll()
+}

@@ -41,3 +41,37 @@ func (h *Handler) createTopic(c *gin.Context) {
 		"id": id,
 	})
 }
+
+type getTopicsResponse struct {
+	Data []connectteam.Topic `json:"data"`
+}
+
+func (h *Handler) getAllTopics(c *gin.Context) {
+	_, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	access, err := getUserAccess(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if access != string(connectteam.Admin) && access != string(connectteam.Superadmin)  {
+		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
+		return
+	}
+
+	topics, err := h.services.Topic.GetAll()
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return 
+	}
+	c.JSON(http.StatusOK, getTopicsResponse {
+		Data: topics,
+	})
+
+
+}

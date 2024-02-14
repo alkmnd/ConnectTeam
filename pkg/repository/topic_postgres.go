@@ -27,3 +27,11 @@ func (r *TopicPostgres) CreateTopic(topic connectteam.Topic) (int, error) {
 		return id, nil
 	
 }
+
+func (r *TopicPostgres) GetAll() ([]connectteam.Topic, error) {
+	var topics [] connectteam.Topic
+
+	query := fmt.Sprintf("SELECT id, title FROM %s", topicsTable)
+	err := r.db.Select(&topics, query)
+	return topics, err
+}

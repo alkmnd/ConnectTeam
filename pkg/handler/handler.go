@@ -77,7 +77,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	topic := router.Group("/topics", h.userIdentity) 
 	{
 		topic.POST("/", h.createTopic)
-
+		topic.GET("/", h.getAllTopics)
 	}
 
 	return router
