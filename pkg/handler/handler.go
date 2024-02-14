@@ -74,6 +74,12 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		// delete plan 
 	}
 
+	topic := router.Group("/topics", h.userIdentity) 
+	{
+		topic.POST("/", h.createTopic)
+
+	}
+
 	return router
 }
 
