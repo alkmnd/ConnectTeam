@@ -76,7 +76,7 @@ go run cmd/main.go
 **Note:**
 
 For all REST Api authenticated requests, ensure to include the Authorization header with the value Bearer 
-your_access_token. This token is obtained through the user authentication process described in the
+<your_access_token>. This token is obtained through the user authentication process described in the
 first section.
 All requests require a valid authorization token in the header.
 
