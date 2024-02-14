@@ -68,6 +68,8 @@ go run cmd/main.go
    
    5.1. [Create Topic](#create-topic)
 
+   5.2. [Get All Topics](#topics)
+
    
 
 
@@ -627,5 +629,29 @@ Note: Use confirmation code to verificate user
 ``` bash
 {
    "id": 1
+}
+```
+
+<a id='topics'></a>
+#### 5.2. Get All Topics
+
+**Method:** `GET`
+
+**Endpoint:** `/topics/`
+
+**Description:** Returns list of all topics 
+
+**Response:**
+* data([]): List of items.
+
+**Example Response:**
+``` bash
+{
+    "data": [
+        {
+            "id": 1,
+            "title": "h"
+        }
+    ]
 }
 ```
