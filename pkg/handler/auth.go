@@ -47,6 +47,31 @@ func (h *Handler) signUp(c *gin.Context) {
 // 	})
 // }
 
+type restorePasswordInput struct {
+	Email string `json:"email" binding:"required"` 
+}
+
+func (h *Handler) restorePassword(c *gin.Context) {
+	var input restorePasswordInput
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return 
+	}
+
+	println(input.Email)
+
+	err := h.services.RestorePassword(input.Email)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, statusResponse{"ok"})
+
+
+}
+
 func (h *Handler) verifyEmailOnRegistration(c *gin.Context) {
 	var input connectteam.VerifyEmail
 

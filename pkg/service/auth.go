@@ -48,7 +48,7 @@ func (s *AuthService) GenerateToken(login, password string, isEmail bool) (strin
 		user, err = s.repo.GetUserWithPhone(login, generatePasswordHash(password))
 	}
 	if err != nil {
-		return "",  "", errors.New("Invalid login data")
+		return "",  "", errors.New("invalid login data")
 	}
 	if !user.Is_verified {
 		println("meow")
@@ -115,7 +115,7 @@ func CreateVerificationCode(id int, email string) (string, error) {
 
  	if err != nil {
 	 	log.Printf("smtp error: %s", err)
-		return "", errors.New("The recipient address is not a valid")
+		return "", errors.New("the recipient address is not a valid")
 	}
 	return confirmationCode, nil
 
@@ -127,7 +127,7 @@ func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (int, err
 
 	if err != nil {
 		log.Printf("smtp error: %s", err)
-		return 0, errors.New("No user with such email")
+		return 0, errors.New("no user with such email")
 	}
 
 
@@ -142,7 +142,7 @@ func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (int, err
 
 	if err != nil {
 		log.Printf("smtp error: %s", err)
-		return 0, errors.New("Error while generating code")
+		return 0, errors.New("error while generating code")
 	}
 
 	log.Printf("verification code: %s", confirmationCode)
@@ -154,17 +154,17 @@ func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (int, err
 func (s *AuthService) VerifyUser(verifyUser connectteam.VerifyUser) error {
 	code, err := s.repo.GetVerificationCode(verifyUser.Id)
 	if err != nil {
-		return errors.New("Wrong verification code")
+		return errors.New("wrong verification code")
 	}
 
 	if code != verifyUser.Code {
 
-		return errors.New("Wrong verification code")
+		return errors.New("wrong verification code")
 	}
 
 	err = s.repo.DeleteVerificationCode(verifyUser.Id, verifyUser.Code)
 	if err != nil {
-		return errors.New("No such row")
+		return errors.New("no such row")
 	}
 	
 	return s.repo.VerifyUser(verifyUser)
@@ -173,7 +173,7 @@ func (s *AuthService) VerifyUser(verifyUser connectteam.VerifyUser) error {
 func (s *AuthService) ParseToken(accessToken string) (int, string, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("Invalid signing method")
+			return nil, errors.New("invalid signing method")
 		}
 
 		return []byte(signingKey), nil
@@ -184,7 +184,7 @@ func (s *AuthService) ParseToken(accessToken string) (int, string, error) {
 
 	claims, ok := token.Claims.(*tokenClaims)
 	if !ok {
-		return 0, "", errors.New("Token claims are not of type *tokenClaims")
+		return 0, "", errors.New("token claims are not of type *tokenClaims")
 	}
 
 	return claims.UserId, claims.Role, nil

@@ -17,7 +17,7 @@ func NewTopicService(repo repository.Topic) *TopicService {
 
 func (s *TopicService) CreateTopic(topic connectteam.Topic) (int, error) {
 	if strings.ReplaceAll(topic.Title, " ", "") == "" {
-		return 0, errors.New("Incorrect title")
+		return 0, errors.New("incorrect title")
 	}
 
 	return s.repo.CreateTopic(topic)

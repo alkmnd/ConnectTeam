@@ -23,7 +23,7 @@ type User interface {
 	UpdateAccessWithId(id int, access string) (error)
 	GetUsersList() ([]connectteam.UserPublic, error)
 	GetPassword(id int) (string, error)
-	UpdatePassword(new_password string, id int) (error)
+	UpdatePasswordWithId(new_password string, id int) (error)
 	GetVerificationCode(id int) (string, error)
 	GetEmailWithId(id int) (string, error)
 	UpdateEmail(email string, id int) (error)
@@ -39,6 +39,7 @@ type User interface {
 	GetUserPlan(user_id int) (connectteam.UserPlan, error)
 	CreatePlanRequest(request connectteam.PlanRequest) (int, error)
 	GetUserCredentials(id int) (connectteam.UserCredentials, error)
+	UpdatePasswordWithEmail(new_password string, email string) (error)
 }
 
 type Plan interface {

@@ -43,14 +43,14 @@ func (h *Handler) getCurrentUser(c *gin.Context) {
 	})
 }
 
-func (h *Handler) restorePassword(c *gin.Context) {
+func (h *Handler) restorePasswordAuthorized(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	err = h.services.RestorePassword(id)
+	err = h.services.RestorePasswordAuthorized(id)
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
