@@ -32,7 +32,7 @@ go run cmd/main.go
    
    1.4. [Sign-In](#sign-in)
 
-   1.5. [Restore Password](#restore-password)
+   1.5. [Restore Password  (Unauthorized)](#restore-password)
 
 3. [User](#user)
    
@@ -213,7 +213,7 @@ Note: Use confirmation code to verificate user
 }
 ```
 <a id="restore-password"></a>
-#### 1.5. Restore Password
+#### 1.5. Restore Password (Unauthorized)
 
 **Method:** `GET`
 
