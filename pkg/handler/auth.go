@@ -27,25 +27,25 @@ func (h *Handler) signUp(c *gin.Context) {
 	})
 }
 
-func (h *Handler) verifyPhone(c *gin.Context) {
-	var input connectteam.VerifyPhone
+// func (h *Handler) verifyPhone(c *gin.Context) {
+// 	var input connectteam.VerifyPhone
 
-	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return 
-	}
+// 	if err := c.BindJSON(&input); err != nil {
+// 		newErrorResponse(c, http.StatusBadRequest, err.Error())
+// 		return 
+// 	}
 
-	confirmationCode, err := h.services.Authorization.VerifyPhone(input)
+// 	confirmationCode, err := h.services.Authorization.VerifyPhone(input)
 	
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
+// 	if err != nil {
+// 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+// 		return
+// 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"confirmationCode": confirmationCode,
-	})
-}
+// 	c.JSON(http.StatusOK, map[string]interface{}{
+// 		"confirmationCode": confirmationCode,
+// 	})
+// }
 
 func (h *Handler) verifyEmailOnRegistration(c *gin.Context) {
 	var input connectteam.VerifyEmail
@@ -95,13 +95,13 @@ func (h *Handler) verifyUser(c *gin.Context) {
 	})
 }
 
-func (h *Handler) signUpWithPhone(c *gin.Context) {
-	var input connectteam.User
+// func (h *Handler) signUpWithPhone(c *gin.Context) {
+// 	var input connectteam.User
 
-	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-	}
-}
+// 	if err := c.BindJSON(&input); err != nil {
+// 		newErrorResponse(c, http.StatusBadRequest, err.Error())
+// 	}
+// }
 
 type signInWithEmailInput struct {
 	Email string `json:"email" binding:"required"` 

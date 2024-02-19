@@ -96,6 +96,11 @@ func (h *Handler) deleteTopic(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("id"))
 
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "Invalid id param")
+		return
+	}
+
 	if err := h.services.DeleteTopic(id); err != nil {
 		newErrorResponse(c, http.StatusForbidden, err.Error())
 		return

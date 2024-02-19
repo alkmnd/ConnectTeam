@@ -84,9 +84,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	return router
 }
 
-func test(c *gin.Context) {
+// func test(c *gin.Context) {
 
-}
+// }
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true // Пропускаем любой запрос
