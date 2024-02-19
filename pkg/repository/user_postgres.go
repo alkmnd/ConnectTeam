@@ -15,7 +15,6 @@ func NewUserPostgres(db *sqlx.DB) *UserPostgres {
 	return &UserPostgres{db: db}
 }
 
-
 func (r *UserPostgres) GetUserById(id int) (connectteam.UserPublic, error) {
 	var user connectteam.UserPublic
 	query := fmt.Sprintf("SELECT id, email, first_name, second_name, description, access, company_name, company_info, company_url, company_logo, profile_image FROM %s WHERE id=$1", usersTable)
@@ -30,11 +29,11 @@ func (r *UserPostgres) GetUserCredentials(id int) (connectteam.UserCredentials, 
 	return userCred, err
 }
 
-func (r *UserPostgres) UpdateAccessWithId(id int, access string) (error) {
+func (r *UserPostgres) UpdateAccessWithId(id int, access string) error {
 	query := fmt.Sprintf("UPDATE %s SET access = $1 WHERE id = %d", usersTable, id)
 
 	_, err := r.db.Exec(query, access)
-	
+
 	return err
 }
 
@@ -47,7 +46,7 @@ func (r *UserPostgres) GetUsersList() ([]connectteam.UserPublic, error) {
 }
 
 func (r *UserPostgres) GetPassword(id int) (string, error) {
-	var db_password string 
+	var db_password string
 	query := fmt.Sprintf("SELECT password_hash FROM %s WHERE id=$1", usersTable)
 	err := r.db.Get(&db_password, query, id)
 	if err != nil {
@@ -56,17 +55,24 @@ func (r *UserPostgres) GetPassword(id int) (string, error) {
 	return db_password, nil
 }
 
-func (r *UserPostgres) UpdatePassword(new_password string, id int) (error) {
+func (r *UserPostgres) UpdatePasswordWithId(new_password string, id int) error {
 	query := fmt.Sprintf("UPDATE %s SET password_hash = $1 WHERE id = %d", usersTable, id)
 
 	_, err := r.db.Exec(query, new_password)
-	
+
 	return err
 }
 
- 
+func (r *UserPostgres) UpdatePasswordWithEmail(new_password string, email string) error {
+	println(email)
+	query := fmt.Sprintf("UPDATE %s SET password_hash = $1 WHERE email = $2", usersTable)
 
-func (r *UserPostgres) UpdateEmail(email string, id int) (error) {
+	_, err := r.db.Exec(query, new_password, email)
+
+	return err
+}
+
+func (r *UserPostgres) UpdateEmail(email string, id int) error {
 	query := fmt.Sprintf("UPDATE %s SET email = $1 WHERE id = %d", usersTable, id)
 	_, err := r.db.Exec(query, email)
 
@@ -82,15 +88,15 @@ func (r *UserPostgres) GetVerificationCode(id int) (string, error) {
 	return code, err
 }
 
-func (r *UserPostgres) CreateVerificationCode(user_id int, code string) (error){
+func (r *UserPostgres) CreateVerificationCode(user_id int, code string) error {
 	query := fmt.Sprintf("INSERT INTO %s (user_id, code) values ($1, $2) ON CONFLICT (user_id) DO UPDATE SET code = $2", codesTable)
 	_, err := r.db.Exec(query, user_id, code)
 	return err
 }
 
-func (r *UserPostgres) DeleteVerificationCode(id int, code string) (error) {
+func (r *UserPostgres) DeleteVerificationCode(id int, code string) error {
 	println(id)
-	println("postgres: "+code)
+	println("postgres: " + code)
 	query := fmt.Sprintf("DELETE FROM %s WHERE user_id = $1 AND code=$2", codesTable)
 	_, err := r.db.Exec(query, id, code)
 	return err
@@ -128,51 +134,51 @@ func (r *UserPostgres) CheckIfExist(email string) (bool, error) {
 // 	return count > 0, nil
 // }
 
-func (r *UserPostgres) UpdateUserFirstName(id int, firstName string) (error) {
+func (r *UserPostgres) UpdateUserFirstName(id int, firstName string) error {
 	query := fmt.Sprintf("UPDATE %s SET first_name = $1 WHERE id = %d", usersTable, id)
 
 	_, err := r.db.Exec(query, firstName)
-	
+
 	return err
 }
 
-func (r *UserPostgres) UpdateUserSecondName(id int, secondName string) (error) {
+func (r *UserPostgres) UpdateUserSecondName(id int, secondName string) error {
 	query := fmt.Sprintf("UPDATE %s SET second_name = $1 WHERE id = %d", usersTable, id)
 
 	_, err := r.db.Exec(query, secondName)
-	
+
 	return err
 }
 
-func (r *UserPostgres) UpdateUserDescription(id int, description string) (error) {
+func (r *UserPostgres) UpdateUserDescription(id int, description string) error {
 	query := fmt.Sprintf("UPDATE %s SET description = $1 WHERE id = %d", usersTable, id)
 
 	_, err := r.db.Exec(query, description)
-	
+
 	return err
 }
 
-func (r *UserPostgres) UpdateCompanyName(id int, companyName string) (error) {
+func (r *UserPostgres) UpdateCompanyName(id int, companyName string) error {
 	query := fmt.Sprintf("UPDATE %s SET company_name = $1 WHERE id = %d", usersTable, id)
 
 	_, err := r.db.Exec(query, companyName)
-	
+
 	return err
 }
 
-func (r *UserPostgres) UpdateCompanyInfo(id int, info string) (error) {
+func (r *UserPostgres) UpdateCompanyInfo(id int, info string) error {
 	query := fmt.Sprintf("UPDATE %s SET company_info = $1 WHERE id = %d", usersTable, id)
 
 	_, err := r.db.Exec(query, info)
-	
+
 	return err
 }
 
-func (r *UserPostgres) UpdateCompanyURL(id int, url string) (error) {
+func (r *UserPostgres) UpdateCompanyURL(id int, url string) error {
 	query := fmt.Sprintf("UPDATE %s SET company_url = $1 WHERE id = %d", usersTable, id)
 
 	_, err := r.db.Exec(query, url)
-	
+
 	return err
 }
 

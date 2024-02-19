@@ -32,7 +32,9 @@ go run cmd/main.go
    
    1.4. [Sign-In](#sign-in)
 
-2. [User](#user)
+   1.5. [Restore Password  (Unauthorized)](#restore-password)
+
+3. [User](#user)
    
    2.1. [Current user](#get-me)
    
@@ -50,7 +52,7 @@ go run cmd/main.go
 
    2.8. [Edit Company Data](#company-change)
 
-   2.9. [Restore Password (Authorized)](#restore-password) 
+   2.9. [Restore Password (Authorized)](#restore-password-auth) 
 
 4. [Plan](#plan)
    
@@ -210,6 +212,35 @@ Note: Use confirmation code to verificate user
 "access": "user"
 }
 ```
+<a id="restore-password"></a>
+#### 1.5. Restore Password (Unauthorized)
+
+**Method:** `GET`
+
+**Endpoint:** `/auth/password`
+
+**Description:** Sends new password on email
+
+**Request Parameters:**
+* email(string, required)
+
+**Response Parameters:**
+* status(string): ok, if there is no error
+
+**Example Request Body:** 
+```bash
+{
+    "email":"blvantla@gmail.com"
+}
+```
+
+**Example Response:**
+```bash
+{
+   "status": "ok"
+}
+```
+
 
 <a id="user"></a>
 ### 2. User 
@@ -413,7 +444,7 @@ Note: Use confirmation code to verificate user
 }
 
 ```
-<a id="restore-password"> </a>
+<a id="restore-password-auth"> </a>
 #### 2.9. Restore Password (Authorized)
 
 **Method:** `GET`

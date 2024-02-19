@@ -21,7 +21,7 @@ func SendMessage(sender string, message string) (error) {
 
  	if err != nil {
 	 	log.Printf("smtp error: %s", err)
-		return errors.New("The recipient address is not a valid")
+		return errors.New("the recipient address is not a valid")
 	}
 	return nil
 }

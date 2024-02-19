@@ -56,8 +56,38 @@ func randomCharacters(characters string) string {
 	}
 	return result
 }
+func (s *UserService) RestorePassword(email string) (error) {
 
-func (s *UserService) RestorePassword(id int) (error) {
+	ifExists, err := s.repo.CheckIfExist(email)
+	if err != nil {
+		return err 
+	}
+
+	if !ifExists {
+		return errors.New("User with such email is not exist")
+	}
+
+	password, err := generatePassword()
+	log.Printf("password: %s", password)
+	if err != nil {
+		return err
+	}
+
+	println(email)
+
+	if err := s.repo.UpdatePasswordWithEmail(generatePasswordHash(password), email); err != nil {
+		return err 
+	}
+
+	msg := "Восстановление пароля\n\n" + "Ваш новый пароль: " + password
+	if err := SendMessage(email, msg); err != nil {
+		return err 
+	}
+
+	return nil
+}
+
+func (s *UserService) RestorePasswordAuthorized(id int) (error) {
 	var userCredentials connectteam.UserCredentials
 	userCredentials, err := s.repo.GetUserCredentials(id)
 	if err != nil {
@@ -70,7 +100,10 @@ func (s *UserService) RestorePassword(id int) (error) {
 		return err
 	}
 
-	err = s.repo.UpdatePassword(generatePasswordHash(password), id)
+
+	if err = s.repo.UpdatePasswordWithId(generatePasswordHash(password), id); err != nil {
+		return err
+	}
 
 	msg := "Восстановление пароля\n\n" + "Ваш новый пароль: " + password
 	if err := SendMessage(userCredentials.Email, msg); err != nil {
@@ -98,10 +131,10 @@ func (s *UserService) UpdatePassword(old_password string, new_password string, i
 	}
 
 	if db_password != generatePasswordHash(old_password) {
-		return errors.New("Wrong old password")
+		return errors.New("wrong old password")
 	}
 
-	return s.repo.UpdatePassword(generatePasswordHash(new_password), id)
+	return s.repo.UpdatePasswordWithId(generatePasswordHash(new_password), id)
 }
 
 func (s *UserService) CheckEmailOnChange(id int, email string, password string) (error) {
@@ -111,7 +144,7 @@ func (s *UserService) CheckEmailOnChange(id int, email string, password string) 
 	}
 
 	if ifEmailExist {
-		return errors.New("Email is already taken")
+		return errors.New("email is already taken")
 	}
 
 	db_password, err := s.repo.GetPassword(id)
@@ -119,11 +152,13 @@ func (s *UserService) CheckEmailOnChange(id int, email string, password string) 
 		println(id)
 		println(password)
 		println(db_password)
-		return errors.New("Invalid password")
+		return errors.New("invalid password")
 	}
 
 	if db_password != generatePasswordHash(password) {
-		return errors.New("Wrong password")
+
+		return errors.New("wrong password")
+
 	}
 
 
@@ -141,7 +176,7 @@ func (s *UserService) CheckEmailOnChange(id int, email string, password string) 
 
 	if err != nil {
 		log.Printf("smtp error: %s", err)
-		return errors.New("Error while generating code")
+		return errors.New("error while generating code")
 	}
 
 	log.Printf("verification code: %s", code)
@@ -151,20 +186,20 @@ func (s *UserService) CheckEmailOnChange(id int, email string, password string) 
 
 func (s *UserService) UpdateEmail(id int, newEmail string, code string) (error) {
 	if newEmail == "" {
-		return errors.New("Invalid email")
+		return errors.New("invalid email")
 	}
 	db_code, err := s.repo.GetVerificationCode(id)
 	if err != nil {
-		return errors.New("Verification code is not sent")
+		return errors.New("verification code is not sent")
 	}
 
 	if code != db_code {
-		return errors.New("Wrong verification code")
+		return errors.New("wrong verification code")
 	}
 
 	err = s.repo.DeleteVerificationCode(id, code)
 	if err != nil {
-		return errors.New("No such row")
+		return errors.New("no such row")
 	}
 
 	return s.repo.UpdateEmail(newEmail, id)
