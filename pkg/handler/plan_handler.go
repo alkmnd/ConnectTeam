@@ -18,7 +18,7 @@ func (h *Handler) getUserPlan(c *gin.Context) {
 	userPlan, err := h.services.Plan.GetUserPlan(id)
 
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, "User has no plan")
+		c.Status(204)
 		return 
 	}
 

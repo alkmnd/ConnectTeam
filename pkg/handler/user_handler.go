@@ -181,6 +181,8 @@ func (h *Handler) changeEmail(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return 
 	}
+
+	c.JSON(http.StatusOK, statusResponse{"ok"})
 }
 
 type sendCodeInput struct {
@@ -227,6 +229,8 @@ func (h *Handler) changePersonalData(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return 
 	}
+
+	c.JSON(http.StatusOK, statusResponse{"ok"})
 }
 
 func (h *Handler) changeCompanyData(c *gin.Context) {
@@ -250,6 +254,8 @@ func (h *Handler) changeCompanyData(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return 
 	}
+
+	c.JSON(http.StatusOK, statusResponse{"ok"})
 
 }
 
