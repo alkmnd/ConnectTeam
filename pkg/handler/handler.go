@@ -44,7 +44,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			signIn.POST("/phone", h.signInWithPhoneNumber)
 		}
 
-		auth.GET("/password", h.restorePassword)
+		auth.PATCH("/password", h.restorePassword)
 
 	}
 
