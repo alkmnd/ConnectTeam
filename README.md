@@ -461,7 +461,8 @@ Note: Use confirmation code to verificate user
     "holder_id": 1,
     "plan_access": "holder",
     "plan_type": "basic",
-    "user_id": 1
+    "user_id": 1,
+    "confirmed": true
 }
 ```
 <a id="new-plan"></a>
