@@ -215,7 +215,7 @@ Note: Use confirmation code to verificate user
 <a id="restore-password"></a>
 #### 1.5. Restore Password (Unauthorized)
 
-**Method:** `GET`
+**Method:** `PATCH`
 
 **Endpoint:** `/auth/password`
 
