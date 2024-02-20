@@ -547,7 +547,7 @@ Note: Use confirmation code to verificate user
 
 **Method:** `GET`
 
-**Endpoint:** `/plans/users-plans`
+**Endpoint:** `/plans/`
 
 **Description:** Returns list of users and their plans.
 
