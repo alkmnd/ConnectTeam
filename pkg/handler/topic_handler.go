@@ -109,6 +109,9 @@ func (h *Handler) deleteTopic(c *gin.Context) {
 	c.JSON(http.StatusOK, statusResponse{"ok"})
 }
 
+type updateTopicInput struct {
+	Title string `json:"title" binding:"required"`
+}
 func (h *Handler) updateTopic(c *gin.Context) {
 	_, err := getUserId(c)
 	if err != nil {
@@ -134,18 +137,18 @@ func (h *Handler) updateTopic(c *gin.Context) {
 		return
 	}
 
-	var input string
+	var input updateTopicInput
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if  len( []rune(input)) < 3 {
+	if  len( []rune(input.Title)) < 3 {
 		newErrorResponse(c, http.StatusInternalServerError, "Incorrect title")
 		return
 	}
 
-	err = h.services.Topic.UpdateTopic(id, input)
+	err = h.services.Topic.UpdateTopic(id, input.Title)
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
