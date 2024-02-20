@@ -618,7 +618,7 @@ Note: Use confirmation code to verificate user
 
 **Request Parameters:**
 
-* duration(int, required)
+* expiry_date(string, required): Plan expiration date according to RFC3339 standard.
 * plan_type(string, required): Type of plan the user is assigned.
 
 **Response:**
