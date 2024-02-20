@@ -74,6 +74,8 @@ go run cmd/main.go
 
    5.3. [Delete Topic](#delete-topic)
 
+   5.4. [Update Topic](#update-topic)
+
    
 
 
@@ -713,3 +715,33 @@ status(string): "ok" if there is no error.
 }
 ```
 
+#### 5.4. Update Topic 
+
+**Method:** `PATCH`
+
+**Endpoint:** `/plans/:id`
+
+**Description:** Update the topic title.
+
+**URL Parameters:**
+* id(int): Id of the uodated topic.
+
+**Request Parameters:**
+* title(string, required): new title of the topic.
+
+**Response:**
+* status(string): "ok", if there is no error.
+
+**Example Request Body:**
+```bash
+{
+   "title": "New Title"
+}
+```
+
+**Example Response:**
+``` bash
+{
+    "status": "ok"
+}
+```

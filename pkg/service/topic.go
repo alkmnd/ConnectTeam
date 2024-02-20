@@ -30,3 +30,7 @@ func (s *TopicService) GetAll() ([] connectteam.Topic, error) {
 func (s *TopicService) DeleteTopic(id int) (error) {
 	return s.repo.DeleteTopic(id)
 }
+
+func (s *TopicService) UpdateTopic(id int, title string) (error) {
+	return s.repo.UpdateTopic(id, title)
+}

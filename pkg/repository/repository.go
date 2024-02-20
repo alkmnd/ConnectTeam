@@ -55,6 +55,7 @@ type Topic interface {
 	CreateTopic(topic connectteam.Topic) (int, error)
 	GetAll() ([]connectteam.Topic, error)
 	DeleteTopic(id int) (error)
+	UpdateTopic(id int, title string) (error)
 }
 
 type Repository struct {
