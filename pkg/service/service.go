@@ -32,11 +32,11 @@ type User interface {
 }
 
 type Plan interface {
-	GetUserPlan(user_id int) (connectteam.UserPlan, error)
+	GetUserPlan(userId int) (connectteam.UserPlan, error)
 	CreatePlan(request connectteam.UserPlan) (connectteam.UserPlan, error)
 	GetUsersPlans() ([] connectteam.UserPlan, error)
 	ConfirmPlan(id int) (error)
-	SetPlanByAdmin(user_id int, duration int, plan_type string) (error)
+	SetPlanByAdmin(userId int, planType string, expiryDateString string) (error)
 	DeletePlan(id int) (error)
 }
 

@@ -137,8 +137,8 @@ func (h *Handler) confirmPlan(c *gin.Context) {
 }
 
 type newPlanInput struct {
-	Duration int `json:"duration"`
-	PlanType string `json:"plan_type"`
+	PlanType string `json:"plan_type" binding:"required"`
+	ExpiryDate string `json:"expiry_date" binding:"required"`
 }
 func (h *Handler) setPlan(c *gin.Context) {
 	_, err := getUserId(c)
@@ -167,14 +167,12 @@ func (h *Handler) setPlan(c *gin.Context) {
 
 	user_id, err := strconv.Atoi(c.Param("user_id"))
 	if err != nil {
-		println("2")
 		newErrorResponse(c, http.StatusBadRequest, "Invalid id param")
 		return
 	}
-	err = h.services.SetPlanByAdmin(user_id, input.Duration, input.PlanType)
+	err = h.services.SetPlanByAdmin(user_id, input.PlanType, input.ExpiryDate)
 	println(input.PlanType)
 	if err != nil {
-		println("3")
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
