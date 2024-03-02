@@ -815,7 +815,7 @@ status(string): "ok" if there is no error.
 ```
 
 <a id='q_list'></a>
-#### 6.2. Question List
+#### 6.3. Question List
 
 **Method:** `GET`
 
@@ -848,3 +848,45 @@ status(string): "ok" if there is no error.
     ]
 }
 ```
+
+
+
+<a id='q_update'></a>
+#### 6.4. Update Question
+
+**Method:** `PATCH`
+
+**Endpoint:**  `/questions/:id`
+
+**Description:**  Returns lisy of questions. 
+
+**Request Parameters:**
+* new_content (string)
+
+**URL Parameters:**
+* id(int): Question id.
+
+
+**Response Parameters:** 
+* id (int)
+* topic_id (int)
+* content (string)
+
+**Example Request Body:**
+``` bash
+{
+    "new_content": "New content???"
+}
+```
+
+**Example Response:**
+``` bash
+{
+    "id": 2,
+    "topic_id": 1,
+    "content": "New content???"
+}
+```
+
+
+
