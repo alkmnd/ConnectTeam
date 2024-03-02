@@ -76,6 +76,14 @@ go run cmd/main.go
 
    5.4. [Update Topic](#update-topic)
 
+6. [Question](#question)
+   6.1. [Create Question](#q_create)
+   
+   6.2. [Update Question](#q_update)
+
+   6.3. [Delete Question](q_delete)
+
+   6.4. [Question List](q_list)
    
 
 
@@ -745,3 +753,35 @@ status(string): "ok" if there is no error.
     "status": "ok"
 }
 ```
+
+### 6. Question
+
+#### 6.1. Create Question 
+
+**Method:** `POST`
+
+**Endpoint:**  `topics/:topic_id/questions/`
+
+**Description:**  Creates new question in the topic with topic_id. 
+
+**URL Parameters:**
+* topic_id(int): Topic id.
+
+**Request Parameters**
+
+* content (string): Content of the question.
+
+**Response Parameters:** 
+* id (int): Id of the created question.
+
+**Example Request Body:**
+```bash
+{
+   "content":"New question?"
+}
+```
+
+**Example Response:**
+```bash 
+
+  
