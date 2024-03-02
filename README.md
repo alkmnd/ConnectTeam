@@ -78,12 +78,12 @@ go run cmd/main.go
 
 6. [Question](#question)
    6.1. [Create Question](#q_create)
+
+   6.2. [Delete Question](q_delete)
+
+   6.3. [Question List](q_list)
    
-   6.2. [Update Question](#q_update)
-
-   6.3. [Delete Question](q_delete)
-
-   6.4. [Question List](q_list)
+   6.4. [Update Question](#q_update)
    
 
 
@@ -794,12 +794,11 @@ status(string): "ok" if there is no error.
 
 **Method:** `DELETE`
 
-**Endpoint:**  `topics/:topic_id/questions/:id`
+**Endpoint:**  `/questions/:id`
 
 **Description:**  Deletes question. 
 
 **URL Parameters:**
-* topic_id(int): Topic id.
 * id(int): Question id.
 
 
@@ -811,5 +810,40 @@ status(string): "ok" if there is no error.
 ```bash
 {
    "status": "ok"
+}
+```
+
+<a id='q_list'></a>
+#### 6.2. Question List
+
+**Method:** `GET`
+
+**Endpoint:**  `topics/:topic_id/questions/`
+
+**Description:**  Returns lisy of questions. 
+
+**URL Parameters:**
+* topic_id(int): Topic id.
+
+
+**Response Parameters:** 
+* data(list): List of questions.
+
+
+**Example Response:**
+```bash
+{
+    "data": [
+        {
+            "id": 2,
+            "topic_id": 1,
+            "content": "Q1"
+        },
+        {
+            "id": 3,
+            "topic_id": 1,
+            "content": "Q2"
+        }
+    ]
 }
 ```
