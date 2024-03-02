@@ -722,7 +722,7 @@ status(string): "ok" if there is no error.
     "status": "ok"
 }
 ```
-
+<a id='update-topic'></a>
 #### 5.4. Update Topic 
 
 **Method:** `PATCH`
@@ -753,9 +753,10 @@ status(string): "ok" if there is no error.
     "status": "ok"
 }
 ```
-
+<a id='question'></a>
 ### 6. Question
 
+<a id='q_create'></a>
 #### 6.1. Create Question 
 
 **Method:** `POST`
@@ -782,6 +783,33 @@ status(string): "ok" if there is no error.
 ```
 
 **Example Response:**
-```bash 
+```bash
+{
+   "id": 1
+}
+```
 
-  
+<a id='q_delete'></a>
+#### 6.2. Delete Question
+
+**Method:** `DELETE`
+
+**Endpoint:**  `topics/:topic_id/questions/:id`
+
+**Description:**  Deletes question. 
+
+**URL Parameters:**
+* topic_id(int): Topic id.
+* id(int): Question id.
+
+
+**Response Parameters:** 
+* status (int): ok, if there is no error.
+
+
+**Example Response:**
+```bash
+{
+   "status": "ok"
+}
+```
