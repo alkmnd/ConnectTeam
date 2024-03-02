@@ -2,7 +2,7 @@ CREATE TYPE user_role AS ENUM ('user', 'admin', 'plan_user');
 
 CREATE TYPE plans AS ENUM ('basic', 'advanced', 'premium');
 
-CREATE TYPE access AS ENUM ('superadmin', 'admin', 'user');
+CREATE TYPE access AS ENUM ('super_admin', 'admin', 'user');
 
 CREATE TABLE users 
 (
@@ -29,7 +29,7 @@ CREATE TABLE verification_codes
     PRIMARY KEY (user_id)
 );
 
-CREATE TABLE plans_users 
+CREATE TABLE active_subscriptions 
 (
   plan_type plans,
   user_id int PRIMARY KEY references users (id) on delete cascade,
@@ -39,6 +39,18 @@ CREATE TABLE plans_users
   plan_access varchar(256), 
   confirmed boolean
 );
+
+CREATE TABLE expired_subscriptions 
+(
+    id serial not null PRIMARY KEY,
+  plan_type plans,
+  user_id int references users (id) on delete cascade,
+  holder_id int references users (id) on delete cascade,
+  expiry_date timestamp,
+  duration int,
+  plan_access varchar(256), 
+  confirmed boolean
+); 
 
 CREATE TABLE plan_requests 
 (
@@ -53,4 +65,11 @@ CREATE TABLE topics
 (
   id serial not null PRIMARY KEY, 
   title varchar(256)
+);
+
+CREATE TABLE questions 
+(
+  id serial not null PRIMARY KEY, 
+  topic_id int references topics (id) on delete cascade,
+  content varchar(256)
 );

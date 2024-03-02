@@ -10,52 +10,58 @@ type Authorization interface {
 	CreateUser(user connectteam.User) (int, error)
 	GetUserWithEmail(email, password string) (connectteam.User, error)
 	GetIdWithEmail(email string) (int, error)
-	GetUserWithPhone(phoneNumber,  password string) (connectteam.User, error)
-	VerifyUser(verifyUser connectteam.VerifyUser)  error	
+	GetUserWithPhone(phoneNumber, password string) (connectteam.User, error)
+	VerifyUser(verifyUser connectteam.VerifyUser) error
 	GetVerificationCode(id int) (string, error)
-	CreateVerificationCode(id int, code string) (error)
+	CreateVerificationCode(id int, code string) error
 	CheckIfExist(id int) (bool, error)
-	DeleteVerificationCode(id int, code string) (error)
+	DeleteVerificationCode(id int, code string) error
 }
 
 type User interface {
 	GetUserById(id int) (connectteam.UserPublic, error)
-	UpdateAccessWithId(id int, access string) (error)
+	UpdateAccessWithId(id int, access string) error
 	GetUsersList() ([]connectteam.UserPublic, error)
 	GetPassword(id int) (string, error)
-	UpdatePasswordWithId(new_password string, id int) (error)
+	UpdatePasswordWithId(newPassword string, id int) error
 	GetVerificationCode(id int) (string, error)
 	GetEmailWithId(id int) (string, error)
-	UpdateEmail(email string, id int) (error)
-	CreateVerificationCode(id int, code string) (error)
-	DeleteVerificationCode(id int, code string) (error)
+	UpdateEmail(email string, id int) error
+	CreateVerificationCode(id int, code string) error
+	DeleteVerificationCode(id int, code string) error
 	CheckIfExist(email string) (bool, error)
-	UpdateUserFirstName(id int, firstName string) (error)
-	UpdateUserSecondName(id int, secondName string) (error)
-	UpdateUserDescription(id int, secondName string) (error)
-	UpdateCompanyName(id int, companyName string) (error)
-	UpdateCompanyInfo(id int, info string) (error)
-	UpdateCompanyURL(id int, companyURL string) (error)
-	GetUserPlan(user_id int) (connectteam.UserPlan, error)
+	UpdateUserFirstName(id int, firstName string) error
+	UpdateUserSecondName(id int, secondName string) error
+	UpdateUserDescription(id int, secondName string) error
+	UpdateCompanyName(id int, companyName string) error
+	UpdateCompanyInfo(id int, info string) error
+	UpdateCompanyURL(id int, companyURL string) error
+	GetUserPlan(userId int) (connectteam.UserPlan, error)
 	CreatePlanRequest(request connectteam.PlanRequest) (int, error)
 	GetUserCredentials(id int) (connectteam.UserCredentials, error)
-	UpdatePasswordWithEmail(new_password string, email string) (error)
+	UpdatePasswordWithEmail(newPassword string, email string) error
 }
 
 type Plan interface {
 	GetUserPlan(userId int) (connectteam.UserPlan, error)
 	CreatePlan(request connectteam.UserPlan) (connectteam.UserPlan, error)
-	GetUsersPlans() ([] connectteam.UserPlan, error)
-	SetConfirmed(id int) (error)
-	DeletePlan(id int) (error)
-
+	GetUsersPlans() ([]connectteam.UserPlan, error)
+	SetConfirmed(id int) error
+	DeletePlan(id int) error
 }
 
 type Topic interface {
 	CreateTopic(topic connectteam.Topic) (int, error)
 	GetAll() ([]connectteam.Topic, error)
-	DeleteTopic(id int) (error)
-	UpdateTopic(id int, title string) (error)
+	DeleteTopic(id int) error
+	UpdateTopic(id int, title string) error
+}
+
+type Question interface {
+	CreateQuestion(content string, topicId int) (int, error)
+	DeleteQuestion(id int) error
+	GetAll(topicId int) ([]connectteam.Question, error)
+	UpdateQuestion(content string, id int) (connectteam.Question, error)
 }
 
 type Repository struct {
@@ -63,12 +69,15 @@ type Repository struct {
 	User
 	Plan
 	Topic
+	Question
 }
+
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
-		User: NewUserPostgres(db),
-		Plan: NewPlanPostgres(db),
-		Topic: NewTopicPostgres(db), 
+		User:          NewUserPostgres(db),
+		Plan:          NewPlanPostgres(db),
+		Topic:         NewTopicPostgres(db),
+		Question:      NewQuestionPostgres(db),
 	}
 }

@@ -2,28 +2,28 @@ package handler
 
 import (
 	"errors"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
-	"github.com/gin-gonic/gin"
 )
 
 const (
 	authorizationHeader = "Authorization"
-	userCtx = "userId"
-	accessCtx = "access"
-
+	userCtx             = "userId"
+	accessCtx           = "access"
 )
-func (h* Handler) userIdentity(c *gin.Context) {
+
+func (h *Handler) userIdentity(c *gin.Context) {
 	header := c.GetHeader(authorizationHeader)
 	if header == "" {
 		newErrorResponse(c, http.StatusUnauthorized, "empty auth header")
-		return 
+		return
 	}
 
 	headerParts := strings.Split(header, " ")
 	if len(headerParts) != 2 {
 		newErrorResponse(c, http.StatusUnauthorized, "invalid auth header")
-		return 
+		return
 	}
 
 	userId, access, err := h.services.Authorization.ParseToken(headerParts[1])
@@ -55,10 +55,10 @@ func getUserAccess(c *gin.Context) (string, error) {
 		return "", errors.New("user access not found")
 	}
 
-	access_string, ok := access.(string)
+	accessString, ok := access.(string)
 	if !ok {
 		return "", errors.New("user access is of invalid type")
 	}
 
-	return access_string, nil
+	return accessString, nil
 }
