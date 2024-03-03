@@ -3,6 +3,11 @@ package service
 import (
 	connectteam "ConnectTeam"
 	"ConnectTeam/pkg/repository"
+	"ConnectTeam/pkg/repository/filestorage"
+	"ConnectTeam/pkg/service/uploader"
+	"context"
+	"io"
+	//	"io"
 )
 
 type Authorization interface {
@@ -53,20 +58,26 @@ type Question interface {
 	UpdateQuestion(content string, id int) (connectteam.Question, error)
 }
 
+type Uploader interface {
+	Upload(ctx context.Context, file io.Reader, size int64, contentType string) (string, error)
+}
+
 type Service struct {
 	Authorization
 	User
 	Plan
 	Topic
 	Question
+	Uploader
 }
 
-func NewService(repos *repository.Repository) *Service {
+func NewService(repos *repository.Repository, fileStorage *filestorage.FileStorage) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos.Authorization),
 		User:          NewUserService(repos.User),
 		Plan:          NewPlanService(repos.Plan),
 		Topic:         NewTopicService(repos.Topic),
 		Question:      NewQuestionService(repos.Question),
+		Uploader:      uploader.NewUploader(fileStorage),
 	}
 }

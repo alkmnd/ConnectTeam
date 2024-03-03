@@ -4,7 +4,10 @@ import (
 	connectteam "ConnectTeam"
 	"ConnectTeam/pkg/handler"
 	"ConnectTeam/pkg/repository"
+	"ConnectTeam/pkg/repository/filestorage"
 	"ConnectTeam/pkg/service"
+	"github.com/minio/minio-go"
+	"log"
 	"net/http"
 
 	"os"
@@ -27,10 +30,10 @@ func main() {
 	}
 
 	db, err := repository.NewPostgresDB(repository.Config{
-		Host: viper.GetString("db.host"), 
-		Port:  viper.GetString("db.port"), 
-		Username:  viper.GetString("db.username"),
-		DBName:  viper.GetString("db.dbname"), 
+		Host:     viper.GetString("db.host"),
+		Port:     viper.GetString("db.port"),
+		Username: viper.GetString("db.username"),
+		DBName:   viper.GetString("db.dbname"),
 		SSLMode:  viper.GetString("db.sslmode"),
 		Password: os.Getenv("DB_PASSWORD"),
 	})
@@ -39,15 +42,28 @@ func main() {
 		logrus.Fatalf("error %s", err.Error())
 	}
 
+	accessKey := os.Getenv("ACCESS_KEY")
+	secretKey := os.Getenv("SECRET_KEY")
+
+	client, err := minio.New(viper.GetString("storage.endpoint"), accessKey, secretKey, false)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fileStorage := filestorage.NewFileStorage(
+		client,
+		viper.GetString("storage.bucket"),
+		viper.GetString("storage.endpoint"),
+	)
 
 	repos := repository.NewRepository(db)
-	services := service.NewService(repos)
+	services := service.NewService(repos, fileStorage)
 	handlers := handler.NewHandler(services)
-	
-	http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
-        handlers.Echo(w, r)
-    })
-    go http.ListenAndServe(":8080", nil)
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		handlers.Echo(w, r)
+	})
+	go http.ListenAndServe(":8080", nil)
 
 	srv := new(connectteam.Server)
 	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
@@ -55,12 +71,8 @@ func main() {
 	}
 }
 
-
 func initConfig() error {
 	viper.AddConfigPath("configs")
 	viper.SetConfigName("config")
 	return viper.ReadInConfig()
 }
-
-
-

@@ -13,7 +13,7 @@ const (
 
 const (
 	codesTable        = "verification_codes"
-	plansUsersTable   = "plans_users"
+	plansUsersTable   = "active_subscriptions"
 	planRequestsTable = "plan_requests"
 	topicsTable       = "topics"
 	questionsTable    = "questions"

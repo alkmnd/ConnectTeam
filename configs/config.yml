@@ -7,3 +7,7 @@ db:
   port: "5436"
   dbname: "postgres"
   sslmode: "disable"
+
+storage:
+  endpoint: "localstack:4572"
+  bucket: "file-storage"
