@@ -2,13 +2,12 @@ package handler
 
 import (
 	connectteam "ConnectTeam"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
-
-	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) createTopic(c *gin.Context) {
+func (h *Handler) createQuestion(c *gin.Context) {
 	_, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -26,13 +25,20 @@ func (h *Handler) createTopic(c *gin.Context) {
 		return
 	}
 
-	var input connectteam.Topic
+	var input connectteam.Question
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	id, err := h.services.Topic.CreateTopic(input)
+	topicId, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "Invalid id param")
+		return
+	}
+
+	id, err := h.services.Question.CreateQuestion(input.Content, topicId)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -43,40 +49,7 @@ func (h *Handler) createTopic(c *gin.Context) {
 	})
 }
 
-type getTopicsResponse struct {
-	Data []connectteam.Topic `json:"data"`
-}
-
-func (h *Handler) getAllTopics(c *gin.Context) {
-	_, err := getUserId(c)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	// access, err := getUserAccess(c)
-	// if err != nil {
-	// 	newErrorResponse(c, http.StatusInternalServerError, err.Error())
-	// 	return
-	// }
-
-	// if access != string(connectteam.Admin) && access != string(connectteam.Superadmin)  {
-	// 	newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
-	// 	return
-	// }
-
-	topics, err := h.services.Topic.GetAll()
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	c.JSON(http.StatusOK, getTopicsResponse{
-		Data: topics,
-	})
-}
-
-func (h *Handler) deleteTopic(c *gin.Context) {
-
+func (h *Handler) deleteQuestion(c *gin.Context) {
 	_, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -101,19 +74,42 @@ func (h *Handler) deleteTopic(c *gin.Context) {
 		return
 	}
 
-	if err := h.services.DeleteTopic(id); err != nil {
-		newErrorResponse(c, http.StatusForbidden, err.Error())
+	err = h.services.Question.DeleteQuestion(id)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	c.JSON(http.StatusOK, statusResponse{"ok"})
 }
 
-type updateTopicInput struct {
-	Title string `json:"title" binding:"required"`
+type getQuestionsResponse struct {
+	Data []connectteam.Question `json:"data"`
 }
 
-func (h *Handler) updateTopic(c *gin.Context) {
+func (h *Handler) getAllQuestions(c *gin.Context) {
+	_, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	topicId, err := strconv.Atoi(c.Param("id"))
+	questions, err := h.services.Question.GetAll(topicId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, getQuestionsResponse{
+		Data: questions,
+	})
+}
+
+type updateQuestionInput struct {
+	NewContent string `json:"new_content" binding:"required"`
+}
+
+func (h *Handler) updateQuestion(c *gin.Context) {
 	_, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -138,23 +134,27 @@ func (h *Handler) updateTopic(c *gin.Context) {
 		return
 	}
 
-	var input updateTopicInput
+	var input updateQuestionInput
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if len([]rune(input.Title)) < 3 {
+	if len([]rune(input.NewContent)) < 0 {
 		newErrorResponse(c, http.StatusInternalServerError, "Incorrect title")
 		return
 	}
 
-	err = h.services.Topic.UpdateTopic(id, input.Title)
+	q, err := h.services.Question.UpdateQuestion(input.NewContent, id)
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, statusResponse{"ok"})
+	c.JSON(http.StatusOK, connectteam.Question{
+		Id:      q.Id,
+		TopicId: q.TopicId,
+		Content: q.Content,
+	})
 }

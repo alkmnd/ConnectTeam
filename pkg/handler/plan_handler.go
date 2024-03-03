@@ -12,23 +12,23 @@ func (h *Handler) getUserPlan(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return 
+		return
 	}
 
 	userPlan, err := h.services.Plan.GetUserPlan(id)
 
 	if err != nil {
 		c.Status(204)
-		return 
+		return
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"plan_type":userPlan.PlanType, 
-		"user_id":userPlan.UserId,
-		"holder_id":userPlan.HolderId, 
-		"expiry_date":userPlan.ExpiryDate,
-		"plan_access":userPlan.PlanAccess,
-		"confirmed":userPlan.Confirmed,
+		"plan_type":   userPlan.PlanType,
+		"user_id":     userPlan.UserId,
+		"holder_id":   userPlan.HolderId,
+		"expiry_date": userPlan.ExpiryDate,
+		"plan_access": userPlan.PlanAccess,
+		"confirmed":   userPlan.Confirmed,
 	})
 }
 
@@ -37,13 +37,13 @@ func (h *Handler) selectPlan(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return 
+		return
 	}
 	println(input.Confirmed)
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return 
+		return
 	}
 
 	input.UserId = id
@@ -58,12 +58,12 @@ func (h *Handler) selectPlan(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"user_id": plan.UserId,
-		"holder_id": plan.HolderId, 
-		"plan_type": plan.PlanType, 
-		"plan_access": plan.PlanAccess, 
-		"confirmed": plan.Confirmed, 
-		"duration": plan.Duration,
+		"user_id":     plan.UserId,
+		"holder_id":   plan.HolderId,
+		"plan_type":   plan.PlanType,
+		"plan_access": plan.PlanAccess,
+		"confirmed":   plan.Confirmed,
+		"duration":    plan.Duration,
 		"expiry_date": plan.ExpiryDate,
 	})
 }
@@ -76,26 +76,26 @@ func (h *Handler) getUsersPlans(c *gin.Context) {
 	_, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return 
+		return
 	}
 
 	access, err := getUserAccess(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return 
+		return
 	}
 
-	if access != string(connectteam.Admin) && access != string(connectteam.Superadmin) {
+	if access != string(connectteam.Admin) && access != string(connectteam.SuperAdmin) {
 		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
-		return 
+		return
 	}
-	
+
 	list, err := h.services.Plan.GetUsersPlans()
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return 
+		return
 	}
-	c.JSON(http.StatusOK, getUsersPlansResponse {
+	c.JSON(http.StatusOK, getUsersPlansResponse{
 		Data: list,
 	})
 }
@@ -115,9 +115,9 @@ func (h *Handler) confirmPlan(c *gin.Context) {
 		return
 	}
 
-	if access != string(connectteam.Admin) && access != string(connectteam.Superadmin) {
+	if access != string(connectteam.Admin) && access != string(connectteam.SuperAdmin) {
 		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
-		return 
+		return
 	}
 
 	id, err := strconv.Atoi(c.Param("id"))
@@ -137,15 +137,16 @@ func (h *Handler) confirmPlan(c *gin.Context) {
 }
 
 type newPlanInput struct {
-	PlanType string `json:"plan_type" binding:"required"`
+	PlanType   string `json:"plan_type" binding:"required"`
 	ExpiryDate string `json:"expiry_date" binding:"required"`
 }
+
 func (h *Handler) setPlan(c *gin.Context) {
 	_, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
-	} 
+	}
 
 	access, err := getUserAccess(c)
 	if err != nil {
@@ -153,7 +154,7 @@ func (h *Handler) setPlan(c *gin.Context) {
 		return
 	}
 
-	if access != string(connectteam.Admin) && access != string(connectteam.Superadmin)  {
+	if access != string(connectteam.Admin) && access != string(connectteam.SuperAdmin) {
 		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
 		return
 	}
@@ -162,15 +163,15 @@ func (h *Handler) setPlan(c *gin.Context) {
 	if err := c.BindJSON(&input); err != nil {
 		println("1")
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return 
+		return
 	}
 
-	user_id, err := strconv.Atoi(c.Param("user_id"))
+	userId, err := strconv.Atoi(c.Param("user_id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "Invalid id param")
 		return
 	}
-	err = h.services.SetPlanByAdmin(user_id, input.PlanType, input.ExpiryDate)
+	err = h.services.SetPlanByAdmin(userId, input.PlanType, input.ExpiryDate)
 	println(input.PlanType)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -185,7 +186,7 @@ func (h *Handler) deleteUserPlan(c *gin.Context) {
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
-	} 
+	}
 
 	access, err := getUserAccess(c)
 	if err != nil {
@@ -193,7 +194,7 @@ func (h *Handler) deleteUserPlan(c *gin.Context) {
 		return
 	}
 
-	if access != string(connectteam.Admin) && access != string(connectteam.Superadmin)  {
+	if access != string(connectteam.Admin) && access != string(connectteam.SuperAdmin) {
 		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
 		return
 	}

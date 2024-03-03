@@ -76,6 +76,15 @@ go run cmd/main.go
 
    5.4. [Update Topic](#update-topic)
 
+6. [Question](#question)
+   
+   6.1. [Create Question](#q_create)
+
+   6.2. [Delete Question](q_delete)
+
+   6.3. [Question List](q_list)
+   
+   6.4. [Update Question](#q_update)
    
 
 
@@ -714,7 +723,7 @@ status(string): "ok" if there is no error.
     "status": "ok"
 }
 ```
-
+<a id='update-topic'></a>
 #### 5.4. Update Topic 
 
 **Method:** `PATCH`
@@ -745,3 +754,139 @@ status(string): "ok" if there is no error.
     "status": "ok"
 }
 ```
+<a id='question'></a>
+### 6. Question
+
+<a id='q_create'></a>
+#### 6.1. Create Question 
+
+**Method:** `POST`
+
+**Endpoint:**  `topics/:topic_id/questions/`
+
+**Description:**  Creates new question in the topic with topic_id. 
+
+**URL Parameters:**
+* topic_id(int): Topic id.
+
+**Request Parameters**
+
+* content (string): Content of the question.
+
+**Response Parameters:** 
+* id (int): Id of the created question.
+
+**Example Request Body:**
+```bash
+{
+   "content":"New question?"
+}
+```
+
+**Example Response:**
+```bash
+{
+   "id": 1
+}
+```
+
+<a id='q_delete'></a>
+#### 6.2. Delete Question
+
+**Method:** `DELETE`
+
+**Endpoint:**  `/questions/:id`
+
+**Description:**  Deletes question. 
+
+**URL Parameters:**
+* id(int): Question id.
+
+
+**Response Parameters:** 
+* status (int): ok, if there is no error.
+
+
+**Example Response:**
+```bash
+{
+   "status": "ok"
+}
+```
+
+<a id='q_list'></a>
+#### 6.3. Question List
+
+**Method:** `GET`
+
+**Endpoint:**  `topics/:topic_id/questions/`
+
+**Description:**  Returns lisy of questions. 
+
+**URL Parameters:**
+* topic_id(int): Topic id.
+
+
+**Response Parameters:** 
+* data(list): List of questions.
+
+
+**Example Response:**
+```bash
+{
+    "data": [
+        {
+            "id": 2,
+            "topic_id": 1,
+            "content": "Q1"
+        },
+        {
+            "id": 3,
+            "topic_id": 1,
+            "content": "Q2"
+        }
+    ]
+}
+```
+
+
+
+<a id='q_update'></a>
+#### 6.4. Update Question
+
+**Method:** `PATCH`
+
+**Endpoint:**  `/questions/:id`
+
+**Description:**  Returns lisy of questions. 
+
+**Request Parameters:**
+* new_content (string)
+
+**URL Parameters:**
+* id(int): Question id.
+
+
+**Response Parameters:** 
+* id (int)
+* topic_id (int)
+* content (string)
+
+**Example Request Body:**
+``` bash
+{
+    "new_content": "New content???"
+}
+```
+
+**Example Response:**
+``` bash
+{
+    "id": 2,
+    "topic_id": 1,
+    "content": "New content???"
+}
+```
+
+
+

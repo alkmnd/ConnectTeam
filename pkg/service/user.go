@@ -3,30 +3,29 @@ package service
 import (
 	connectteam "ConnectTeam"
 	"ConnectTeam/pkg/repository"
+	"crypto/rand"
 	"errors"
 	"log"
-	"crypto/rand"
 	"math/big"
-
 )
-
 
 type UserService struct {
 	repo repository.User
-
 }
+
 func NewUserService(repo repository.User) *UserService {
 	return &UserService{repo: repo}
 }
 
 func (s *UserService) GetUserById(id int) (connectteam.UserPublic, error) {
 	user, err := s.repo.GetUserById(id)
-	return user, err 
+	return user, err
 }
+
 const (
-	letterBytes   = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	symbolBytes   = "!@#$%^&*()_-+=<>?"
-	digitBytes    = "0123456789"
+	letterBytes    = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	symbolBytes    = "!@#$%^&*()_-+=<>?"
+	digitBytes     = "0123456789"
 	minPasswordLen = 8
 )
 
@@ -56,11 +55,11 @@ func randomCharacters(characters string) string {
 	}
 	return result
 }
-func (s *UserService) RestorePassword(email string) (error) {
+func (s *UserService) RestorePassword(email string) error {
 
 	ifExists, err := s.repo.CheckIfExist(email)
 	if err != nil {
-		return err 
+		return err
 	}
 
 	if !ifExists {
@@ -76,18 +75,18 @@ func (s *UserService) RestorePassword(email string) (error) {
 	println(email)
 
 	if err := s.repo.UpdatePasswordWithEmail(generatePasswordHash(password), email); err != nil {
-		return err 
+		return err
 	}
 
 	msg := "Восстановление пароля\n\n" + "Ваш новый пароль: " + password
 	if err := SendMessage(email, msg); err != nil {
-		return err 
+		return err
 	}
 
 	return nil
 }
 
-func (s *UserService) RestorePasswordAuthorized(id int) (error) {
+func (s *UserService) RestorePasswordAuthorized(id int) error {
 	var userCredentials connectteam.UserCredentials
 	userCredentials, err := s.repo.GetUserCredentials(id)
 	if err != nil {
@@ -100,20 +99,19 @@ func (s *UserService) RestorePasswordAuthorized(id int) (error) {
 		return err
 	}
 
-
 	if err = s.repo.UpdatePasswordWithId(generatePasswordHash(password), id); err != nil {
 		return err
 	}
 
 	msg := "Восстановление пароля\n\n" + "Ваш новый пароль: " + password
 	if err := SendMessage(userCredentials.Email, msg); err != nil {
-		return err 
+		return err
 	}
 
 	return nil
 }
 
-func (s *UserService) UpdateAccessWithId(id int, access connectteam.AccessLevel) (error) {
+func (s *UserService) UpdateAccessWithId(id int, access connectteam.AccessLevel) error {
 	if err := s.repo.UpdateAccessWithId(id, string(access)); err != nil {
 		return err
 	}
@@ -124,7 +122,7 @@ func (s *UserService) GetUsersList() ([]connectteam.UserPublic, error) {
 	return s.repo.GetUsersList()
 }
 
-func (s *UserService) UpdatePassword(old_password string, new_password string, id int) (error) {
+func (s *UserService) UpdatePassword(old_password string, new_password string, id int) error {
 	db_password, err := s.repo.GetPassword(id)
 	if err != nil {
 		return err
@@ -137,7 +135,7 @@ func (s *UserService) UpdatePassword(old_password string, new_password string, i
 	return s.repo.UpdatePasswordWithId(generatePasswordHash(new_password), id)
 }
 
-func (s *UserService) CheckEmailOnChange(id int, email string, password string) (error) {
+func (s *UserService) CheckEmailOnChange(id int, email string, password string) error {
 	ifEmailExist, err := s.repo.CheckIfExist(email)
 	if err != nil {
 		return err
@@ -161,10 +159,6 @@ func (s *UserService) CheckEmailOnChange(id int, email string, password string) 
 
 	}
 
-
-	
-
-
 	code, err := CreateVerificationCode(id, email)
 
 	if err != nil {
@@ -184,7 +178,7 @@ func (s *UserService) CheckEmailOnChange(id int, email string, password string) 
 	return nil
 }
 
-func (s *UserService) UpdateEmail(id int, newEmail string, code string) (error) {
+func (s *UserService) UpdateEmail(id int, newEmail string, code string) error {
 	if newEmail == "" {
 		return errors.New("invalid email")
 	}
@@ -205,29 +199,29 @@ func (s *UserService) UpdateEmail(id int, newEmail string, code string) (error) 
 	return s.repo.UpdateEmail(newEmail, id)
 }
 
-func (s *UserService) DeleteVerificationCode(id int, code string) (error) {
+func (s *UserService) DeleteVerificationCode(id int, code string) error {
 	return s.repo.DeleteVerificationCode(id, code)
 }
 
-func (s *UserService) UpdatePersonalData(id int, user connectteam.UserPersonalInfo) (error) {
+func (s *UserService) UpdatePersonalData(id int, user connectteam.UserPersonalInfo) error {
 	if user.FirstName != "" {
-		err := s.repo.UpdateUserFirstName(id, user.FirstName) 
+		err := s.repo.UpdateUserFirstName(id, user.FirstName)
 		if err != nil {
 			return err
 		}
 	}
 
 	if user.SecondName != "" {
-		err := s.repo.UpdateUserSecondName(id, user.SecondName) 
+		err := s.repo.UpdateUserSecondName(id, user.SecondName)
 		if err != nil {
 			return err
 		}
 	}
 
-	return s.repo.UpdateUserDescription(id, user.Description) 
+	return s.repo.UpdateUserDescription(id, user.Description)
 }
 
-func (s *UserService) UpdateCompanyData(id int, company connectteam.UserCompanyData) (error) {
+func (s *UserService) UpdateCompanyData(id int, company connectteam.UserCompanyData) error {
 	err := s.repo.UpdateCompanyName(id, company.CompanyName)
 	if err != nil {
 		return err

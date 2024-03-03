@@ -1,8 +1,8 @@
 package repository
 
 import (
-	_ "github.com/lib/pq"
 	"fmt"
+	_ "github.com/lib/pq"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -12,23 +12,24 @@ const (
 )
 
 const (
-	codesTable = "verification_codes"
-	plansUsersTable = "plans_users"
+	codesTable        = "verification_codes"
+	plansUsersTable   = "active_subscriptions"
 	planRequestsTable = "plan_requests"
-	topicsTable = "topics"
+	topicsTable       = "topics"
+	questionsTable    = "questions"
 )
 
 type Config struct {
-	Host string 
-	Port string 
-	Username string 
-	Password string 
-	DBName string 
-	SSLMode string 
+	Host     string
+	Port     string
+	Username string
+	Password string
+	DBName   string
+	SSLMode  string
 }
 
 func NewPostgresDB(cfg Config) (*sqlx.DB, error) {
-	db, err := sqlx.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s", 
+	db, err := sqlx.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.Username, cfg.DBName, cfg.Password, cfg.SSLMode))
 	if err != nil {
 		return nil, err
