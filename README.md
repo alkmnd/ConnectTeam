@@ -488,23 +488,25 @@ Note: Use confirmation code to verificate user
 **Description:** Returns current user's plan
 
 **Response:**
-
+* id (int): Id of the subscription.
 * expiry_date (string): Expiration date of the plan.
 * holder_id (int): User who owns the plan.
 * user_id (int): User who is participant in the plan (for 'basic' and 'advanced' who owns the plan).
 * plan_access (string): User access in the plan ('holder' or 'additional')
 * plan_type (string): Type of the plan.
+* status(string): Plan status ('active', 'on_confirm', 'expired').
 
 
 **Example Response:**
 ``` bash
 {
+      "id": 1,
     "expiry_date": "2024-02-01T12:34:56Z",
     "holder_id": 1,
     "plan_access": "holder",
     "plan_type": "basic",
     "user_id": 1,
-    "confirmed": true
+    "status": "on_confirm"
 }
 ```
 <a id="new-plan"></a>
@@ -529,7 +531,7 @@ Note: Use confirmation code to verificate user
 * plan_access(string): User access in the plan ('holder' or 'additional')
 * duration(int): The number of days the user can use the plan.
 * expiry_date(string):  Expiration date of the plan.
-* confirmed(bool): If admin confirmed the purchase.
+* status(string): Status of the plan.
 
 **Example Body:**
 ``` bash
@@ -542,7 +544,8 @@ Note: Use confirmation code to verificate user
 **Example Response:**
 ``` bash
 {
-    "confirmed": false,
+      "id": 1,
+    "atatus": on_confirm,
     "duration": 30,
     "expiry_date": "0001-01-01T00:00:00Z",
     "holder_id": 1,
@@ -558,7 +561,7 @@ Note: Use confirmation code to verificate user
 
 **Method:** `GET`
 
-**Endpoint:** `/plans/`
+**Endpoint:** `/plans/active`
 
 **Description:** Returns list of users and their plans.
 
@@ -571,13 +574,14 @@ Note: Use confirmation code to verificate user
 {
     "data": [
         {
+            "id": 1,
             "plan_type": "premium",
             "user_id": 1,
             "holder_id": 1,
             "expiry_date": "0001-01-01T00:00:00Z",
             "duration": 30,
             "plan_access": "holder",
-            "confirmed": false
+            "status": "active"
         }
     ]
 }
@@ -643,6 +647,69 @@ Note: Use confirmation code to verificate user
     "status": "ok"
 }
 ```
+
+#### 3.6. Get User Subscriptions
+
+**Method:** `GET`
+
+**Endpoint:** `/plans/`
+
+**Description:** Returns all user subscriptions.
+
+**Response:**
+
+* data(list): list of subscriptions.
+
+
+**Example Response:**
+``` bash
+{
+    "data": [
+        {
+            "id": 1,
+            "plan_type": "premium",
+            "user_id": 1,
+            "holder_id": 1,
+            "expiry_date": "0001-01-01T00:00:00Z",
+            "duration": 30,
+            "plan_access": "holder",
+            "status": "active"
+        }
+    ]
+}
+```
+
+#### 3.7. Get Trial 
+
+**Method:** `POST`
+
+**Endpoint:** `/plans/`
+
+**Description:** Creates user trial plan (subscription).
+
+**Response:**
+* plan_type(string): Type of plan the user uses.
+* user_id(int): User id.
+* holder_id(int): Who owns the plan.
+* plan_access(string): User access in the plan ('holder' or 'additional')
+* duration(int): The number of days the user can use the plan.
+* expiry_date(string):  Expiration date of the plan.
+* status(string): Status of the plan.
+
+**Example Response:**
+``` bash
+{
+   "id": 1,
+    "atatus": on_confirm,
+    "duration": 30,
+    "expiry_date": "0001-01-01T00:00:00Z",
+    "holder_id": 1,
+    "plan_access": "holder",
+    "plan_type": "basic",
+    "user_id": 1
+}
+```
+
 <a id='topic'></a>
 ### 5. Topic
 
