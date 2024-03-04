@@ -21,6 +21,7 @@ import (
 var upgrader = websocket.Upgrader{}
 
 func main() {
+	logrus.Println("2")
 	if err := initConfig(); err != nil {
 		logrus.Fatalf("error")
 	}
@@ -29,6 +30,11 @@ func main() {
 		logrus.Fatalf("error")
 	}
 
+	logrus.Println(viper.GetString("db.username"))
+	logrus.Println(viper.GetString("db.name"))
+	logrus.Println(viper.GetString("db.port"))
+	logrus.Println(viper.GetString("db.host"))
+	logrus.Println(os.Getenv("DB_PASSWORD"))
 	db, err := repository.NewPostgresDB(repository.Config{
 		Host:     viper.GetString("db.host"),
 		Port:     viper.GetString("db.port"),
@@ -39,6 +45,7 @@ func main() {
 	})
 
 	if err != nil {
+		logrus.Println("1")
 		logrus.Fatalf("error %s", err.Error())
 	}
 

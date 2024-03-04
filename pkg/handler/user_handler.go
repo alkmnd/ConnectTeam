@@ -2,6 +2,7 @@ package handler
 
 import (
 	connectteam "ConnectTeam"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -276,6 +277,7 @@ func (h *Handler) uploadProfileImage(c *gin.Context) {
 
 	file, fileHeader, err := c.Request.FormFile("file")
 	if err != nil {
+		log.Println("suka")
 		c.JSON(http.StatusBadRequest, &uploadResponse{
 			Status: "error",
 			Msg:    err.Error(),

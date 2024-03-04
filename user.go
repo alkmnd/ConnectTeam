@@ -64,14 +64,23 @@ func (pt *PlanType) Scan(value interface{}) error {
 }
 
 type UserPlan struct {
+	Id         int       `json:"id" db:"id"`
 	PlanType   string    `json:"plan_type" db:"plan_type"`
 	UserId     int       `json:"user_id" db:"user_id"`
 	HolderId   int       `json:"holder_id" db:"holder_id"`
 	ExpiryDate time.Time `json:"expiry_date" db:"expiry_date"`
 	Duration   int       `json:"duration" db:"duration"`
 	PlanAccess string    `json:"plan_access" db:"plan_access"`
-	Confirmed  bool      `json:"confirmed" db:"confirmed"`
+	Status     string    `json:"status" db:"status"`
 }
+
+const (
+	OnConfirm = "on_confirm"
+	Active    = "active"
+	Expired   = "expired"
+	Trial     = "trial"
+)
+
 type VerifyPhone struct {
 	PhoneNumber string `json:"phone_number" binding:"required"`
 }

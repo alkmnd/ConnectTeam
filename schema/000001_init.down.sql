@@ -1,10 +1,8 @@
-DROP TABLE IF EXISTS users;
-DROP TYPE IF EXISTS user_role;
-DROP TABLE IF EXISTS active_subscriptions;
-DROP TABLE IF EXISTS expired_subscriptions;
-DROP TABLE IF EXISTS plan_requests;
+DROP TABLE IF EXISTS subscriptions;
 DROP TYPE IF EXISTS plans;
 DROP TABLE IF EXISTS verification_codes;
-DROP TABLE IF EXISTS topics;
+DROP TABLE IF EXISTS users;
+DROP TYPE IF EXISTS user_role;
 DROP TABLE IF EXISTS questions;
+DROP TABLE IF EXISTS topics;
 DROP TYPE IF EXISTS access;

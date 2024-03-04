@@ -43,11 +43,14 @@ type User interface {
 }
 
 type Plan interface {
-	GetUserPlan(userId int) (connectteam.UserPlan, error)
+	GetUserActivePlan(userId int) (connectteam.UserPlan, error)
 	CreatePlan(request connectteam.UserPlan) (connectteam.UserPlan, error)
 	GetUsersPlans() ([]connectteam.UserPlan, error)
 	SetConfirmed(id int) error
 	DeletePlan(id int) error
+	SetExpiredStatus(id int) error
+	DeleteOnConfirmPlan(userId int) error
+	GetUserSubscriptions(userId int) ([]connectteam.UserPlan, error)
 }
 
 type Topic interface {
