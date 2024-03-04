@@ -17,7 +17,7 @@ func NewPlanPostgres(db *sqlx.DB) *PlanPostgres {
 
 func (r *PlanPostgres) GetUserActivePlan(userId int) (connectteam.UserPlan, error) {
 	var userPlan connectteam.UserPlan
-	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id=$1 AND status='active' or 'on_confirm'", plansUsersTable)
+	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id=$1 AND status='active' or status='on_confirm'", plansUsersTable)
 	err := r.db.Get(&userPlan, query, userId)
 
 	return userPlan, err
@@ -32,7 +32,7 @@ func (r *PlanPostgres) SetExpiredStatus(id int) error {
 }
 
 func (r *PlanPostgres) DeleteOnConfirmPlan(userId int) error {
-	query := fmt.Sprintf("DELETE FROM %s WHERE userId = $1 AND status='on_confirm'", plansUsersTable)
+	query := fmt.Sprintf("DELETE FROM %s WHERE user_id = $1 AND status='on_confirm'", plansUsersTable)
 	_, err := r.db.Exec(query, userId)
 
 	return err
@@ -53,7 +53,7 @@ func (r *PlanPostgres) GetUserSubscriptions(userId int) ([]connectteam.UserPlan,
 
 func (r *PlanPostgres) CreatePlan(request connectteam.UserPlan) (connectteam.UserPlan, error) {
 	query := fmt.Sprintf(`INSERT INTO %s (user_id, holder_id, expiry_date, duration, plan_access, 
-		status, plan_type) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (user_id) 
+		status, plan_type) VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING *`, plansUsersTable)
 
 	var userPlan connectteam.UserPlan

@@ -3,6 +3,7 @@ package service
 import (
 	"ConnectTeam"
 	"ConnectTeam/pkg/repository"
+	"errors"
 	"time"
 )
 
@@ -69,6 +70,10 @@ func (s *PlanService) CreatePlan(request connectteam.UserPlan) (userPlan connect
 		return s.repo.CreatePlan(request)
 	}
 
+	if request.Duration <= 0 {
+		return userPlan, errors.New("incorrect value of duration")
+	}
+
 	request.ExpiryDate = time.Time{}
 	request.Status = connectteam.OnConfirm
 	return s.repo.CreatePlan(request)
@@ -90,6 +95,10 @@ func (s *PlanService) SetPlanByAdmin(userId int, planType string, expiryDateStri
 
 	if err != nil {
 		return err
+	}
+
+	if !expiryDate.After(time.Now()) {
+		return errors.New("incorrect expiry date")
 	}
 
 	var userPlan = connectteam.UserPlan{
