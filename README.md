@@ -495,6 +495,7 @@ Note: Use confirmation code to verificate user
 * plan_access (string): User access in the plan ('holder' or 'additional')
 * plan_type (string): Type of the plan.
 * status(string): Plan status ('active', 'on_confirm', 'expired').
+* invitation_code (string)
 
 
 **Example Response:**
@@ -506,7 +507,8 @@ Note: Use confirmation code to verificate user
     "plan_access": "holder",
     "plan_type": "basic",
     "user_id": 1,
-    "status": "on_confirm"
+    "status": "on_confirm",
+   "invitation_code": "12345d78p0123G56"
 }
 ```
 <a id="new-plan"></a>
