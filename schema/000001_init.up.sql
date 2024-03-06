@@ -42,7 +42,7 @@ CREATE TABLE subscriptions
     expiry_date timestamp,
     duration int,
     plan_access varchar(256),
-    status status not null DEFAULT 'on_confirm'
+    status status not null DEFAULT 'on_confirm',
     invitation_code varchar(256) unique
 );
 
