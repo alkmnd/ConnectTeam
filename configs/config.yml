@@ -1,13 +1,12 @@
-port: "5432"
+port: "8000"
 
 db:
   username: "postgres"
-  password: "qwerty"
   host: "localhost"
   port: "5436"
   dbname: "postgres"
   sslmode: "disable"
 
 storage:
-  endpoint: "localstack:4572"
+  endpoint: "localstack:4563"
   bucket: "file-storage"

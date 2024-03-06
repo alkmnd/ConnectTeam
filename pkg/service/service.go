@@ -36,12 +36,19 @@ type User interface {
 }
 
 type Plan interface {
-	GetUserPlan(userId int) (connectteam.UserPlan, error)
+	GetUserActivePlan(userId int) (connectteam.UserPlan, error)
 	CreatePlan(request connectteam.UserPlan) (connectteam.UserPlan, error)
 	GetUsersPlans() ([]connectteam.UserPlan, error)
 	ConfirmPlan(id int) error
 	SetPlanByAdmin(userId int, planType string, expiryDateString string) error
 	DeletePlan(id int) error
+	CheckIfSubscriptionExists(userId int) (bool, error)
+	CreateTrialPlan(userId int) (userPlan connectteam.UserPlan, err error)
+	GetUserSubscriptions(userId int) ([]connectteam.UserPlan, error)
+	GetHolderWithInvitationCode(code string) (id int, err error)
+	AddUserToAdvanced(holderPlan connectteam.UserPlan, userId int) (userPlan connectteam.UserPlan, err error)
+	GetMembers(code string) ([]connectteam.UserPublic, error)
+	DeleteUserFromSub(id int) error
 }
 
 type Topic interface {

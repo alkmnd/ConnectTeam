@@ -11,11 +11,11 @@ type User struct {
 	Id    int    `json:"id" db:"id"`
 	Email string `json:"email" db:"email"`
 	// PhoneNumber string `json:"phone_number" db:"phone_number"`
-	FirstName   string `json:"first_name" db:"first_name" binding:"required"`
-	SecondName  string `json:"second_name" db:"second_name" binding:"required"`
-	Password    string `json:"password" binding:"required"`
-	Is_verified bool   `json:"-" db:"is_verified"`
-	Access      string `json:"access" db:"access"`
+	FirstName  string `json:"first_name" db:"first_name" binding:"required"`
+	SecondName string `json:"second_name" db:"second_name" binding:"required"`
+	Password   string `json:"password" binding:"required"`
+	IsVerified bool   `json:"-" db:"is_verified"`
+	Access     string `json:"access" db:"access"`
 }
 type UserCredentials struct {
 	Email        string `json:"email" db:"email"`
@@ -64,14 +64,24 @@ func (pt *PlanType) Scan(value interface{}) error {
 }
 
 type UserPlan struct {
-	PlanType   string    `json:"plan_type" db:"plan_type"`
-	UserId     int       `json:"user_id" db:"user_id"`
-	HolderId   int       `json:"holder_id" db:"holder_id"`
-	ExpiryDate time.Time `json:"expiry_date" db:"expiry_date"`
-	Duration   int       `json:"duration" db:"duration"`
-	PlanAccess string    `json:"plan_access" db:"plan_access"`
-	Confirmed  bool      `json:"confirmed" db:"confirmed"`
+	Id             int       `json:"id,omitempty" db:"id"`
+	PlanType       string    `json:"plan_type,omitempty" db:"plan_type"`
+	UserId         int       `json:"user_id,omitempty" db:"user_id"`
+	HolderId       int       `json:"holder_id,omitempty" db:"holder_id"`
+	ExpiryDate     time.Time `json:"expiry_date,omitempty" db:"expiry_date"`
+	Duration       int       `json:"duration,omitempty" db:"duration"`
+	PlanAccess     string    `json:"plan_access,omitempty" db:"plan_access"`
+	Status         string    `json:"status,omitempty" db:"status"`
+	InvitationCode string    `json:"invitation_code,omitempty" db:"invitation_code"`
 }
+
+const (
+	OnConfirm = "on_confirm"
+	Active    = "active"
+	Expired   = "expired"
+	Trial     = "trial"
+)
+
 type VerifyPhone struct {
 	PhoneNumber string `json:"phone_number" binding:"required"`
 }

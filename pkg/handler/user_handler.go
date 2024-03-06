@@ -2,7 +2,9 @@ package handler
 
 import (
 	connectteam "ConnectTeam"
+	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,6 +40,27 @@ func (h *Handler) getCurrentUser(c *gin.Context) {
 		"company_url":   user.CompanyURL,
 		"company_logo":  user.CompanyLogo,
 		"profile_image": user.ProfileImage,
+	})
+}
+
+func (h *Handler) getUserById(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+	var user connectteam.UserPublic
+	user, err = h.services.User.GetUserById(id)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"id":          id,
+		"email":       user.Email,
+		"first_name":  user.FirstName,
+		"second_name": user.SecondName,
 	})
 }
 
@@ -276,6 +299,7 @@ func (h *Handler) uploadProfileImage(c *gin.Context) {
 
 	file, fileHeader, err := c.Request.FormFile("file")
 	if err != nil {
+		log.Println("suka")
 		c.JSON(http.StatusBadRequest, &uploadResponse{
 			Status: "error",
 			Msg:    err.Error(),

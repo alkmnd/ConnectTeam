@@ -4,31 +4,41 @@ import (
 	connectteam "ConnectTeam"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) getUserPlan(c *gin.Context) {
+func (h *Handler) getUserActivePlan(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	userPlan, err := h.services.Plan.GetUserPlan(id)
+	userPlan, err := h.services.Plan.GetUserActivePlan(id)
 
 	if err != nil {
 		c.Status(204)
 		return
 	}
 
+	var invitationCode string
+
+	if userPlan.PlanType == "premium" &&
+		userPlan.Status == connectteam.Active {
+		invitationCode = userPlan.InvitationCode
+	}
+
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"plan_type":   userPlan.PlanType,
-		"user_id":     userPlan.UserId,
-		"holder_id":   userPlan.HolderId,
-		"expiry_date": userPlan.ExpiryDate,
-		"plan_access": userPlan.PlanAccess,
-		"confirmed":   userPlan.Confirmed,
+		"id":              userPlan.Id,
+		"plan_type":       userPlan.PlanType,
+		"user_id":         userPlan.UserId,
+		"holder_id":       userPlan.HolderId,
+		"expiry_date":     userPlan.ExpiryDate,
+		"plan_access":     userPlan.PlanAccess,
+		"status":          userPlan.Status,
+		"invitation_code": invitationCode,
 	})
 }
 
@@ -39,7 +49,6 @@ func (h *Handler) selectPlan(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	println(input.Confirmed)
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
@@ -49,6 +58,8 @@ func (h *Handler) selectPlan(c *gin.Context) {
 	input.UserId = id
 	input.HolderId = id
 	input.PlanAccess = "holder"
+	input.Status = connectteam.OnConfirm
+	input.ExpiryDate = time.Time{}
 
 	plan, err := h.services.CreatePlan(input)
 
@@ -58,11 +69,12 @@ func (h *Handler) selectPlan(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
+		"id":          plan.Id,
 		"user_id":     plan.UserId,
 		"holder_id":   plan.HolderId,
 		"plan_type":   plan.PlanType,
 		"plan_access": plan.PlanAccess,
-		"confirmed":   plan.Confirmed,
+		"status":      plan.Status,
 		"duration":    plan.Duration,
 		"expiry_date": plan.ExpiryDate,
 	})
@@ -98,6 +110,29 @@ func (h *Handler) getUsersPlans(c *gin.Context) {
 	c.JSON(http.StatusOK, getUsersPlansResponse{
 		Data: list,
 	})
+}
+
+type getUserSubscriptionsResponse struct {
+	Data []connectteam.UserPlan `json:"data"`
+}
+
+func (h *Handler) getUserSubscriptions(c *gin.Context) {
+	id, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	plans, err := h.services.Plan.GetUserSubscriptions(id)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, getUserSubscriptionsResponse{
+		Data: plans,
+	})
+
 }
 
 func (h *Handler) confirmPlan(c *gin.Context) {
@@ -139,6 +174,42 @@ func (h *Handler) confirmPlan(c *gin.Context) {
 type newPlanInput struct {
 	PlanType   string `json:"plan_type" binding:"required"`
 	ExpiryDate string `json:"expiry_date" binding:"required"`
+}
+
+func (h *Handler) getTrial(c *gin.Context) {
+	id, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	subscriptionExists, err := h.services.Plan.CheckIfSubscriptionExists(id)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if subscriptionExists {
+		newErrorResponse(c, http.StatusForbidden, err.Error())
+		return
+	}
+
+	plan, err := h.services.Plan.CreateTrialPlan(id)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"id":          plan.Id,
+		"user_id":     plan.UserId,
+		"holder_id":   plan.HolderId,
+		"plan_type":   plan.PlanType,
+		"plan_access": plan.PlanAccess,
+		"status":      plan.Status,
+		"duration":    plan.Duration,
+		"expiry_date": plan.ExpiryDate,
+	})
+
 }
 
 func (h *Handler) setPlan(c *gin.Context) {
@@ -209,6 +280,134 @@ func (h *Handler) deleteUserPlan(c *gin.Context) {
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+	}
+
+	c.JSON(http.StatusOK, statusResponse{"ok"})
+}
+
+func (h *Handler) addUserToPlan(c *gin.Context) {
+	id, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	code := c.Param("code")
+	holderId, err := h.services.GetHolderWithInvitationCode(code)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if holderId == 0 {
+		newErrorResponse(c, http.StatusNotFound, "incorrect invitation code")
+	}
+	holderPlan, err := h.services.GetUserActivePlan(holderId)
+	if holderPlan.Status != connectteam.Active {
+		newErrorResponse(c, http.StatusForbidden, "invitor subscription is not active")
+	}
+
+	members, err := h.services.GetMembers(code)
+	if len(members) == 3 {
+		newErrorResponse(c, http.StatusForbidden, "max number of members")
+	}
+
+	// добавить проверку на количество участников
+
+	plan, err := h.services.AddUserToAdvanced(holderPlan, id)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"id":          plan.Id,
+		"user_id":     plan.UserId,
+		"holder_id":   plan.HolderId,
+		"plan_type":   plan.PlanType,
+		"plan_access": plan.PlanAccess,
+		"status":      plan.Status,
+		"duration":    plan.Duration,
+		"expiry_date": plan.ExpiryDate,
+	})
+}
+
+func (h *Handler) validateInvitationCode(c *gin.Context) {
+	_, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	code := c.Param("code")
+	id, err := h.services.GetHolderWithInvitationCode(code)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if id == 0 {
+		newErrorResponse(c, http.StatusNotFound, "incorrect invitation code")
+	}
+
+	var userPlan connectteam.UserPlan
+	userPlan, err = h.services.Plan.GetUserActivePlan(id)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if userPlan.Status != connectteam.Active {
+		newErrorResponse(c, http.StatusForbidden, "subscription is not active")
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"holder_id": id,
+	})
+}
+
+type getMembersResponse struct {
+	Data []connectteam.UserPublic `json:"data"`
+}
+
+func (h *Handler) getMembers(c *gin.Context) {
+	_, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	code := c.Param("code")
+
+	users, err := h.services.Plan.GetMembers(code)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, getMembersResponse{
+		Data: users,
+	})
+}
+
+func (h *Handler) deleteUserFromSub(c *gin.Context) {
+	holderId, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	userId, err := strconv.Atoi(c.Param("user_id"))
+	plan, err := h.services.GetUserPlan(userId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if holderId != plan.HolderId {
+		newErrorResponse(c, http.StatusForbidden, "access denied")
+	}
+
+	err = h.services.DeleteUserFromSub(plan.Id)
+	if holderId != plan.HolderId {
+		newErrorResponse(c, http.StatusForbidden, "access denied")
 	}
 
 	c.JSON(http.StatusOK, statusResponse{"ok"})

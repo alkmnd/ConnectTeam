@@ -13,17 +13,17 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 )
+
 const (
-	salt = "hjqrhjqw124617ajfhajs"
+	salt       = "hjqrhjqw124617ajfhajs"
 	signingKey = "qrkjk#4#%35FSFJlja#4353KSFjH"
-	tokenTTL = 12 * time.Hour
-	
+	tokenTTL   = 12 * time.Hour
 )
 
 type tokenClaims struct {
 	jwt.StandardClaims
-	UserId int `json:"user_id"`
-	Role string `json:"access"`
+	UserId int    `json:"user_id"`
+	Role   string `json:"access"`
 }
 
 type AuthService struct {
@@ -41,16 +41,16 @@ func (s *AuthService) CreateUser(user connectteam.User) (int, error) {
 
 func (s *AuthService) GenerateToken(login, password string, isEmail bool) (string, string, error) {
 	var user connectteam.User
-	var err error 
+	var err error
 	if isEmail {
 		user, err = s.repo.GetUserWithEmail(login, generatePasswordHash(password))
 	} else {
 		user, err = s.repo.GetUserWithPhone(login, generatePasswordHash(password))
 	}
 	if err != nil {
-		return "",  "", errors.New("invalid login data")
+		return "", "", errors.New("invalid login data")
 	}
-	if !user.Is_verified {
+	if !user.IsVerified {
 		println("meow")
 		return "", "", errors.New("User is not verified")
 	}
@@ -58,8 +58,6 @@ func (s *AuthService) GenerateToken(login, password string, isEmail bool) (strin
 	if err != nil {
 		return "", "", err
 	}
-
-
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 		jwt.StandardClaims{
@@ -75,7 +73,7 @@ func (s *AuthService) GenerateToken(login, password string, isEmail bool) (strin
 		return "", "", err
 	}
 
-	return  user.Access, signedString, nil
+	return user.Access, signedString, nil
 }
 
 func generatePasswordHash(password string) string {
@@ -92,8 +90,8 @@ func generateConfirmationCode() string {
 	}
 
 	return code
-	
-} 
+
+}
 
 func (s *AuthService) VerifyPhone(verifyPhone connectteam.VerifyPhone) (string, error) {
 	return "1234", nil
@@ -102,19 +100,19 @@ func (s *AuthService) VerifyPhone(verifyPhone connectteam.VerifyPhone) (string, 
 func CreateVerificationCode(id int, email string) (string, error) {
 	from := os.Getenv("EMAIL")
 	password := os.Getenv("EMAIL_PASSWORD")
- 	to := email
- 	confirmationCode := generateConfirmationCode()
+	to := email
+	confirmationCode := generateConfirmationCode()
 
- 	msg := "From: " + from + "\n" +
-	 "To: " + to + "\n" +
-	 "Subject: Код подтверждения\n\n" +
-	 confirmationCode
- 	err := smtp.SendMail("smtp.gmail.com:587",
- 	smtp.PlainAuth("", from, password, "smtp.gmail.com"),
- 	from, []string{to}, []byte(msg))
+	msg := "From: " + from + "\n" +
+		"To: " + to + "\n" +
+		"Subject: Код подтверждения\n\n" +
+		confirmationCode
+	err := smtp.SendMail("smtp.gmail.com:587",
+		smtp.PlainAuth("", from, password, "smtp.gmail.com"),
+		from, []string{to}, []byte(msg))
 
- 	if err != nil {
-	 	log.Printf("smtp error: %s", err)
+	if err != nil {
+		log.Printf("smtp error: %s", err)
 		return "", errors.New("the recipient address is not a valid")
 	}
 	return confirmationCode, nil
@@ -129,7 +127,6 @@ func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (int, err
 		log.Printf("smtp error: %s", err)
 		return 0, errors.New("no user with such email")
 	}
-
 
 	confirmationCode, err := CreateVerificationCode(id, verifyEmail.Email)
 
@@ -147,8 +144,7 @@ func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (int, err
 
 	log.Printf("verification code: %s", confirmationCode)
 
-
-   return id, err
+	return id, err
 }
 
 func (s *AuthService) VerifyUser(verifyUser connectteam.VerifyUser) error {
@@ -166,7 +162,7 @@ func (s *AuthService) VerifyUser(verifyUser connectteam.VerifyUser) error {
 	if err != nil {
 		return errors.New("no such row")
 	}
-	
+
 	return s.repo.VerifyUser(verifyUser)
 }
 
@@ -190,6 +186,6 @@ func (s *AuthService) ParseToken(accessToken string) (int, string, error) {
 	return claims.UserId, claims.Role, nil
 }
 
-func (s *AuthService) DeleteVerificationCode(id int, code string) (error) {
+func (s *AuthService) DeleteVerificationCode(id int, code string) error {
 	return s.repo.DeleteVerificationCode(id, code)
 }

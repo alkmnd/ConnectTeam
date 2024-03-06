@@ -1,75 +1,75 @@
 CREATE TYPE user_role AS ENUM ('user', 'admin', 'plan_user');
-
-CREATE TYPE plans AS ENUM ('basic', 'advanced', 'premium');
-
+CREATE TYPE plans AS ENUM ('basic', 'advanced', 'premium', 'trial');
 CREATE TYPE access AS ENUM ('super_admin', 'admin', 'user');
+CREATE TYPE status AS ENUM ('active', 'expired', 'on_confirm');
 
-CREATE TABLE users 
+CREATE TABLE users
 (
-  id serial not null PRIMARY KEY,
-  email varchar(256) UNIQUE,
-  -- phone_number varchar(256),
-  first_name varchar(256),
-  second_name varchar(256),
-  description varchar(256),
-  password_hash varchar(256), 
-  access access,
-  is_verified boolean DEFAULT false,
-  company_name varchar(256),
-  company_info varchar(256),
-  company_url varchar(256),
-  company_logo varchar(256),
-  profile_image varchar(256)
-); 
+    id serial not null PRIMARY KEY,
+    email varchar(256) UNIQUE,
+    first_name varchar(256),
+    second_name varchar(256),
+    description varchar(256),
+    password_hash varchar(256),
+    access access,
+    is_verified boolean DEFAULT false,
+    company_name varchar(256),
+    company_info varchar(256),
+    company_url varchar(256),
+    company_logo varchar(256),
+    profile_image varchar(256)
+);
 
-CREATE TABLE verification_codes 
+CREATE TABLE verification_codes
 (
     user_id int REFERENCES users (id) ON DELETE CASCADE,
     code VARCHAR(10),
     PRIMARY KEY (user_id)
 );
 
-CREATE TABLE active_subscriptions 
+CREATE TABLE plan_invitation_codes
 (
-  plan_type plans,
-  user_id int PRIMARY KEY references users (id) on delete cascade,
-  holder_id int references users (id) on delete cascade,
-  expiry_date timestamp,
-  duration int,
-  plan_access varchar(256), 
-  confirmed boolean
+    holder_id int references users (id) on delete cascade,
+    invitation_code varchar(256) unique
 );
 
-CREATE TABLE expired_subscriptions 
+CREATE TABLE subscriptions
 (
     id serial not null PRIMARY KEY,
-  plan_type plans,
-  user_id int references users (id) on delete cascade,
-  holder_id int references users (id) on delete cascade,
-  expiry_date timestamp,
-  duration int,
-  plan_access varchar(256), 
-  confirmed boolean
-); 
-
-CREATE TABLE plan_requests 
-(
-  id serial not null PRIMARY KEY,
-  user_id int,
-  plan_type plans, 
-  duration int, 
-  request_date timestamp
+    plan_type plans,
+    user_id int references users (id) on delete cascade,
+    holder_id int references users (id) on delete cascade,
+    expiry_date timestamp,
+    duration int,
+    plan_access varchar(256),
+    status status not null DEFAULT 'on_confirm'
+    invitation_code varchar(256) unique
 );
 
-CREATE TABLE topics 
+CREATE TABLE topics
 (
-  id serial not null PRIMARY KEY, 
-  title varchar(256)
+    id serial not null PRIMARY KEY,
+    title varchar(256)
 );
 
-CREATE TABLE questions 
+CREATE TABLE questions
 (
-  id serial not null PRIMARY KEY, 
-  topic_id int references topics (id) on delete cascade,
-  content varchar(256)
+    id serial not null PRIMARY KEY,
+    topic_id int references topics (id) on delete cascade,
+    content varchar(256)
 );
+
+CREATE OR REPLACE FUNCTION update_subscription()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.expiry_date < now() AND NEW.status != 'on_confirm' THEN
+    NEW.status := 'expired';
+END IF;
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_subscription_expiry
+    AFTER INSERT OR UPDATE ON subscriptions
+                        FOR EACH ROW
+                        EXECUTE FUNCTION update_subscription();
