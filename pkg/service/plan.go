@@ -18,6 +18,7 @@ func NewPlanService(repo repository.Plan) *PlanService {
 }
 
 func (s *PlanService) GetUserActivePlan(userId int) (connectteam.UserPlan, error) {
+	println(userId)
 	return s.repo.GetUserActivePlan(userId)
 }
 

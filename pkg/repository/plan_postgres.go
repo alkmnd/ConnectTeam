@@ -17,7 +17,8 @@ func NewPlanPostgres(db *sqlx.DB) *PlanPostgres {
 
 func (r *PlanPostgres) GetUserActivePlan(userId int) (connectteam.UserPlan, error) {
 	var userPlan connectteam.UserPlan
-	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id=$1 AND status='active' or status='on_confirm'", plansUsersTable)
+	println(userId)
+	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id=$1 AND (status='active' or status='on_confirm')", plansUsersTable)
 	err := r.db.Get(&userPlan, query, userId)
 
 	return userPlan, err
