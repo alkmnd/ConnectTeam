@@ -66,7 +66,19 @@ go run cmd/main.go
 
    3.5. [Set Plan For User](#set-plan)
 
-5. [Topic](#topic)
+   3.6. [Get User Subscriptions](#get-user-subs)
+
+   3.7. [Get Trial](#get-trial)
+   
+   3.8. [Validate code](#validate-code)
+
+   3.9. [Get Members](#get-members)
+
+   3.10. [Add Member](#add-member)
+
+   3.11. [Delete User From Subscription](#delete-user-from-sub)
+
+6. [Topic](#topic)
    
    5.1. [Create Topic](#create-topic)
 
@@ -76,7 +88,7 @@ go run cmd/main.go
 
    5.4. [Update Topic](#update-topic)
 
-6. [Question](#question)
+7. [Question](#question)
    
    6.1. [Create Question](#q_create)
 
@@ -649,7 +661,7 @@ Note: Use confirmation code to verificate user
     "status": "ok"
 }
 ```
-
+<a id='get-user-subs'></a>
 #### 3.6. Get User Subscriptions
 
 **Method:** `GET`
@@ -681,6 +693,7 @@ Note: Use confirmation code to verificate user
 }
 ```
 
+<a id='get-tral'></a>
 #### 3.7. Get Trial 
 
 **Method:** `POST`
@@ -711,6 +724,75 @@ Note: Use confirmation code to verificate user
     "user_id": 1
 }
 ```
+<a id='validate-code'></a>
+#### 3.8. Validate code
+
+**Method:** `GET`
+
+**Endpoint:** `/plans/validate/:code`
+
+**Description:** Validates code and returns holder id.
+
+**URL Parameters:**
+* code(string)
+
+**Response Parameters:**
+* id (int): Holder id.
+
+
+<a id='get-members'></a>
+#### 3.9. Get Members
+
+**Method:** `GET`
+
+**Endpoint:** `/plans/members/:code`
+
+**Description:** Returns sunscription members.
+
+**URL Parameters:**
+* code(string)
+
+**Response Parameters:**
+* list of members.
+
+
+<a id='get-members'></a>
+#### 3.10. Join to Subscription (Plan)
+
+**Method:** `POST`
+
+**Endpoint:** `/plans/join/:code`
+
+**Description:** Returns subscription members.
+
+**URL Parameters:**
+* code(string)
+
+**Response Parameters:**
+* id(int):          plan.Id,
+* user_id(int)
+* holder_id(int)
+* plan_type(string)
+* plan_access(string)
+* status(string)
+* duration(int)
+* expiry_date(string)
+
+
+<a id='delete-user-from-sub'></a>
+#### 3.11. Delete User From Subscription
+**Method:** `DELETE`
+
+**Endpoint:** `/plans/:user_id`
+
+**Description:** Removes user from subscription.
+
+**URL Parameters:**
+* user_id(int)
+
+**Response Parameters:**
+* status(string): ok if there is no error
+
 
 <a id='topic'></a>
 ### 5. Topic
