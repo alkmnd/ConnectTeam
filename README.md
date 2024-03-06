@@ -610,10 +610,10 @@ Note: Use confirmation code to verificate user
 
 **Endpoint:** `/plans/:id`
 
-**Description:** Sets field 'confirmed' true, activates user plan.
+**Description:** Sets field 'status' as active, activates user plan.
 
 **URL Parameters:**
-* id: Plan id (equal to user id)
+* id: Plan id.
 
 **Response:**
 
