@@ -403,11 +403,13 @@ func (h *Handler) deleteUserFromSub(c *gin.Context) {
 
 	if holderId != plan.HolderId {
 		newErrorResponse(c, http.StatusForbidden, "access denied")
+		return
 	}
 
 	err = h.services.DeleteUserFromSub(plan.Id)
 	if holderId != plan.HolderId {
 		newErrorResponse(c, http.StatusForbidden, "access denied")
+		return
 	}
 
 	c.JSON(http.StatusOK, statusResponse{"ok"})
