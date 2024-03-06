@@ -45,6 +45,9 @@ type Plan interface {
 	CheckIfSubscriptionExists(userId int) (bool, error)
 	CreateTrialPlan(userId int) (userPlan connectteam.UserPlan, err error)
 	GetUserSubscriptions(userId int) ([]connectteam.UserPlan, error)
+	GetHolderWithInvitationCode(code string) (id int, err error)
+	AddUserToAdvanced(holderPlan connectteam.UserPlan, userId int) (userPlan connectteam.UserPlan, err error)
+	GetMembers(code string) ([]connectteam.UserPublic, error)
 }
 
 type Topic interface {

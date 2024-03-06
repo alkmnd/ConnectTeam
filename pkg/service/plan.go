@@ -3,6 +3,8 @@ package service
 import (
 	"ConnectTeam"
 	"ConnectTeam/pkg/repository"
+	"crypto/rand"
+	"encoding/base64"
 	"errors"
 	"time"
 )
@@ -47,14 +49,41 @@ func (s *PlanService) CreateTrialPlan(userId int) (userPlan connectteam.UserPlan
 	}
 
 	return s.repo.CreatePlan(connectteam.UserPlan{
-		UserId:     userId,
-		PlanType:   "trial",
-		HolderId:   userId,
-		Status:     connectteam.Active,
-		Duration:   14,
-		ExpiryDate: time.Now().Add(14 * 24 * time.Hour),
-		PlanAccess: "holder",
+		UserId:         userId,
+		PlanType:       "trial",
+		HolderId:       userId,
+		Status:         connectteam.Active,
+		Duration:       14,
+		ExpiryDate:     time.Now().Add(14 * 24 * time.Hour),
+		PlanAccess:     "holder",
+		InvitationCode: "",
 	})
+}
+
+func (s *PlanService) AddUserToAdvanced(holderPlan connectteam.UserPlan, userId int) (userPlan connectteam.UserPlan, err error) {
+	// добавить проверку на кол-во участников
+	err = s.repo.DeleteOnConfirmPlan(userId)
+	if err != nil {
+		return userPlan, err
+	}
+	err = s.repo.SetExpiredStatusWithUserId(userId)
+	if err != nil {
+		return userPlan, err
+	}
+	return s.repo.CreatePlan(connectteam.UserPlan{
+		UserId:         userId,
+		PlanType:       "premium",
+		HolderId:       holderPlan.UserId,
+		Status:         connectteam.Active,
+		Duration:       holderPlan.Duration,
+		ExpiryDate:     holderPlan.ExpiryDate,
+		PlanAccess:     "additional",
+		InvitationCode: holderPlan.InvitationCode,
+	})
+}
+
+func (s *PlanService) GetMembers(code string) ([]connectteam.UserPublic, error) {
+	return s.repo.GetMembers(code)
 }
 
 func (s *PlanService) CreatePlan(request connectteam.UserPlan) (userPlan connectteam.UserPlan, err error) {
@@ -74,8 +103,12 @@ func (s *PlanService) CreatePlan(request connectteam.UserPlan) (userPlan connect
 		return userPlan, errors.New("incorrect value of duration")
 	}
 
-	request.ExpiryDate = time.Time{}
-	request.Status = connectteam.OnConfirm
+	if request.PlanType == "premium" && request.UserId == request.HolderId {
+		request.InvitationCode, err = generateInviteCode()
+		if err != nil {
+			return userPlan, err
+		}
+	}
 	return s.repo.CreatePlan(request)
 }
 
@@ -97,18 +130,25 @@ func (s *PlanService) SetPlanByAdmin(userId int, planType string, expiryDateStri
 		return err
 	}
 
+	var invitationCode string
 	if !expiryDate.After(time.Now()) {
 		return errors.New("incorrect expiry date")
 	}
-
+	if planType == "premium" {
+		invitationCode, err = generateInviteCode()
+		if err != nil {
+			return err
+		}
+	}
 	var userPlan = connectteam.UserPlan{
-		PlanType:   planType,
-		Status:     "active",
-		PlanAccess: "holder",
-		ExpiryDate: expiryDate,
-		UserId:     userId,
-		HolderId:   userId,
-		Duration:   int(time.Until(expiryDate).Hours() / 24),
+		PlanType:       planType,
+		Status:         "active",
+		PlanAccess:     "holder",
+		ExpiryDate:     expiryDate,
+		UserId:         userId,
+		HolderId:       userId,
+		Duration:       int(time.Until(expiryDate).Hours() / 24),
+		InvitationCode: invitationCode,
 	}
 	_, err = s.repo.CreatePlan(userPlan)
 
@@ -124,4 +164,22 @@ func (s *PlanService) ConfirmPlan(id int) error {
 	return s.repo.SetConfirmed(id)
 }
 
-// get trial
+func generateInviteCode() (string, error) {
+	// Создание байтового среза для хранения случайных данных
+	randomBytes := make([]byte, 16)
+
+	// Заполнение среза случайными данными
+	_, err := rand.Read(randomBytes)
+	if err != nil {
+		return "", err
+	}
+
+	// Кодирование случайных данных в base64
+	inviteCode := base64.URLEncoding.EncodeToString(randomBytes)
+
+	return inviteCode, nil
+}
+
+func (s *PlanService) GetHolderWithInvitationCode(code string) (id int, err error) {
+	return s.repo.GetHolderWithInvitationCode(code)
+}

@@ -4,6 +4,7 @@ import (
 	connectteam "ConnectTeam"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,14 +23,22 @@ func (h *Handler) getUserActivePlan(c *gin.Context) {
 		return
 	}
 
+	var invitationCode string
+
+	if userPlan.PlanType == "premium" &&
+		userPlan.Status == connectteam.Active {
+		invitationCode = userPlan.InvitationCode
+	}
+
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"id":          userPlan.Id,
-		"plan_type":   userPlan.PlanType,
-		"user_id":     userPlan.UserId,
-		"holder_id":   userPlan.HolderId,
-		"expiry_date": userPlan.ExpiryDate,
-		"plan_access": userPlan.PlanAccess,
-		"status":      userPlan.Status,
+		"id":              userPlan.Id,
+		"plan_type":       userPlan.PlanType,
+		"user_id":         userPlan.UserId,
+		"holder_id":       userPlan.HolderId,
+		"expiry_date":     userPlan.ExpiryDate,
+		"plan_access":     userPlan.PlanAccess,
+		"status":          userPlan.Status,
+		"invitation_code": invitationCode,
 	})
 }
 
@@ -49,6 +58,8 @@ func (h *Handler) selectPlan(c *gin.Context) {
 	input.UserId = id
 	input.HolderId = id
 	input.PlanAccess = "holder"
+	input.Status = connectteam.OnConfirm
+	input.ExpiryDate = time.Time{}
 
 	plan, err := h.services.CreatePlan(input)
 
@@ -274,4 +285,107 @@ func (h *Handler) deleteUserPlan(c *gin.Context) {
 	c.JSON(http.StatusOK, statusResponse{"ok"})
 }
 
+func (h *Handler) addUserToPlan(c *gin.Context) {
+	id, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	code := c.Param("code")
+	holderId, err := h.services.GetHolderWithInvitationCode(code)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if holderId == 0 {
+		newErrorResponse(c, http.StatusNotFound, "incorrect invitation code")
+	}
+	holderPlan, err := h.services.GetUserActivePlan(holderId)
+	if holderPlan.Status != connectteam.Active {
+		newErrorResponse(c, http.StatusForbidden, "invitor subscription is not active")
+	}
+
+	members, err := h.services.GetMembers(code)
+	if len(members) == 3 {
+		newErrorResponse(c, http.StatusForbidden, "max number of members")
+	}
+
+	// добавить проверку на количество участников
+
+	plan, err := h.services.AddUserToAdvanced(holderPlan, id)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"id":          plan.Id,
+		"user_id":     plan.UserId,
+		"holder_id":   plan.HolderId,
+		"plan_type":   plan.PlanType,
+		"plan_access": plan.PlanAccess,
+		"status":      plan.Status,
+		"duration":    plan.Duration,
+		"expiry_date": plan.ExpiryDate,
+	})
+}
+
+func (h *Handler) validateInvitationCode(c *gin.Context) {
+	_, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	code := c.Param("code")
+	id, err := h.services.GetHolderWithInvitationCode(code)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if id == 0 {
+		newErrorResponse(c, http.StatusNotFound, "incorrect invitation code")
+	}
+
+	var userPlan connectteam.UserPlan
+	userPlan, err = h.services.Plan.GetUserActivePlan(id)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if userPlan.Status != connectteam.Active {
+		newErrorResponse(c, http.StatusForbidden, "subscription is not active")
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"holder_id": id,
+	})
+}
+
+type getMembersResponse struct {
+	Data []connectteam.UserPublic `json:"data"`
+}
+
+func (h *Handler) getMembers(c *gin.Context) {
+	_, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	code := c.Param("code")
+
+	users, err := h.services.Plan.GetMembers(code)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, getMembersResponse{
+		Data: users,
+	})
+}
+
+// delete member
 // get trial
