@@ -183,3 +183,7 @@ func generateInviteCode() (string, error) {
 func (s *PlanService) GetHolderWithInvitationCode(code string) (id int, err error) {
 	return s.repo.GetHolderWithInvitationCode(code)
 }
+
+func (s *PlanService) DeleteUserFromSub(id int) error {
+	return s.repo.DeleteUserFromSub(id)
+}

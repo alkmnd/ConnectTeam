@@ -48,6 +48,7 @@ type Plan interface {
 	GetHolderWithInvitationCode(code string) (id int, err error)
 	AddUserToAdvanced(holderPlan connectteam.UserPlan, userId int) (userPlan connectteam.UserPlan, err error)
 	GetMembers(code string) ([]connectteam.UserPublic, error)
+	DeleteUserFromSub(id int) error
 }
 
 type Topic interface {

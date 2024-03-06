@@ -387,5 +387,28 @@ func (h *Handler) getMembers(c *gin.Context) {
 	})
 }
 
-// delete member
-// get trial
+func (h *Handler) deleteUserFromSub(c *gin.Context) {
+	holderId, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	userId, err := strconv.Atoi(c.Param("user_id"))
+	plan, err := h.services.GetUserPlan(userId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if holderId != plan.HolderId {
+		newErrorResponse(c, http.StatusForbidden, "access denied")
+	}
+
+	err = h.services.DeleteUserFromSub(plan.Id)
+	if holderId != plan.HolderId {
+		newErrorResponse(c, http.StatusForbidden, "access denied")
+	}
+
+	c.JSON(http.StatusOK, statusResponse{"ok"})
+}

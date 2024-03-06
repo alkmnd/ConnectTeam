@@ -54,6 +54,7 @@ type Plan interface {
 	GetHolderWithInvitationCode(code string) (id int, err error)
 	SetExpiredStatusWithUserId(userId int) error
 	GetMembers(code string) (users []connectteam.UserPublic, err error)
+	DeleteUserFromSub(id int) error
 }
 
 type Topic interface {

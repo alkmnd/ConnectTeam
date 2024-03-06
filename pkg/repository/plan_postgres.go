@@ -115,3 +115,10 @@ func (r *PlanPostgres) SetConfirmed(id int) error {
 
 	return err
 }
+
+func (r *PlanPostgres) DeleteUserFromSub(id int) error {
+	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1", plansUsersTable)
+	_, err := r.db.Exec(query, id)
+
+	return err
+}
