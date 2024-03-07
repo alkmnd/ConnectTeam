@@ -334,12 +334,6 @@ func (h *Handler) addUserToPlan(c *gin.Context) {
 }
 
 func (h *Handler) validateInvitationCode(c *gin.Context) {
-	_, err := getUserId(c)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
 	code := c.Param("code")
 	id, err := h.services.GetHolderWithInvitationCode(code)
 	if err != nil {
