@@ -730,7 +730,7 @@ Note: Use confirmation code to verificate user
 
 **Method:** `GET`
 
-**Endpoint:** `/plans/validate/:code`
+**Endpoint:** `/validate/:code`
 
 **Description:** Validates code and returns holder id.
 
