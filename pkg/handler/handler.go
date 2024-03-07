@@ -86,7 +86,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	}
 	validator := router.Group("/validate")
 	{
-		validator.GET("/validate/:code", h.validateInvitationCode)
+		validator.GET("/:code", h.validateInvitationCode)
 	}
 
 	topic := router.Group("/topics", h.userIdentity)

@@ -301,7 +301,6 @@ func (h *Handler) addUserToPlan(c *gin.Context) {
 		return
 	}
 	if holderId == 0 {
-
 		newErrorResponse(c, http.StatusNotFound, "incorrect invitation code")
 		return
 	}
