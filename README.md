@@ -764,13 +764,13 @@ Note: Use confirmation code to verificate user
 
 **Endpoint:** `/plans/join/:code`
 
-**Description:** Returns subscription members.
+**Description:** Adds user to the subscription.
 
 **URL Parameters:**
 * code(string)
 
 **Response Parameters:**
-* id(int):          plan.Id,
+* id(int)
 * user_id(int)
 * holder_id(int)
 * plan_type(string)
