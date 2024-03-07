@@ -18,6 +18,7 @@ func NewPlanService(repo repository.Plan) *PlanService {
 }
 
 func (s *PlanService) GetUserActivePlan(userId int) (connectteam.UserPlan, error) {
+	println(userId)
 	return s.repo.GetUserActivePlan(userId)
 }
 
@@ -103,7 +104,7 @@ func (s *PlanService) CreatePlan(request connectteam.UserPlan) (userPlan connect
 		return userPlan, errors.New("incorrect value of duration")
 	}
 
-	if request.PlanType == "premium" && request.UserId == request.HolderId {
+	if request.PlanType == "premium" {
 		request.InvitationCode, err = generateInviteCode()
 		if err != nil {
 			return userPlan, err

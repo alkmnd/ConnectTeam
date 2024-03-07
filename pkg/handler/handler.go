@@ -76,7 +76,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		plan.GET("/active", h.getUsersPlans)
 		plan.PATCH("/:id", h.confirmPlan)
 		plan.POST("/:user_id", h.setPlan)
-		//plan.DELETE("/:id", h.deleteUserPlan)
+		plan.DELETE("/cancel/:id", h.deleteUserPlan)
 		plan.POST("/trial", h.getTrial)
 		plan.GET("/", h.getUserSubscriptions)
 		plan.GET("/validate/:code", h.validateInvitationCode)

@@ -11,6 +11,7 @@ import (
 
 func (h *Handler) getUserActivePlan(c *gin.Context) {
 	id, err := getUserId(c)
+	println(id)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -403,11 +404,13 @@ func (h *Handler) deleteUserFromSub(c *gin.Context) {
 
 	if holderId != plan.HolderId {
 		newErrorResponse(c, http.StatusForbidden, "access denied")
+		return
 	}
 
 	err = h.services.DeleteUserFromSub(plan.Id)
 	if holderId != plan.HolderId {
 		newErrorResponse(c, http.StatusForbidden, "access denied")
+		return
 	}
 
 	c.JSON(http.StatusOK, statusResponse{"ok"})

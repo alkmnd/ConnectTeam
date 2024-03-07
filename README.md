@@ -78,6 +78,7 @@ go run cmd/main.go
 
    3.11. [Delete User From Subscription](#delete-user-from-sub)
 
+
 6. [Topic](#topic)
    
    5.1. [Create Topic](#create-topic)
@@ -610,10 +611,10 @@ Note: Use confirmation code to verificate user
 
 **Endpoint:** `/plans/:id`
 
-**Description:** Sets field 'confirmed' true, activates user plan.
+**Description:** Sets field 'status' as active, activates user plan.
 
 **URL Parameters:**
-* id: Plan id (equal to user id)
+* id: Plan id.
 
 **Response:**
 
