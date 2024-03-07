@@ -281,6 +281,7 @@ func (h *Handler) deleteUserPlan(c *gin.Context) {
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, statusResponse{"ok"})
@@ -300,16 +301,25 @@ func (h *Handler) addUserToPlan(c *gin.Context) {
 		return
 	}
 	if holderId == 0 {
+
 		newErrorResponse(c, http.StatusNotFound, "incorrect invitation code")
+		return
+	}
+
+	if holderId == id {
+		newErrorResponse(c, http.StatusNotFound, "holder and user is equal")
+		return
 	}
 	holderPlan, err := h.services.GetUserActivePlan(holderId)
 	if holderPlan.Status != connectteam.Active {
 		newErrorResponse(c, http.StatusForbidden, "invitor subscription is not active")
+		return
 	}
 
 	members, err := h.services.GetMembers(code)
 	if len(members) == 3 {
 		newErrorResponse(c, http.StatusForbidden, "max number of members")
+		return
 	}
 
 	// добавить проверку на количество участников
@@ -342,6 +352,7 @@ func (h *Handler) validateInvitationCode(c *gin.Context) {
 	}
 	if id == 0 {
 		newErrorResponse(c, http.StatusNotFound, "incorrect invitation code")
+		return
 	}
 
 	var userPlan connectteam.UserPlan
@@ -352,6 +363,7 @@ func (h *Handler) validateInvitationCode(c *gin.Context) {
 	}
 	if userPlan.Status != connectteam.Active {
 		newErrorResponse(c, http.StatusForbidden, "subscription is not active")
+		return
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{

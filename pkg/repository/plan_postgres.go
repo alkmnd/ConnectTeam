@@ -67,7 +67,7 @@ func (r *PlanPostgres) GetPlanInvitationCode(code string) (id int, err error) {
 //
 
 func (r *PlanPostgres) GetMembers(code string) (users []connectteam.UserPublic, err error) {
-	query := fmt.Sprintf(`SELECT id, email, first_name, second_name, profile_image FROM %s u
+	query := fmt.Sprintf(`SELECT u.id, u.email, u.first_name, u.second_name, u.profile_image FROM %s u
 	JOIN %s p ON p.user_id = u.id WHERE invitation_code=$2`, usersTable, plansUsersTable)
 	err = r.db.Select(&users, query, code)
 	return users, err
