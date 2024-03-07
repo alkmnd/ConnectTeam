@@ -79,11 +79,14 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		plan.DELETE("/cancel/:id", h.deleteUserPlan)
 		plan.POST("/trial", h.getTrial)
 		plan.GET("/", h.getUserSubscriptions)
-		plan.GET("/validate/:code", h.validateInvitationCode)
 		plan.GET("members/:code", h.getMembers)
 		plan.POST("/join/:code", h.addUserToPlan)
 		plan.DELETE("/:user_id", h.deleteUserFromSub)
 		// delete plan
+	}
+	validator := router.Group("/validate")
+	{
+		validator.GET("/validate/:code", h.validateInvitationCode)
 	}
 
 	topic := router.Group("/topics", h.userIdentity)
