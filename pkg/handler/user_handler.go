@@ -50,10 +50,12 @@ func (h *Handler) getUserById(c *gin.Context) {
 		return
 	}
 	var user connectteam.UserPublic
+	println(id)
 	user, err = h.services.User.GetUserById(id)
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
