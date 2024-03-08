@@ -70,7 +70,7 @@ func (r *PlanPostgres) GetPlanInvitationCode(code string) (id int, err error) {
 
 func (r *PlanPostgres) GetMembers(code string) (users []connectteam.UserPublic, err error) {
 	query := fmt.Sprintf(`SELECT u.id, u.email, u.first_name, u.second_name, u.profile_image FROM %s u
-	JOIN %s p ON p.user_id = u.id WHERE invitation_code=$1`, usersTable, plansUsersTable)
+	JOIN %s p ON p.user_id = u.id WHERE invitation_code=$1 AND status='active'`, usersTable, plansUsersTable)
 	err = r.db.Select(&users, query, code)
 	return users, err
 }
@@ -87,12 +87,12 @@ func (r *PlanPostgres) GetHolderWithInvitationCode(code string) (id int, err err
 
 func (r *PlanPostgres) CreatePlan(request connectteam.UserPlan) (connectteam.UserPlan, error) {
 	query := fmt.Sprintf(`INSERT INTO %s (user_id, holder_id, expiry_date, duration, plan_access, 
-		status, plan_type, invitation_code) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		status, plan_type, invitation_code, is_trial) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 		RETURNING *`, plansUsersTable)
 
 	var userPlan connectteam.UserPlan
-	row := r.db.QueryRow(query, request.UserId, request.HolderId, request.ExpiryDate, request.Duration, request.PlanAccess, request.Status, request.PlanType, request.InvitationCode)
-	if err := row.Scan(&userPlan.Id, &userPlan.PlanType, &userPlan.UserId, &userPlan.HolderId, &userPlan.ExpiryDate, &userPlan.Duration, &userPlan.PlanAccess, &userPlan.Status, &userPlan.InvitationCode); err != nil {
+	row := r.db.QueryRow(query, request.UserId, request.HolderId, request.ExpiryDate, request.Duration, request.PlanAccess, request.Status, request.PlanType, request.InvitationCode, request.IsTrial)
+	if err := row.Scan(&userPlan.Id, &userPlan.PlanType, &userPlan.UserId, &userPlan.HolderId, &userPlan.ExpiryDate, &userPlan.Duration, &userPlan.PlanAccess, &userPlan.Status, &userPlan.InvitationCode, &userPlan.IsTrial); err != nil {
 		return request, err
 	}
 	return userPlan, nil

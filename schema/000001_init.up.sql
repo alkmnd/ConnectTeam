@@ -1,5 +1,5 @@
 CREATE TYPE user_role AS ENUM ('user', 'admin', 'plan_user');
-CREATE TYPE plans AS ENUM ('basic', 'advanced', 'premium', 'trial');
+CREATE TYPE plans AS ENUM ('basic', 'advanced', 'premium');
 CREATE TYPE access AS ENUM ('super_admin', 'admin', 'user');
 CREATE TYPE status AS ENUM ('active', 'expired', 'on_confirm');
 
@@ -43,6 +43,7 @@ CREATE TABLE subscriptions
     duration int,
     plan_access varchar(256),
     status status not null DEFAULT 'on_confirm',
+    is_trial boolean DEFAULT false,
     invitation_code varchar(256)
 );
 

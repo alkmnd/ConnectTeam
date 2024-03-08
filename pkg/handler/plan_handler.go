@@ -40,6 +40,7 @@ func (h *Handler) getUserActivePlan(c *gin.Context) {
 		"plan_access":     userPlan.PlanAccess,
 		"status":          userPlan.Status,
 		"invitation_code": invitationCode,
+		"is_trial":        userPlan.IsTrial,
 	})
 }
 
@@ -78,6 +79,7 @@ func (h *Handler) selectPlan(c *gin.Context) {
 		"status":      plan.Status,
 		"duration":    plan.Duration,
 		"expiry_date": plan.ExpiryDate,
+		"is_trial":    false,
 	})
 }
 
@@ -209,6 +211,7 @@ func (h *Handler) getTrial(c *gin.Context) {
 		"status":      plan.Status,
 		"duration":    plan.Duration,
 		"expiry_date": plan.ExpiryDate,
+		"is_trial":    plan.IsTrial,
 	})
 
 }
