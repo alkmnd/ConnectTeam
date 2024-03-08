@@ -51,13 +51,14 @@ func (s *PlanService) CreateTrialPlan(userId int) (userPlan connectteam.UserPlan
 
 	return s.repo.CreatePlan(connectteam.UserPlan{
 		UserId:         userId,
-		PlanType:       "trial",
+		PlanType:       "basic",
 		HolderId:       userId,
 		Status:         connectteam.Active,
 		Duration:       14,
 		ExpiryDate:     time.Now().Add(14 * 24 * time.Hour),
 		PlanAccess:     "holder",
 		InvitationCode: "",
+		IsTrial:        true,
 	})
 }
 
