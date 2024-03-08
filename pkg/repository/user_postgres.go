@@ -19,6 +19,7 @@ func (r *UserPostgres) GetUserById(id int) (connectteam.UserPublic, error) {
 	var user connectteam.UserPublic
 	query := fmt.Sprintf("SELECT id, email, first_name, second_name, description, access, company_name, company_info, company_url, company_logo, profile_image FROM %s WHERE id=$1", usersTable)
 	err := r.db.Get(&user, query, id)
+	println(err)
 	return user, err
 }
 

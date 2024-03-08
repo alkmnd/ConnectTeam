@@ -43,7 +43,7 @@ CREATE TABLE subscriptions
     duration int,
     plan_access varchar(256),
     status status not null DEFAULT 'on_confirm',
-    invitation_code varchar(256) unique
+    invitation_code varchar(256)
 );
 
 CREATE TABLE topics
