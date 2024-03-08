@@ -521,7 +521,8 @@ Note: Use confirmation code to verificate user
     "plan_type": "basic",
     "user_id": 1,
     "status": "on_confirm",
-   "invitation_code": "12345d78p0123G56"
+   "invitation_code": "12345d78p0123G56",
+   "is_trial": false,
 }
 ```
 <a id="new-plan"></a>
@@ -699,7 +700,7 @@ Note: Use confirmation code to verificate user
 
 **Method:** `POST`
 
-**Endpoint:** `/plans/`
+**Endpoint:** `/plans/trial`
 
 **Description:** Creates user trial plan (subscription).
 
@@ -711,18 +712,20 @@ Note: Use confirmation code to verificate user
 * duration(int): The number of days the user can use the plan.
 * expiry_date(string):  Expiration date of the plan.
 * status(string): Status of the plan.
+* is_trial
 
 **Example Response:**
 ``` bash
 {
    "id": 1,
-    "atatus": on_confirm,
+    "atatus": "active",
     "duration": 30,
     "expiry_date": "0001-01-01T00:00:00Z",
     "holder_id": 1,
     "plan_access": "holder",
     "plan_type": "basic",
-    "user_id": 1
+    "user_id": ,
+   "is_trial": true
 }
 ```
 <a id='validate-code'></a>
