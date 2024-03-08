@@ -346,10 +346,11 @@ func (h *Handler) validateInvitationCode(c *gin.Context) {
 	code := c.Param("code")
 	id, err := h.services.GetHolderWithInvitationCode(code)
 	if err != nil {
+		println("1")
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	if id == 0 {
+	if id == 0 || len(code) == 0 {
 		newErrorResponse(c, http.StatusNotFound, "incorrect invitation code")
 		return
 	}
@@ -357,6 +358,7 @@ func (h *Handler) validateInvitationCode(c *gin.Context) {
 	var userPlan connectteam.UserPlan
 	userPlan, err = h.services.Plan.GetUserActivePlan(id)
 	if err != nil {
+		println("2")
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

@@ -43,7 +43,6 @@ func (r *PlanPostgres) SetExpiredStatusWithUserId(userId int) error {
 func (r *PlanPostgres) DeleteOnConfirmPlan(userId int) error {
 	query := fmt.Sprintf("DELETE FROM %s WHERE user_id = $1 AND status='on_confirm'", plansUsersTable)
 	_, err := r.db.Exec(query, userId)
-
 	return err
 }
 
@@ -59,6 +58,9 @@ func (r *PlanPostgres) GetUserSubscriptions(userId int) ([]connectteam.UserPlan,
 func (r *PlanPostgres) GetPlanInvitationCode(code string) (id int, err error) {
 	query := fmt.Sprintf(`SELECT holder_id FROM %s WHERE status='active' and invitation_code=$1 and holder_id=user_id LIMIT 1`, plansUsersTable)
 	err = r.db.Select(&id, query, code)
+	if err != nil {
+		println("cjkf")
+	}
 	return id, err
 }
 
@@ -74,8 +76,12 @@ func (r *PlanPostgres) GetMembers(code string) (users []connectteam.UserPublic, 
 }
 
 func (r *PlanPostgres) GetHolderWithInvitationCode(code string) (id int, err error) {
-	query := fmt.Sprintf(`SELECT holder_id FROM %s WHERE status='active' and invitation_code=$1 LIMIT 1`, plansUsersTable)
-	err = r.db.Select(&id, query, code)
+	query := fmt.Sprintf(`SELECT holder_id FROM %s WHERE status='active' and invitation_code=$1 and holder_id=user_id LIMIT 1`, plansUsersTable)
+	err = r.db.Get(&id, query, code)
+
+	if err != nil {
+		println(err.Error())
+	}
 	return id, err
 }
 
