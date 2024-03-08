@@ -73,7 +73,7 @@ type UserPlan struct {
 	PlanAccess     string    `json:"plan_access,omitempty" db:"plan_access"`
 	Status         string    `json:"status,omitempty" db:"status"`
 	InvitationCode string    `json:"invitation_code,omitempty" db:"invitation_code"`
-	IsTrial        bool      `json:"is_trial" db:"is_trial"`
+	IsTrial        bool      `json:"is_trial,omitempty" db:"is_trial"`
 }
 
 const (
