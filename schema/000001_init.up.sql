@@ -43,8 +43,8 @@ CREATE TABLE subscriptions
     duration int,
     plan_access varchar(256),
     status status not null DEFAULT 'on_confirm',
-    is_trial boolean DEFAULT false,
-    invitation_code varchar(256)
+    invitation_code varchar(256),
+    is_trial boolean DEFAULT false
 );
 
 CREATE TABLE topics
