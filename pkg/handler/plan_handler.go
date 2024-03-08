@@ -180,19 +180,23 @@ type newPlanInput struct {
 }
 
 func (h *Handler) getTrial(c *gin.Context) {
+	println("hui")
 	id, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+	println("pizda")
 
 	subscriptionExists, err := h.services.Plan.CheckIfSubscriptionExists(id)
 	if err != nil {
+		println("1")
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 	if subscriptionExists {
-		newErrorResponse(c, http.StatusForbidden, err.Error())
+		println("meow")
+		newErrorResponse(c, http.StatusForbidden, "user could not get trial")
 		return
 	}
 

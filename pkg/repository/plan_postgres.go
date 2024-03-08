@@ -48,10 +48,14 @@ func (r *PlanPostgres) DeleteOnConfirmPlan(userId int) error {
 
 func (r *PlanPostgres) GetUserSubscriptions(userId int) ([]connectteam.UserPlan, error) {
 	var usersPlan []connectteam.UserPlan
+	println("2")
 
 	query := fmt.Sprintf(`SELECT id, user_id, holder_id, plan_type, 
 		plan_access, expiry_date, duration, status FROM %s WHERE user_id=$1`, plansUsersTable)
+	println("3")
 	err := r.db.Select(&usersPlan, query, userId)
+	println("4")
+	println(usersPlan[0].UserId)
 	return usersPlan, err
 }
 
