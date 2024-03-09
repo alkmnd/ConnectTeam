@@ -78,6 +78,8 @@ go run cmd/main.go
 
    3.11. [Delete User From Subscription](#delete-user-from-sub)
 
+   3.12. [Check If User Can Get Trial] (#check-trial)
+
 
 6. [Topic](#topic)
    
