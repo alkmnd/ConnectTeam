@@ -34,7 +34,7 @@ go run cmd/main.go
 
    1.5. [Restore Password  (Unauthorized)](#restore-password)
 
-3. [User](#user)
+2. [User](#user)
    
    2.1. [Current user](#get-me)
    
@@ -54,7 +54,7 @@ go run cmd/main.go
 
    2.9. [Restore Password (Authorized)](#restore-password-auth) 
 
-4. [Plan](#plan)
+3. [Plan](#plan)
    
    3.1. [Get My Plan](#get-plan)
    
@@ -78,28 +78,42 @@ go run cmd/main.go
 
    3.11. [Delete User From Subscription](#delete-user-from-sub)
 
-   3.12. [Check If User Can Get Trial] (#check-trial)
+   3.12. Check If User Can Get Trial
 
 
-6. [Topic](#topic)
+4. [Topic](#topic)
    
-   5.1. [Create Topic](#create-topic)
+   4.1. [Create Topic](#create-topic)
 
-   5.2. [Get All Topics](#topics)
+   4.2. [Get All Topics](#topics)
 
-   5.3. [Delete Topic](#delete-topic)
+   4.3. [Delete Topic](#delete-topic)
 
-   5.4. [Update Topic](#update-topic)
+   4.4. [Update Topic](#update-topic)
 
-7. [Question](#question)
+5. [Question](#question)
    
-   6.1. [Create Question](#q_create)
+   5.1. [Create Question](#q_create)
 
-   6.2. [Delete Question](q_delete)
+   5.2. [Delete Question](q_delete)
 
-   6.3. [Question List](q_list)
+   5.3. [Question List](q_list)
    
-   6.4. [Update Question](#q_update)
+   5.4. [Update Question](#q_update)
+
+6. [Game](#game)
+
+   6.1. [Create Game](#create-game)
+
+   6.2. [Delete Game](#delete-game)
+
+   6.3. [Get Games Created by User](#get-created)
+
+   6.4. [Get All User Games](#get-games)
+
+   6.5. [Add User to the Game](#add-user-to-game)
+
+   6.6. [Validate Game Invitation Code](#validate-game-code)
    
 
 
@@ -735,7 +749,7 @@ Note: Use confirmation code to verificate user
 
 **Method:** `GET`
 
-**Endpoint:** `/validate/:code`
+**Endpoint:** `/validate/plan/:code`
 
 **Description:** Validates code and returns holder id.
 
@@ -912,10 +926,10 @@ status(string): "ok" if there is no error.
 }
 ```
 <a id='question'></a>
-### 6. Question
+### 5. Question
 
 <a id='q_create'></a>
-#### 6.1. Create Question 
+#### 5.1. Create Question 
 
 **Method:** `POST`
 
@@ -948,7 +962,7 @@ status(string): "ok" if there is no error.
 ```
 
 <a id='q_delete'></a>
-#### 6.2. Delete Question
+#### 5.2. Delete Question
 
 **Method:** `DELETE`
 
@@ -972,7 +986,7 @@ status(string): "ok" if there is no error.
 ```
 
 <a id='q_list'></a>
-#### 6.3. Question List
+#### 5.3. Question List
 
 **Method:** `GET`
 
@@ -1009,7 +1023,7 @@ status(string): "ok" if there is no error.
 
 
 <a id='q_update'></a>
-#### 6.4. Update Question
+#### 5.4. Update Question
 
 **Method:** `PATCH`
 
@@ -1044,6 +1058,85 @@ status(string): "ok" if there is no error.
     "content": "New content???"
 }
 ```
+
+<a id='game'></a>
+### 6. Game(#game)
+
+<a id='create-game'></a>
+#### 6.1. Create Game
+
+**Method:** `POST`
+
+**Endpoint:** `/games/`
+
+**Description:** Creaate new game and returns created game.
+
+**Request Parameters:**
+* name(string, required): Game name.
+* start_date(string, required): When game starts.
+
+<a id='delete-game'></a>
+#### 6.2. Delete Game 
+
+**Method:** `DELETE`
+
+**Endpoint:** `/games/:id`
+
+**Description:** Deletes game by id.
+
+**URL Parameters:**
+* id (int): Game id.
+ 
+<a id ='get-created'></a>
+#### 6.3. Get Games Created by User
+
+**Method:** `GET`
+
+**Endpoint:** `/games/`
+
+**Description:** Returns games created by user order by start date.
+
+**Request Parameters:**
+* offset(int, required)
+* limit(int, required)
+
+<a id='get-games'></a>
+#### 6.4. Get All User Games
+
+**Method:** `GET`
+
+**Endpoint:** `/games/all`
+
+**Description:** Returns all games that user participated in.
+
+**Request Parameters:**
+* offset(int, required)
+* limit(int, required)
+
+<a id='add-user-to-game'></a>
+#### 6.5. Add User to the Game
+
+**Method:**`POST`
+
+**Enpoint:** `/games/:code`
+
+**Description:** Adds user to the game as participant.
+
+**URL Parameters:**
+*code(string): Invitation code.
+
+
+<a id='validate-game-code'></a>
+#### 6.6. Validate Game Invitation Code
+
+**Method:** `GET`
+
+**Endpoint:** `validate/game/:code`
+
+**Description:** Checks invitation code and returns game.
+
+**URL Parameters:**
+*code(string): Invitation code.
 
 
 
