@@ -109,6 +109,7 @@ type AccessLevel string
 const (
 	Admin      AccessLevel = "admin"
 	SuperAdmin AccessLevel = "super_admin"
+	UserAccess AccessLevel = "user"
 )
 
 type Topic struct {
@@ -120,4 +121,13 @@ type Question struct {
 	Id      int    `json:"id" db:"id"`
 	TopicId int    `json:"topic_id" db:"topic_id"`
 	Content string `json:"content" db:"content"`
+}
+
+type Game struct {
+	Id             int       `json:"id" db:"id"`
+	CreatorId      int       `json:"creator_id" db:"creator_id"`
+	InvitationCode string    `json:"invitation_code" db:"invitation_code"`
+	Name           string    `json:"name" db:"name"`
+	StartDate      time.Time `json:"start_date" db:"start_date"`
+	Status         string    `json:"status" db:"status"`
 }

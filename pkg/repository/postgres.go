@@ -17,6 +17,8 @@ const (
 	planRequestsTable = "plan_requests"
 	topicsTable       = "topics"
 	questionsTable    = "questions"
+	gamesTable        = "games"
+	gamesUsersTable   = "games_users"
 )
 
 type Config struct {

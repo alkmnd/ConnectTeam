@@ -17,7 +17,6 @@ func NewPlanPostgres(db *sqlx.DB) *PlanPostgres {
 
 func (r *PlanPostgres) GetUserActivePlan(userId int) (connectteam.UserPlan, error) {
 	var userPlan connectteam.UserPlan
-	println(userId)
 	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id=$1 AND (status='active' or status='on_confirm')", plansUsersTable)
 	err := r.db.Get(&userPlan, query, userId)
 
@@ -48,14 +47,10 @@ func (r *PlanPostgres) DeleteOnConfirmPlan(userId int) error {
 
 func (r *PlanPostgres) GetUserSubscriptions(userId int) ([]connectteam.UserPlan, error) {
 	var usersPlan []connectteam.UserPlan
-	println("2")
 
 	query := fmt.Sprintf(`SELECT id, user_id, holder_id, plan_type, 
 		plan_access, expiry_date, duration, status FROM %s WHERE user_id=$1`, plansUsersTable)
-	println("3")
 	err := r.db.Select(&usersPlan, query, userId)
-	println("4")
-	println(usersPlan[0].UserId)
 	return usersPlan, err
 }
 
@@ -83,9 +78,6 @@ func (r *PlanPostgres) GetHolderWithInvitationCode(code string) (id int, err err
 	query := fmt.Sprintf(`SELECT holder_id FROM %s WHERE status='active' and invitation_code=$1 and holder_id=user_id LIMIT 1`, plansUsersTable)
 	err = r.db.Get(&id, query, code)
 
-	if err != nil {
-		println(err.Error())
-	}
 	return id, err
 }
 

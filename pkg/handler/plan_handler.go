@@ -313,7 +313,7 @@ func (h *Handler) addUserToPlan(c *gin.Context) {
 	}
 
 	if holderId == id {
-		newErrorResponse(c, http.StatusNotFound, "holder and user is equal")
+		newErrorResponse(c, http.StatusForbidden, "holder and user is equal")
 		return
 	}
 	holderPlan, err := h.services.GetUserActivePlan(holderId)
@@ -323,7 +323,7 @@ func (h *Handler) addUserToPlan(c *gin.Context) {
 	}
 
 	members, err := h.services.GetMembers(code)
-	if len(members) == 3 {
+	if len(members) == 4 {
 		newErrorResponse(c, http.StatusForbidden, "max number of members")
 		return
 	}
@@ -353,7 +353,6 @@ func (h *Handler) validateInvitationCode(c *gin.Context) {
 	code := c.Param("code")
 	id, err := h.services.GetHolderWithInvitationCode(code)
 	if err != nil {
-		println("1")
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -365,7 +364,6 @@ func (h *Handler) validateInvitationCode(c *gin.Context) {
 	var userPlan connectteam.UserPlan
 	userPlan, err = h.services.Plan.GetUserActivePlan(id)
 	if err != nil {
-		println("2")
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

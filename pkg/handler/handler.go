@@ -86,7 +86,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	}
 	validator := router.Group("/validate")
 	{
-		validator.GET("/:code", h.validateInvitationCode)
+		validator.GET("plan/:code", h.validateInvitationCode)
+		validator.GET("plan/:code")
 	}
 
 	topic := router.Group("/topics", h.userIdentity)
@@ -101,10 +102,14 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			questions.POST("/", h.createQuestion)
 		}
 	}
-	questions := router.Group("/questions", h.userIdentity)
+	question := router.Group("/questions", h.userIdentity)
 	{
-		questions.DELETE("/:id", h.deleteQuestion)
-		questions.PATCH("/:id", h.updateQuestion)
+		question.DELETE("/:id", h.deleteQuestion)
+		question.PATCH("/:id", h.updateQuestion)
+	}
+	game := router.Group("games", h.userIdentity)
+	{
+		game.POST("/")
 	}
 
 	return router
