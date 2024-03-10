@@ -114,6 +114,8 @@ go run cmd/main.go
    6.5. [Add User to the Game](#add-user-to-game)
 
    6.6. [Validate Game Invitation Code](#validate-game-code)
+
+   6.7. [Get Game](#gate-game)
    
 
 
@@ -1138,5 +1140,16 @@ status(string): "ok" if there is no error.
 **URL Parameters:**
 *code(string): Invitation code.
 
+<a id='get-game'></a>
+#### 6.7. Get Game
+
+**Method:** `GET`
+
+**Endpoint:** `/games/:id`
+
+**Description:** Returns game date by id.
+
+**URL Parameters:**
+* id(int): Game id.
 
 
