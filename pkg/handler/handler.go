@@ -110,8 +110,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	game := router.Group("games", h.userIdentity)
 	{
 		game.POST("/", h.createGame)
-		game.GET("/", h.getGames)
-		game.GET("/created", h.getCreatedGames)
+		game.GET("/all", h.getGames)
+		game.GET("/", h.getCreatedGames)
 		game.GET("/:id", h.getGame)
 		game.DELETE("/:id", h.deleteGame)
 		game.POST("/:code", h.addUserAsParticipant)
