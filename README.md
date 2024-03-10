@@ -1062,7 +1062,7 @@ status(string): "ok" if there is no error.
 ```
 
 <a id='game'></a>
-### 6. Game(#game)
+### 6. Game
 
 <a id='create-game'></a>
 #### 6.1. Create Game
