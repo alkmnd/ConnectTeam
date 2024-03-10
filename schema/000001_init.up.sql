@@ -77,6 +77,7 @@ CREATE TABLE games_users
     user_id int references users (id) on delete cascade,
 );
 
+
 CREATE OR REPLACE FUNCTION update_subscription()
 RETURNS TRIGGER AS $$
 BEGIN

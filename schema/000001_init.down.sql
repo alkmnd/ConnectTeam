@@ -1,6 +1,9 @@
 DROP TABLE IF EXISTS subscriptions;
 DROP TYPE IF EXISTS plans;
 DROP TABLE IF EXISTS verification_codes;
+DROP TABLE IF EXISTS games_users;
+DROP TABLE IF EXISTS games;
+DROP TYPE IF EXISTS game_status;
 DROP TABLE IF EXISTS users;
 DROP TYPE IF EXISTS user_role;
 DROP TABLE IF EXISTS questions;
