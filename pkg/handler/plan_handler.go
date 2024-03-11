@@ -303,12 +303,13 @@ func (h *Handler) addUserToPlan(c *gin.Context) {
 
 	code := c.Param("code")
 	holderId, err := h.services.GetHolderWithInvitationCode(code)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
 	if holderId == 0 {
 		newErrorResponse(c, http.StatusNotFound, "incorrect invitation code")
+		return
+	}
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -327,8 +328,6 @@ func (h *Handler) addUserToPlan(c *gin.Context) {
 		newErrorResponse(c, http.StatusForbidden, "max number of members")
 		return
 	}
-
-	// добавить проверку на количество участников
 
 	plan, err := h.services.AddUserToAdvanced(holderPlan, id)
 
