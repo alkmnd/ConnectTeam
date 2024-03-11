@@ -2,6 +2,7 @@ CREATE TYPE user_role AS ENUM ('user', 'admin', 'plan_user');
 CREATE TYPE plans AS ENUM ('basic', 'advanced', 'premium');
 CREATE TYPE access AS ENUM ('super_admin', 'admin', 'user');
 CREATE TYPE status AS ENUM ('active', 'expired', 'on_confirm');
+CREATE TYPE game_status AS ENUM ('not_started', 'in_process', 'ended')
 
 CREATE TABLE users
 (
@@ -59,6 +60,23 @@ CREATE TABLE questions
     topic_id int references topics (id) on delete cascade,
     content varchar(256)
 );
+
+CREATE TABLE games
+(
+    id serial not null PRIMARY KEY,
+    creator_id int references users (id) on delete cascade,
+    name string,
+    start_date timestamp,
+    invitation_code string,
+    status game_status
+);
+
+CREATE TABLE games_users
+(
+    game_id int references games (id) on delete cascade,
+    user_id int references users (id) on delete cascade,
+);
+
 
 CREATE OR REPLACE FUNCTION update_subscription()
 RETURNS TRIGGER AS $$

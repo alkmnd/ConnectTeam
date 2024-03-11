@@ -69,6 +69,16 @@ type Uploader interface {
 	Upload(ctx context.Context, file io.Reader, size int64, contentType string) (string, error)
 }
 
+type Game interface {
+	CreateGame(creatorId int, startDateString string, name string) (connectteam.Game, error)
+	GetCreatedGames(limit int, offset int, userId int) ([]connectteam.Game, error)
+	CreateParticipant(userId int, gameId int) error
+	GetGame(gameId int) (connectteam.Game, error)
+	DeleteGame(gameId int) error
+	GetGameWithInvitationCode(code string) (connectteam.Game, error)
+	GetGames(limit int, offset int, userId int) ([]connectteam.Game, error)
+}
+
 type Service struct {
 	Authorization
 	User
@@ -76,6 +86,7 @@ type Service struct {
 	Topic
 	Question
 	Uploader
+	Game
 }
 
 func NewService(repos *repository.Repository, fileStorage *filestorage.FileStorage) *Service {
@@ -86,5 +97,6 @@ func NewService(repos *repository.Repository, fileStorage *filestorage.FileStora
 		Topic:         NewTopicService(repos.Topic),
 		Question:      NewQuestionService(repos.Question),
 		Uploader:      uploader.NewUploader(fileStorage),
+		Game:          NewGameService(repos.Game),
 	}
 }
