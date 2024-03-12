@@ -65,9 +65,9 @@ CREATE TABLE games
 (
     id serial not null PRIMARY KEY,
     creator_id int references users (id) on delete cascade,
-    name string,
+    name varchar(256),
     start_date timestamp,
-    invitation_code string,
+    invitation_code varchar(256),
     status game_status
 );
 
