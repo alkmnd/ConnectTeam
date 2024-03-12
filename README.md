@@ -1094,7 +1094,7 @@ status(string): "ok" if there is no error.
 
 **Method:** `GET`
 
-**Endpoint:** `/games/:page`
+**Endpoint:** `/games/created/:page`
 
 **Description:** Returns games created by user order by start date.
 
