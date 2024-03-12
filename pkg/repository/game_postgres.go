@@ -14,18 +14,22 @@ func NewGamePostgres(db *sqlx.DB) *GamePostgres {
 	return &GamePostgres{db: db}
 }
 
+const (
+	limit = 10
+)
+
 func (r *GamePostgres) CreateGame(game connectteam.Game) (connectteam.Game, error) {
-	query := fmt.Sprintf("INSERT INTO %s (creator_id, name, start_date, invitation_code) values ($1, $2, $3, $4) RETURNING id", gamesTable)
-	row := r.db.QueryRow(query, game.CreatorId, game.Name, game.StartDate, game.InvitationCode)
+	query := fmt.Sprintf("INSERT INTO %s (creator_id, name, start_date, invitation_code, status) values ($1, $2, $3, $4, $5) RETURNING id", gamesTable)
+	row := r.db.QueryRow(query, game.CreatorId, game.Name, game.StartDate, game.InvitationCode, game.Status)
 	if err := row.Scan(&game.Id); err != nil {
 		return game, err
 	}
 	return game, nil
 }
 
-func (r *GamePostgres) GetCreatedGames(limit int, offset int, userId int) (games []connectteam.Game, err error) {
+func (r *GamePostgres) GetCreatedGames(page int, userId int) (games []connectteam.Game, err error) {
 	query := fmt.Sprintf(`SELECT * FROM %s WHERE creator_id=$1 ORDER BY start_date DESC LIMIT $2 OFFSET $3`, gamesTable)
-	err = r.db.Select(&games, query, userId, limit, offset)
+	err = r.db.Select(&games, query, userId, limit, page*limit)
 	return games, err
 }
 
@@ -55,9 +59,9 @@ func (r *GamePostgres) GetGameWithInvitationCode(code string) (game connectteam.
 	return game, err
 }
 
-func (r *GamePostgres) GetGames(limit int, offset int, userId int) (games []connectteam.Game, err error) {
+func (r *GamePostgres) GetGames(page int, userId int) (games []connectteam.Game, err error) {
 	query := fmt.Sprintf(`SELECT * FROM %s g
 	JOIN %s p ON p.game_id = g.id WHERE user_id =$1 ORDER BY start_date DESC LIMIT $2 OFFSET $3`, gamesTable, gamesUsersTable)
-	err = r.db.Select(&games, query, userId, limit, offset)
+	err = r.db.Select(&games, query, userId, limit, limit*page)
 	return games, err
 }

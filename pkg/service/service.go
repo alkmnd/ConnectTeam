@@ -71,12 +71,12 @@ type Uploader interface {
 
 type Game interface {
 	CreateGame(creatorId int, startDateString string, name string) (connectteam.Game, error)
-	GetCreatedGames(limit int, offset int, userId int) ([]connectteam.Game, error)
+	GetCreatedGames(page int, userId int) ([]connectteam.Game, error)
 	CreateParticipant(userId int, gameId int) error
 	GetGame(gameId int) (connectteam.Game, error)
 	DeleteGame(gameId int) error
 	GetGameWithInvitationCode(code string) (connectteam.Game, error)
-	GetGames(limit int, offset int, userId int) ([]connectteam.Game, error)
+	GetGames(page int, userId int) ([]connectteam.Game, error)
 }
 
 type Service struct {
