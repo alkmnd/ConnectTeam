@@ -2,6 +2,7 @@ package main
 
 import (
 	connectteam "ConnectTeam"
+	"ConnectTeam/pkg/game"
 	"ConnectTeam/pkg/handler"
 	"ConnectTeam/pkg/repository"
 	"ConnectTeam/pkg/repository/filestorage"
@@ -21,7 +22,6 @@ import (
 var upgrader = websocket.Upgrader{}
 
 func main() {
-	logrus.Println("2")
 	if err := initConfig(); err != nil {
 		logrus.Fatalf("error")
 	}
@@ -67,8 +67,11 @@ func main() {
 	services := service.NewService(repos, fileStorage)
 	handlers := handler.NewHandler(services)
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		handlers.Echo(w, r)
+	wsServer := game.NewWebsocketServer()
+	go wsServer.Run()
+
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		game.ServeWs(wsServer, w, r)
 	})
 	go http.ListenAndServe(":8080", nil)
 
