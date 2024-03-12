@@ -64,17 +64,16 @@ func (h *Handler) createGame(c *gin.Context) {
 	})
 }
 
-type getUserGamesInput struct {
-	Limit  int `json:"limit"`
-	Offset int `json:"offset"`
-}
+//type getUserGamesInput struct {
+//	Limit  int `json:"limit" binding:"required"`
+//	Offset int `json:"offset" binding:"required"`
+//}
 
 type getUserGamesResponse struct {
 	Data []connectteam.Game `json:"data"`
 }
 
 func (h *Handler) getCreatedGames(c *gin.Context) {
-	var input getUserGamesInput
 	id, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -92,8 +91,9 @@ func (h *Handler) getCreatedGames(c *gin.Context) {
 		return
 	}
 
-	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+	page, err := strconv.Atoi(c.Param("page"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -103,7 +103,7 @@ func (h *Handler) getCreatedGames(c *gin.Context) {
 		return
 	}
 
-	games, err := h.services.Game.GetCreatedGames(input.Limit, input.Offset, id)
+	games, err := h.services.Game.GetCreatedGames(page, id)
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -165,6 +165,10 @@ func (h *Handler) getGame(c *gin.Context) {
 	}
 
 	gameId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	game, err := h.services.Game.GetGame(gameId)
 
@@ -240,14 +244,15 @@ func (h *Handler) validateGameInvitationCode(c *gin.Context) {
 }
 
 func (h *Handler) getGames(c *gin.Context) {
-	var input getUserGamesInput
 	id, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+
+	page, err := strconv.Atoi(c.Param("page"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -256,7 +261,7 @@ func (h *Handler) getGames(c *gin.Context) {
 		newErrorResponse(c, http.StatusForbidden, "user has no plan")
 		return
 	}
-	games, err := h.services.Game.GetGames(input.Limit, input.Offset, id)
+	games, err := h.services.Game.GetGames(page, id)
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())

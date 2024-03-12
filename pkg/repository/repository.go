@@ -73,12 +73,12 @@ type Question interface {
 
 type Game interface {
 	CreateGame(game connectteam.Game) (connectteam.Game, error)
-	GetCreatedGames(limit int, offset int, userId int) (games []connectteam.Game, err error)
+	GetCreatedGames(page int, userId int) (games []connectteam.Game, err error)
 	CreateParticipant(userId int, gameId int) error
 	GetGame(gameId int) (game connectteam.Game, err error)
 	DeleteGame(gameId int) error
 	GetGameWithInvitationCode(code string) (game connectteam.Game, err error)
-	GetGames(limit int, offset int, userId int) (games []connectteam.Game, err error)
+	GetGames(page int, userId int) (games []connectteam.Game, err error)
 }
 
 type Repository struct {

@@ -1094,26 +1094,24 @@ status(string): "ok" if there is no error.
 
 **Method:** `GET`
 
-**Endpoint:** `/games/`
+**Endpoint:** `/games/:page`
 
 **Description:** Returns games created by user order by start date.
 
 **Request Parameters:**
-* offset(int, required)
-* limit(int, required)
+* page(int, required)
 
 <a id='get-games'></a>
 #### 6.4. Get All User Games
 
 **Method:** `GET`
 
-**Endpoint:** `/games/all`
+**Endpoint:** `/games/all/:page`
 
 **Description:** Returns all games that user participated in.
 
 **Request Parameters:**
-* offset(int, required)
-* limit(int, required)
+* page(int, required)
 
 <a id='add-user-to-game'></a>
 #### 6.5. Add User to the Game

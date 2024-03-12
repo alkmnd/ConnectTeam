@@ -37,6 +37,7 @@ func (s *GameService) CreateGame(creatorId int, startDateString string, name str
 	if len(name) == 0 {
 		return game, errors.New("incorrect game name")
 	}
+	game.Name = name
 
 	return s.repo.CreateGame(game)
 }
@@ -45,8 +46,8 @@ func (s *GameService) CreateParticipant(userId int, gameId int) error {
 	return s.repo.CreateParticipant(userId, gameId)
 }
 
-func (s *GameService) GetCreatedGames(limit int, offset int, userId int) ([]connectteam.Game, error) {
-	return s.repo.GetCreatedGames(limit, offset, userId)
+func (s *GameService) GetCreatedGames(page int, userId int) ([]connectteam.Game, error) {
+	return s.repo.GetCreatedGames(page, userId)
 }
 
 func (s *GameService) GetGame(gameId int) (connectteam.Game, error) {
@@ -61,6 +62,6 @@ func (s *GameService) GetGameWithInvitationCode(code string) (connectteam.Game, 
 	return s.repo.GetGameWithInvitationCode(code)
 }
 
-func (s *GameService) GetGames(limit int, offset int, userId int) ([]connectteam.Game, error) {
-	return s.repo.GetGames(limit, offset, userId)
+func (s *GameService) GetGames(page int, userId int) ([]connectteam.Game, error) {
+	return s.repo.GetGames(page, userId)
 }
