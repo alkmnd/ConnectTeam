@@ -34,7 +34,7 @@ func (s *GameService) CreateGame(creatorId int, startDateString string, name str
 	game.StartDate = startDate
 	game.CreatorId = creatorId
 	game.Status = "not_started"
-	if len(name) != 0 {
+	if len(name) == 0 {
 		return game, errors.New("incorrect game name")
 	}
 
