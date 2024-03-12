@@ -74,7 +74,7 @@ CREATE TABLE games
 CREATE TABLE games_users
 (
     game_id int references games (id) on delete cascade,
-    user_id int references users (id) on delete cascade,
+    user_id int references users (id) on delete cascade
 );
 
 
