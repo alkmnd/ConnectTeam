@@ -116,6 +116,8 @@ go run cmd/main.go
    6.6. [Validate Game Invitation Code](#validate-game-code)
 
    6.7. [Get Game](#gate-game)
+
+7. [WebSocket Server](#ws-server)
    
 
 
@@ -1150,4 +1152,7 @@ status(string): "ok" if there is no error.
 **URL Parameters:**
 * id(int): Game id.
 
+<a id='ws-server'></a>
+### 7. Websocket Server 
 
+#### 7.1. Connect to the Server

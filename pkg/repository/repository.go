@@ -69,6 +69,7 @@ type Question interface {
 	DeleteQuestion(id int) error
 	GetAll(topicId int) ([]connectteam.Question, error)
 	UpdateQuestion(content string, id int) (connectteam.Question, error)
+	GetAllWithLimit(topicId int, limit int) ([]connectteam.Question, error)
 }
 
 type Game interface {

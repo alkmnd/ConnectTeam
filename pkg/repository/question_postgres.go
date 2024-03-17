@@ -39,6 +39,14 @@ func (r *QuestionPostgres) GetAll(topicId int) ([]connectteam.Question, error) {
 	return questions, err
 }
 
+func (r *QuestionPostgres) GetAllWithLimit(topicId int, limit int) ([]connectteam.Question, error) {
+	var questions []connectteam.Question
+
+	query := fmt.Sprintf("SELECT id, topic_id, content FROM %s WHERE topic_id = $1 ORDER BY RAND() LIMIT $1", questionsTable)
+	err := r.db.Select(&questions, query, topicId, limit)
+	return questions, err
+}
+
 func (r *QuestionPostgres) UpdateQuestion(content string, id int) (connectteam.Question, error) {
 	var question connectteam.Question
 	query := fmt.Sprintf(`UPDATE %s SET content = $1 WHERE id = %d RETURNING id, topic_id, content`, questionsTable, id)

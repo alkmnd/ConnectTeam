@@ -1,6 +1,7 @@
 package game
 
 import (
+	connectteam "ConnectTeam"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -183,20 +184,15 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 	switch message.Action {
 
 	case SendMessageAction:
-		// The send-message action, this will send messages to a specific room now.
-		// Which room wil depend on the message Target
-		//roomName := message.Target.Name
-		// Use the ChatServer method to find the room, and if found, broadcast!
-		if room := client.wsServer.findGame(message.Target.ID); room != nil {
-			room.broadcast <- &message
+		if game := client.wsServer.findGame(message.Target.ID); game != nil {
+			game.broadcast <- &message
 		}
-		// We delegate the join and leave actions.
 	case JoinGameAction:
 		log.Println("joinGameAction")
 		client.handleJoinGameMessage(message)
-	//case StartGameAction:
-	//	log.Println("startGameAction")
-	//	...
+	case StartGameAction:
+		log.Println("startGameAction")
+		client.handleStartGameMessage(message)
 	case LeaveGameAction:
 		client.handleLeaveGameMessage(message)
 
@@ -206,31 +202,40 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 	}
 }
 
-//func (client *Client) handleStartGameMessage(message Message) {
-//	//  меняем статус,
-//	gameId := message.Target.ID
-//
-//	game := client.wsServer.findGame(gameId)
-//	game.Status = "in_progress"
-//
-//	err := client.wsServer.repos.StartGame(gameId)
-//	if err != nil {
-//		log.Println("handleStartGameMessage unknown game")
-//		return
-//	}
-//	if len(game.Rounds) == 0 {
-//		log.Println("number of rounds is 0")
-//		return
-//	}
-//	questions := map[int][]connectteam.Question{}
-//
-//	for i, _ := range game.Rounds {
-//		numberOfClients := len(game.clients)
-//		questions[game.Rounds[i].Id], _ = client.wsServer.repos.Question.GetAll(game.Rounds[i].Id)
-//		for j = range
-//	}
-//
-//}
+func (client *Client) handleStartGameMessage(message Message) {
+	//  меняем статус,
+	gameId := message.Target.ID
+
+	game := client.wsServer.findGame(gameId)
+	game.Status = "in_progress"
+
+	err := client.wsServer.repos.StartGame(gameId)
+	if err != nil {
+		log.Println("handleStartGameMessage unknown game")
+		return
+	}
+	if len(game.Rounds) == 0 {
+		log.Println("number of rounds is 0")
+		return
+	}
+	questions := map[int][]connectteam.Question{}
+
+	for i, _ := range game.Rounds {
+		questions[game.Rounds[i].Id], _ = client.wsServer.repos.Question.GetAllWithLimit(game.Rounds[i].Id, len(game.clients))
+		game.Rounds[i].Questions = make([]string, len(game.clients))
+		for j := 0; j < len(game.clients); j++ {
+			game.Rounds[i].Questions[j] = questions[game.Rounds[i].Id][j].Content
+		}
+	}
+
+	bytes, err := json.Marshal(game.Rounds)
+	if err != nil {
+		return
+	}
+	message.Message = bytes
+	game.broadcast <- &message
+
+}
 
 func (client *Client) handleSelectTopicGameMessage(message Message) {
 	gameId := message.Target.ID
