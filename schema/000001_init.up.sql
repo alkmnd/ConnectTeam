@@ -2,7 +2,7 @@ CREATE TYPE user_role AS ENUM ('user', 'admin', 'plan_user');
 CREATE TYPE plans AS ENUM ('basic', 'advanced', 'premium');
 CREATE TYPE access AS ENUM ('super_admin', 'admin', 'user');
 CREATE TYPE status AS ENUM ('active', 'expired', 'on_confirm');
-CREATE TYPE game_status AS ENUM ('not_started', 'in_process', 'ended');
+CREATE TYPE game_status AS ENUM ('not_started', 'in_progress', 'ended');
 
 CREATE TABLE users
 (

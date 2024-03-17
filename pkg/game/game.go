@@ -9,6 +9,7 @@ type Game struct {
 	Name    string `json:"name"`
 	clients map[*Client]bool
 	//state
+	MaxSize    int
 	Status     string
 	Creator    int `json:"creator_id"`
 	Rounds     []Topic
@@ -19,7 +20,8 @@ type Game struct {
 }
 
 type Topic struct {
-	Id        string   `json:"id"`
+	Id        int      `json:"id"`
+	Title     string   `json:"title,omitempty"`
 	Questions []string `json:"questions,omitempty"`
 }
 
@@ -30,6 +32,7 @@ func NewGame(name string, id int, creator int, status string) *Game {
 		Rounds:  make([]Topic, 0),
 		Creator: creator,
 		Status:  status,
+		MaxSize: 3,
 		// state
 		clients:    make(map[*Client]bool),
 		register:   make(chan *Client),
@@ -80,8 +83,12 @@ func (game *Game) notifyClientJoined(client *Client) {
 
 func (game *Game) registerClientInGame(client *Client) {
 	log.Println("client joined")
-	game.clients[client] = true
-	game.notifyClientJoined(client)
+	if len(game.clients) < game.MaxSize {
+		game.clients[client] = true
+		game.notifyClientJoined(client)
+	}
+	log.Println("registerClientInGame max number of users in game")
+	return
 }
 
 func (game *Game) unregisterClientInGame(client *Client) {
