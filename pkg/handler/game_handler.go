@@ -186,6 +186,7 @@ func (h *Handler) getGame(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"id":              game.Id,
 		"name":            game.Name,
+		"creator_id":      game.CreatorId,
 		"start_date":      game.StartDate,
 		"status":          game.Status,
 		"invitation_code": invitationCode,
@@ -237,6 +238,7 @@ func (h *Handler) validateGameInvitationCode(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"id":              game.Id,
 		"name":            game.Name,
+		"creator_id":      game.CreatorId,
 		"start_date":      game.StartDate,
 		"status":          game.Status,
 		"invitation_code": game.InvitationCode,

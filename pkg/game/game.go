@@ -1,7 +1,7 @@
 package game
 
 import (
-	"fmt"
+	"encoding/json"
 	"log"
 )
 
@@ -11,8 +11,8 @@ type Game struct {
 	//state
 	MaxSize    int
 	Status     string
-	Creator    int `json:"creator_id"`
-	Rounds     []Topic
+	Creator    int     `json:"creator_id"`
+	Rounds     []Topic `json:"rounds"`
 	register   chan *Client
 	unregister chan *Client
 	broadcast  chan *Message
@@ -70,11 +70,21 @@ func (game *Game) RunGame() {
 
 const welcomeMessage = "%s joined the room"
 
+type UserList struct {
+	Users []User `json:"users"`
+}
+
 func (game *Game) notifyClientJoined(client *Client) {
+	var users UserList
+	for i, _ := range game.clients {
+		users.Users = append(users.Users, i.User)
+	}
+	bytes, _ := json.Marshal(users)
+
 	message := &Message{
 		Action:  JoinGameAction,
 		Target:  game,
-		Message: fmt.Sprintf(welcomeMessage, client.GetName()),
+		Message: bytes,
 		Sender:  &client.User,
 	}
 
