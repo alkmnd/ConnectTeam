@@ -243,6 +243,32 @@ func (h *Handler) validateGameInvitationCode(c *gin.Context) {
 	})
 }
 
+//func (h *Handler) addTopicToGame(c *gin.Context) {
+//	id, err := getUserId(c)
+//	if err != nil {
+//		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+//		return
+//	}
+//
+//	gameId, err := strconv.Atoi(c.Param("id"))
+//	if err != nil {
+//		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+//		return
+//	}
+//
+//	game, err := h.services.GetGame(gameId)
+//	if err != nil {
+//		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+//		return
+//	}
+//
+//	if game.CreatorId != id {
+//		newErrorResponse(c, http.StatusForbidden, err.Error())
+//		return
+//	}
+//
+//}
+
 func (h *Handler) getGames(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {
