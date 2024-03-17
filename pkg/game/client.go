@@ -194,13 +194,43 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 	case JoinGameAction:
 		log.Println("joinGameAction")
 		client.handleJoinGameMessage(message)
-
+	//case StartGameAction:
+	//	log.Println("startGameAction")
+	//	...
 	case LeaveGameAction:
 		client.handleLeaveGameMessage(message)
+
 	case SelectTopicAction:
+		log.Println("selectTopicAction")
 		client.handleSelectTopicGameMessage(message)
 	}
 }
+
+//func (client *Client) handleStartGameMessage(message Message) {
+//	//  меняем статус,
+//	gameId := message.Target.ID
+//
+//	game := client.wsServer.findGame(gameId)
+//	game.Status = "in_progress"
+//
+//	err := client.wsServer.repos.StartGame(gameId)
+//	if err != nil {
+//		log.Println("handleStartGameMessage unknown game")
+//		return
+//	}
+//	if len(game.Rounds) == 0 {
+//		log.Println("number of rounds is 0")
+//		return
+//	}
+//	questions := map[int][]connectteam.Question{}
+//
+//	for i, _ := range game.Rounds {
+//		numberOfClients := len(game.clients)
+//		questions[game.Rounds[i].Id], _ = client.wsServer.repos.Question.GetAll(game.Rounds[i].Id)
+//		for j = range
+//	}
+//
+//}
 
 func (client *Client) handleSelectTopicGameMessage(message Message) {
 	gameId := message.Target.ID

@@ -79,6 +79,7 @@ type Game interface {
 	DeleteGame(gameId int) error
 	GetGameWithInvitationCode(code string) (game connectteam.Game, err error)
 	GetGames(page int, userId int) (games []connectteam.Game, err error)
+	StartGame(gameId int) error
 }
 
 type Repository struct {

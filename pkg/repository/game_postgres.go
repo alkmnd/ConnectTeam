@@ -47,6 +47,14 @@ func (r *GamePostgres) GetGame(gameId int) (game connectteam.Game, err error) {
 	return game, err
 }
 
+func (r *GamePostgres) StartGame(gameId int) error {
+	query := fmt.Sprintf(`UPDATE %s SET status = 'in_progress' WHERE id = %d`, gamesTable, gameId)
+
+	_, err := r.db.Exec(query)
+
+	return err
+}
+
 func (r *GamePostgres) DeleteGame(gameId int) error {
 	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1", gamesTable)
 	_, err := r.db.Exec(query, gameId)
@@ -54,7 +62,7 @@ func (r *GamePostgres) DeleteGame(gameId int) error {
 }
 
 func (r *GamePostgres) GetGameWithInvitationCode(code string) (game connectteam.Game, err error) {
-	query := fmt.Sprintf(`SELECT * FROM %s WHERE and invitation_code=$1 LIMIT 1`, gamesTable)
+	query := fmt.Sprintf(`SELECT * FROM %s WHERE invitation_code=$1 LIMIT 1`, gamesTable)
 	err = r.db.Get(&game, query, code)
 	return game, err
 }
