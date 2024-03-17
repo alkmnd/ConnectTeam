@@ -111,6 +111,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		game.GET("/:id", h.getGame)
 		game.DELETE("/:id", h.deleteGame)
 		game.POST("/:code", h.addUserAsParticipant)
+		//game.POST(":id/topics", h.addTopicToGame)
 	}
 
 	return router

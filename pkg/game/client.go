@@ -1,10 +1,13 @@
 package game
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
@@ -13,36 +16,70 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 4096,
 }
 
+type User struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+}
+
 type Client struct {
 	// The actual websocket connection.
+	ID       uuid.UUID `json:"id"`
 	conn     *websocket.Conn
 	wsServer *WsServer
 	send     chan []byte
+	games    map[*Game]bool
+	User     User `json:"user"`
 }
 
-func newClient(conn *websocket.Conn, wsServer *WsServer) *Client {
+func newClient(conn *websocket.Conn, wsServer *WsServer, user User) *Client {
 	return &Client{
+		ID:       uuid.New(),
+		User:     user,
 		conn:     conn,
 		wsServer: wsServer,
+		games:    make(map[*Game]bool),
+		send:     make(chan []byte, 256),
 	}
+}
+
+func (client *Client) GetName() string {
+	return client.User.Name
 }
 
 func (client *Client) disconnect() {
 	client.wsServer.unregister <- client
-	close(client.send)
-	client.conn.Close()
+	for game := range client.games {
+		game.unregister <- client
+	}
 }
 
 // ServeWs handles websocket requests from clients requests.
 func ServeWs(wsServer *WsServer, w http.ResponseWriter, r *http.Request) {
+	name, ok := r.URL.Query()["name"]
 
+	if !ok || len(name[0]) < 1 {
+		log.Println("Url Param 'name' is missing")
+		return
+	}
+
+	id_string, ok := r.URL.Query()["id"]
+
+	if !ok || len(id_string[0]) < 1 {
+		log.Println("Url Param 'id' is missing")
+		return
+	}
+
+	id, err := strconv.Atoi(id_string[0])
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	client := newClient(conn, wsServer)
+	client := newClient(conn, wsServer, User{
+		Id:   id,
+		Name: name[0],
+	})
 
 	go client.writePump()
 	go client.readPump()
@@ -83,7 +120,7 @@ func (client *Client) readPump() {
 			break
 		}
 
-		client.wsServer.broadcast <- jsonMessage
+		client.handleNewMessage(jsonMessage)
 	}
 }
 
@@ -131,4 +168,76 @@ func (client *Client) writePump() {
 			}
 		}
 	}
+}
+func (client *Client) handleNewMessage(jsonMessage []byte) {
+
+	var message Message
+	if err := json.Unmarshal(jsonMessage, &message); err != nil {
+		log.Printf("Error on unmarshal JSON message %s", err)
+		return
+	}
+
+	// Attach the client object as the sender of the messsage.
+	message.Sender = &client.User
+
+	switch message.Action {
+
+	case SendMessageAction:
+		// The send-message action, this will send messages to a specific room now.
+		// Which room wil depend on the message Target
+		//roomName := message.Target.Name
+		// Use the ChatServer method to find the room, and if found, broadcast!
+		if room := client.wsServer.findGame(message.Target.ID); room != nil {
+			room.broadcast <- &message
+		}
+		// We delegate the join and leave actions.
+	case JoinGameAction:
+		log.Println("joinGameAction")
+		client.handleJoinGameMessage(message)
+
+	case LeaveGameAction:
+		client.handleLeaveGameMessage(message)
+	case SelectTopicAction:
+		client.handleSelectTopicGameMessage(message)
+	}
+}
+
+func (client *Client) handleSelectTopicGameMessage(message Message) {
+	gameId := message.Target.ID
+
+	game := client.wsServer.findGame(gameId)
+
+	if message.Sender.Id != game.Creator {
+		log.Println("handleSelectTopicGameMessage message.Sender.Id != game.Creator")
+		return
+	}
+
+	if err := json.Unmarshal([]byte(message.Message), &game.Rounds); err != nil {
+		log.Println("handleSelectTopicGameMessage unmarshal error")
+		return
+	}
+}
+
+func (client *Client) handleJoinGameMessage(message Message) {
+	//gameName := message.Message
+	gameId := message.Target.ID
+
+	game := client.wsServer.findGame(gameId)
+	//if game == nil {
+	//	// тут из бд создаем
+	//	game = client.wsServer.createGame(gameName, gameId)
+	//}
+
+	client.games[game] = true
+
+	game.register <- client
+}
+
+func (client *Client) handleLeaveGameMessage(message Message) {
+	game := client.wsServer.findGame(message.Target.ID)
+	if _, ok := client.games[game]; ok {
+		delete(client.games, game)
+	}
+
+	game.unregister <- client
 }
