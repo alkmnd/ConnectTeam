@@ -188,6 +188,12 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 			game.broadcast <- &message
 		}
 	case JoinGameAction:
+		gameId := message.Target.ID
+
+		game := client.wsServer.findGame(gameId)
+		if game == nil {
+			return
+		}
 		log.Println("joinGameAction")
 		client.handleJoinGameMessage(message)
 	case StartGameAction:
@@ -215,6 +221,11 @@ func (client *Client) handleStartGameMessage(message Message) {
 		return
 	}
 	if len(game.Rounds) == 0 {
+		var messageError Message
+		messageError.Action = Error
+		messageError.Target = message.Target
+		messageError.Message = "number of rounds is 0"
+		client.send <- messageError.encode()
 		log.Println("number of rounds is 0")
 		return
 	}
@@ -232,9 +243,8 @@ func (client *Client) handleStartGameMessage(message Message) {
 	if err != nil {
 		return
 	}
-	message.Message = bytes
+	message.Message = string(bytes)
 	game.broadcast <- &message
-
 }
 
 func (client *Client) handleSelectTopicGameMessage(message Message) {

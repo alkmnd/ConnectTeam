@@ -10,12 +10,13 @@ const LeaveGameAction = "leave-game"
 const SendMessageAction = "send-message"
 const SelectTopicAction = "select-topic"
 const StartGameAction = "start-game"
+const Error = "error"
 const UserJoinedAction = "user-join"
 const UserLeftAction = "user-left"
 
 type Message struct {
 	Action  string `json:"action"`
-	Message []byte `json:"message"`
+	Message string `json:"message"`
 	Target  *Game  `json:"target"`
 	Sender  *User  `json:"sender"`
 	// time

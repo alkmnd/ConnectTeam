@@ -47,10 +47,11 @@ func (server *WsServer) Run() {
 
 func (server *WsServer) findGame(id int) *Game {
 	var foundGame *Game
+	log.Println(id)
 	for game := range server.games {
 		if game.GetId() == id {
 			foundGame = game
-			break
+			return foundGame
 		}
 	}
 
@@ -60,8 +61,11 @@ func (server *WsServer) findGame(id int) *Game {
 		return foundGame
 	}
 
-	foundGame = NewGame(dbGame.Name, dbGame.Id, dbGame.CreatorId, "not_started")
+	log.Println("game found in data base")
 
+	foundGame = NewGame(dbGame.Name, dbGame.Id, dbGame.CreatorId, "not_started")
+	go foundGame.RunGame()
+	server.games[foundGame] = true
 	return foundGame
 }
 
