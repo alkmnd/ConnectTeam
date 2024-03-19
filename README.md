@@ -1199,7 +1199,7 @@ status(string): "ok" if there is no error.
      ```bash
      {
     "action": "error",
-    "message": "maximum number of participants",
+    "payload": "maximum number of participants",
     "target": {
         "id": 1
     },
@@ -1219,7 +1219,7 @@ status(string): "ok" if there is no error.
         "id":1
     },
     "sender":{"id":1},
-    "message": [ 
+    "payload": [ 
             {"id":1}, 
             {"id":2}
         ]
@@ -1230,7 +1230,7 @@ status(string): "ok" if there is no error.
 ```bash
 {
     "action": "select-topic",
-    "message": [
+    "payload": [
         {
             "id": 1
         },
@@ -1271,7 +1271,7 @@ status(string): "ok" if there is no error.
      ```bash
      {
     "action": "error",
-    "message": "message.Sender.Id != game.Creator",
+    "payload": "message.Sender.Id != game.Creator",
     "target": {
         "id": 1
     },
@@ -1284,7 +1284,7 @@ status(string): "ok" if there is no error.
 ```bash
  {
     "action": "error",
-    "message": "incorrect payload",
+    "payload": "incorrect payload",
     "target": {
         "id": 1
     },
@@ -1310,7 +1310,7 @@ status(string): "ok" if there is no error.
 ```bash
 {
     "action": "start-game",
-    "message": {
+    "payload": {
         "name": "new game",
         "max_size": 3,
         "status": "in_progress",
