@@ -1198,7 +1198,7 @@ status(string): "ok" if there is no error.
     },
     "sender": null
 }
-     ```
+```
 
 
 
