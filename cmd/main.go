@@ -67,7 +67,7 @@ func main() {
 	services := service.NewService(repos, fileStorage)
 	handlers := handler.NewHandler(services)
 
-	wsServer := game.NewWebsocketServer(repos)
+	wsServer := game.NewWebsocketServer(repos, services)
 	go wsServer.Run()
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {

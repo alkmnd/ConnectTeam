@@ -3,9 +3,10 @@ package game
 import (
 	connectteam "ConnectTeam"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
-	"strconv"
+	//"encoding/binary"
 	"time"
 
 	"github.com/google/uuid"
@@ -24,12 +25,12 @@ type User struct {
 
 type Client struct {
 	// The actual websocket connection.
-	ID       uuid.UUID `json:"id"`
+	ID       uuid.UUID
 	conn     *websocket.Conn
 	wsServer *WsServer
 	send     chan []byte
 	games    map[*Game]bool
-	User     User `json:"user"`
+	User     User
 }
 
 func newClient(conn *websocket.Conn, wsServer *WsServer, user User) *Client {
@@ -41,10 +42,15 @@ func newClient(conn *websocket.Conn, wsServer *WsServer, user User) *Client {
 		games:    make(map[*Game]bool),
 		send:     make(chan []byte, 256),
 	}
+
 }
 
 func (client *Client) GetName() string {
 	return client.User.Name
+}
+
+func (client *Client) GetId() uuid.UUID {
+	return client.ID
 }
 
 func (client *Client) disconnect() {
@@ -56,30 +62,41 @@ func (client *Client) disconnect() {
 
 // ServeWs handles websocket requests from clients requests.
 func ServeWs(wsServer *WsServer, w http.ResponseWriter, r *http.Request) {
-	name, ok := r.URL.Query()["name"]
+	//name, ok := r.URL.Query()["name"]
+	//
+	//if !ok || len(name[0]) < 1 {
+	//	log.Println("Url Param 'name' is missing")
+	//	return
+	//}
 
-	if !ok || len(name[0]) < 1 {
-		log.Println("Url Param 'name' is missing")
+	token, ok := r.URL.Query()["token"]
+
+	if !ok || len(token[0]) < 1 {
+		log.Println("Url Param 'token' is missing")
 		return
 	}
 
-	id_string, ok := r.URL.Query()["id"]
-
-	if !ok || len(id_string[0]) < 1 {
-		log.Println("Url Param 'id' is missing")
-		return
-	}
-
-	id, err := strconv.Atoi(id_string[0])
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
+	// если токен пустой, используем client id
+
+	id, _, err := wsServer.services.ParseToken(token[0])
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	user, err := wsServer.repos.GetUserById(id)
+
+	// TODO: проверить есть ли уже клиент на сервере
+
 	client := newClient(conn, wsServer, User{
 		Id:   id,
-		Name: name[0],
+		Name: fmt.Sprintf("%s %s", user.FirstName, user.SecondName),
 	})
 
 	go client.writePump()
@@ -174,11 +191,11 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 
 	var message Message
 	if err := json.Unmarshal(jsonMessage, &message); err != nil {
-		log.Printf("Error on unmarshal JSON message %s", err)
+		log.Printf("handleNewMessage error on unmarshal JSON message %s", err)
 		return
 	}
 
-	// Attach the client object as the sender of the messsage.
+	// Attach the client object as the sender of the message.
 	message.Sender = &client.User
 
 	switch message.Action {
@@ -188,6 +205,12 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 			game.broadcast <- &message
 		}
 	case JoinGameAction:
+		gameId := message.Target.ID
+
+		game := client.wsServer.findGame(gameId)
+		if game == nil {
+			return
+		}
 		log.Println("joinGameAction")
 		client.handleJoinGameMessage(message)
 	case StartGameAction:
@@ -215,53 +238,74 @@ func (client *Client) handleStartGameMessage(message Message) {
 		return
 	}
 	if len(game.Rounds) == 0 {
-		log.Println("number of rounds is 0")
+		var messageError Message
+		messageError.Action = Error
+		messageError.Target = message.Target
+		messageError.Payload, err = json.Marshal("number of rounds is 0")
+		client.send <- messageError.encode()
+		log.Printf("handleStartGameMessage %s", messageError.Payload)
 		return
 	}
-	questions := map[int][]connectteam.Question{}
+	questions := make(map[int][]connectteam.Question)
 
 	for i, _ := range game.Rounds {
-		questions[game.Rounds[i].Id], _ = client.wsServer.repos.Question.GetAllWithLimit(game.Rounds[i].Id, len(game.clients))
+		questions[game.Rounds[i].Id], _ = client.wsServer.repos.Question.GetRandWithLimit(game.Rounds[i].Id, len(game.clients))
 		game.Rounds[i].Questions = make([]string, len(game.clients))
 		for j := 0; j < len(game.clients); j++ {
 			game.Rounds[i].Questions[j] = questions[game.Rounds[i].Id][j].Content
 		}
 	}
 
-	bytes, err := json.Marshal(game.Rounds)
+	bytes, err := json.Marshal(game)
+	log.Println(json.Unmarshal(bytes, &game.Rounds))
 	if err != nil {
 		return
 	}
-	message.Message = bytes
+	message.Payload = bytes
 	game.broadcast <- &message
-
 }
 
 func (client *Client) handleSelectTopicGameMessage(message Message) {
 	gameId := message.Target.ID
-
 	game := client.wsServer.findGame(gameId)
 
 	if message.Sender.Id != game.Creator {
-		log.Println("handleSelectTopicGameMessage message.Sender.Id != game.Creator")
+		var messageError Message
+		messageError.Action = Error
+		messageError.Target = message.Target
+		messageError.Payload, _ = json.Marshal("message.Sender.Id != game.Creator")
+		client.send <- messageError.encode()
+		log.Printf("handleSelectTopicMessage %s", messageError.Payload)
 		return
 	}
 
-	if err := json.Unmarshal([]byte(message.Message), &game.Rounds); err != nil {
-		log.Println("handleSelectTopicGameMessage unmarshal error")
+	if err := json.Unmarshal(message.Payload, &game.Rounds); err != nil {
+		var messageError Message
+		messageError.Action = Error
+		messageError.Target = message.Target
+		messageError.Payload, _ = json.Marshal("incorrect payload")
+		client.send <- messageError.encode()
+		log.Printf("handleSelectTopicMessage %s", messageError.Payload)
 		return
 	}
+	game.broadcast <- &message
 }
 
 func (client *Client) handleJoinGameMessage(message Message) {
-	//gameName := message.Message
+	// TODO:  проверить есть ли этот пользователь в игре по id клиента
+	//gameName := message.MessageSend
 	gameId := message.Target.ID
 
 	game := client.wsServer.findGame(gameId)
-	//if game == nil {
-	//	// тут из бд создаем
-	//	game = client.wsServer.createGame(gameName, gameId)
-	//}
+
+	if len(game.clients) == game.MaxSize {
+		var messageError Message
+		messageError.Action = Error
+		messageError.Target = message.Target
+		messageError.Payload, _ = json.Marshal("maximum number of participants")
+		client.send <- messageError.encode()
+		return
+	}
 
 	client.games[game] = true
 

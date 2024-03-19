@@ -1,22 +1,21 @@
 package game
 
 import (
-	"encoding/json"
 	"log"
 )
 
 type Game struct {
-	Name    string `json:"name"`
-	clients map[*Client]bool
-	//state
-	MaxSize    int
-	Status     string
-	Creator    int     `json:"creator_id"`
-	Rounds     []Topic `json:"rounds"`
+	Name       string `json:"name,omitempty"`
+	clients    map[*Client]bool
+	MaxSize    int     `json:"max_size,omitempty"`
+	Status     string  `json:"status,omitempty"`
+	Creator    int     `json:"creator_id,omitempty"`
+	Rounds     []Topic `json:"rounds,omitempty"`
 	register   chan *Client
 	unregister chan *Client
 	broadcast  chan *Message
-	ID         int `json:"id"`
+	ID         int     `json:"id"`
+	Users      []*User `json:"users,omitempty"`
 }
 
 type Topic struct {
@@ -33,6 +32,7 @@ func NewGame(name string, id int, creator int, status string) *Game {
 		Creator: creator,
 		Status:  status,
 		MaxSize: 3,
+		Users:   make([]*User, 0),
 		// state
 		clients:    make(map[*Client]bool),
 		register:   make(chan *Client),
@@ -54,6 +54,7 @@ func (game *Game) GetName() string {
 }
 
 func (game *Game) RunGame() {
+	log.Println("RunGame()")
 	for {
 		select {
 		case client := <-game.register:
@@ -74,29 +75,57 @@ type UserList struct {
 	Users []User `json:"users"`
 }
 
-func (game *Game) notifyClientJoined(client *Client) {
-	var users UserList
-	for i, _ := range game.clients {
-		users.Users = append(users.Users, i.User)
+func (game *Game) listUsersInGame(client *Client) {
+	for existingClient := range game.clients {
+		message := &Message{
+			Action: UserJoinedAction,
+			Target: game,
+			Sender: &existingClient.User,
+		}
+		game.broadcastToClientsInGame(message.encode())
 	}
-	bytes, _ := json.Marshal(users)
+}
+
+func (game *Game) notifyClientJoined(client *Client) {
+	//var users UserList
+	//for i, _ := range game.clients {
+	//	log.Println("notifyClientJoined")
+	//	users.Users = append(users.Users, i.User)
+	//}
+	//bytes, _ := json.Marshal(users)
 
 	message := &Message{
 		Action:  JoinGameAction,
 		Target:  game,
-		Message: bytes,
+		Payload: []byte{},
 		Sender:  &client.User,
 	}
+	log.Println("notifyClientJoined")
 
 	game.broadcastToClientsInGame(message.encode())
 }
 
 func (game *Game) registerClientInGame(client *Client) {
 	log.Println("client joined")
+	//if game.Status == "in-progress" {
+	//	log.Println("registerClientInGame max number of users in game")
+	//	return
+	//}
 	if len(game.clients) < game.MaxSize {
 		game.clients[client] = true
+		game.Users = append(game.Users, &client.User)
 		game.notifyClientJoined(client)
+		//game.listUsersInGame(client)
+		return
 	}
+
+	//message := &Message{
+	//	Action:  Error,
+	//	Target:  game,
+	//	Payload: []byte{},
+	//	Sender:  &client.User,
+	//}
+
 	log.Println("registerClientInGame max number of users in game")
 	return
 }

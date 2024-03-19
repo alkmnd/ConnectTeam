@@ -2,6 +2,7 @@ package game
 
 import (
 	"ConnectTeam/pkg/repository"
+	"ConnectTeam/pkg/service"
 	"log"
 )
 
@@ -12,10 +13,11 @@ type WsServer struct {
 	broadcast  chan []byte
 	games      map[*Game]bool
 	repos      *repository.Repository
+	services   *service.Service
 }
 
 // NewWebsocketServer creates a new WsServer type
-func NewWebsocketServer(repo *repository.Repository) *WsServer {
+func NewWebsocketServer(repo *repository.Repository, services *service.Service) *WsServer {
 	return &WsServer{
 		clients:    make(map[*Client]bool),
 		register:   make(chan *Client),
@@ -23,6 +25,7 @@ func NewWebsocketServer(repo *repository.Repository) *WsServer {
 		broadcast:  make(chan []byte),
 		games:      make(map[*Game]bool),
 		repos:      repo,
+		services:   services,
 	}
 }
 
@@ -47,10 +50,11 @@ func (server *WsServer) Run() {
 
 func (server *WsServer) findGame(id int) *Game {
 	var foundGame *Game
+	log.Println(id)
 	for game := range server.games {
 		if game.GetId() == id {
 			foundGame = game
-			break
+			return foundGame
 		}
 	}
 
@@ -60,8 +64,11 @@ func (server *WsServer) findGame(id int) *Game {
 		return foundGame
 	}
 
-	foundGame = NewGame(dbGame.Name, dbGame.Id, dbGame.CreatorId, "not_started")
+	log.Println("game found in data base")
 
+	foundGame = NewGame(dbGame.Name, dbGame.Id, dbGame.CreatorId, "not_started")
+	go foundGame.RunGame()
+	server.games[foundGame] = true
 	return foundGame
 }
 

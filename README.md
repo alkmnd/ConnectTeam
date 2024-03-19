@@ -1155,4 +1155,220 @@ status(string): "ok" if there is no error.
 <a id='ws-server'></a>
 ### 7. Websocket Server 
 
-#### 7.1. Connect to the Server
+#### 1. Подключение к игре
+
+Сообщение для отпраки на сервер:
+```bash
+{
+    "action": "join-game", 
+    "target": {"id":1},
+    "sender":{"id":1}
+}
+```
+
+Транслируемое сообщение (отправляется всем участникам игры, в том числе тому кто присоединяется):
+```bash
+{
+    "action": "join-game",
+    "target": {
+        "name": "new game",
+        "max_size": 3,
+        "status": "not_started",
+        "creator_id": 1,
+        "id": 1,
+       "users": [
+            {
+                "id": 1,
+                "name": "Natasha Belova"
+            }
+        ]
+    },
+    "sender": {
+        "id": 1,
+        "name": "Natasha Belova"
+    }
+}
+```
+
+Ошибки:
+
+* Максимальное количество участников в игре.
+  
+     Сообщение (отправляется клиенту, который отправил сообщение на присоединение к игре):
+
+     ```bash
+     {
+    "action": "error",
+    "payload": "maximum number of participants",
+    "target": {
+        "id": 1
+    },
+    "sender": null
+   }
+   ```
+
+#### Выбор темы (для организатора)
+
+Сообщение для отправки на сервер:
+*  message: массив из выбранных тем, в структуру передается только id темы. 
+   
+```bash
+{
+    "action": "select-topic", 
+    "target": {
+        "id":1
+    },
+    "sender":{"id":1},
+    "payload": [ 
+            {"id":1}, 
+            {"id":2}
+        ]
+}
+```
+
+Транслируемое сообщение (всем участникам):
+```bash
+{
+    "action": "select-topic",
+    "payload": [
+        {
+            "id": 1
+        },
+        {
+            "id": 2
+        }
+    ],
+    "target": {
+        "name": "new game",
+        "max_size": 3,
+        "status": "not_started",
+        "creator_id": 1,
+        "rounds": [
+            {
+                "id": 1
+            },
+            {
+                "id": 2
+            }
+        ],
+        "id": 1,
+      "users": [
+            {
+                "id": 1,
+                "name": "Natasha Belova"
+            }
+        ]
+    },
+    "sender": {
+        "id": 1,
+        "name": "Natasha Belova"
+    }
+}
+```
+Ошибки (транслируются только совершившим действие):
+
+*  Пользователь не является организатором
+     ```bash
+     {
+    "action": "error",
+    "payload": "message.Sender.Id != game.Creator",
+    "target": {
+        "id": 1
+    },
+    "sender": null
+   }
+   ```
+
+* Не удалось распарсить темы в payload
+
+```bash
+ {
+    "action": "error",
+    "payload": "incorrect payload",
+    "target": {
+        "id": 1
+    },
+    "sender": null
+   }
+```
+
+#### 3. Запуск игры 
+
+Сообщение для отправки на сервер (можно добавить sender, вообще не принципиально, я без него узнаю что за клиент):
+
+```bash
+{
+    "action": "start-game", 
+    "target": {
+        "id":1
+    }
+}
+```
+
+Транслируемое сообщение (всем участникам):
+
+```bash
+{
+    "action": "",
+    "target": {
+        "name": "new game",
+        "max_size": 3,
+        "status": "in_progress",
+        "creator_id": 1,
+        "rounds": [
+            {
+                "id": 1,
+                "questions": [
+                    "Q1"
+                ]
+            },
+            {
+                "id": 2,
+                "questions": [
+                    "Q2"
+                ]
+            }
+        ],
+        "id": 1,
+        "users": [
+            {
+                "id": 1,
+                "name": "Natasha Belova"
+            }
+        ]
+    },
+    "sender": null
+}
+```
+
+Ошибки:
+
+* Не выбраны темы (=> не составлены раунды)
+
+#### Workflkow
+
+1. Подключение к серверу 
+2. Присоединение к игре
+
+Если пользователь организатор:
+
+3. Выбор темы 
+4. Запуск игры 
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
