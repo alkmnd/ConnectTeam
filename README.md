@@ -1309,8 +1309,8 @@ status(string): "ok" if there is no error.
 
 ```bash
 {
-    "action": "start-game",
-    "payload": {
+    "action": "",
+    "target": {
         "name": "new game",
         "max_size": 3,
         "status": "in_progress",
@@ -1330,20 +1330,14 @@ status(string): "ok" if there is no error.
             }
         ],
         "id": 1,
-       "users": [
+        "users": [
             {
                 "id": 1,
                 "name": "Natasha Belova"
             }
         ]
     },
-    "target": {
-        "id": 1
-    },
-    "sender": {
-        "id": 1,
-        "name": "Natasha Belova"
-    }
+    "sender": null
 }
 ```
 
