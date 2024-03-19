@@ -1175,7 +1175,13 @@ status(string): "ok" if there is no error.
         "max_size": 3,
         "status": "not_started",
         "creator_id": 1,
-        "id": 1
+        "id": 1,
+       "users": [
+            {
+                "id": 1,
+                "name": "Natasha Belova"
+            }
+        ]
     },
     "sender": {
         "id": 1,
@@ -1245,7 +1251,13 @@ status(string): "ok" if there is no error.
                 "id": 2
             }
         ],
-        "id": 1
+        "id": 1,
+      "users": [
+            {
+                "id": 1,
+                "name": "Natasha Belova"
+            }
+        ]
     },
     "sender": {
         "id": 1,
@@ -1317,7 +1329,13 @@ status(string): "ok" if there is no error.
                 ]
             }
         ],
-        "id": 1
+        "id": 1,
+       "users": [
+            {
+                "id": 1,
+                "name": "Natasha Belova"
+            }
+        ]
     },
     "target": {
         "id": 1
