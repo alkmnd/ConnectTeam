@@ -1155,4 +1155,52 @@ status(string): "ok" if there is no error.
 <a id='ws-server'></a>
 ### 7. Websocket Server 
 
-#### 7.1. Connect to the Server
+#### 1. Подключение к игре
+
+Сообщение для отпраки на сервер:
+```bash{
+    "action": "join-game", 
+    "target": {"id":1},
+    "sender":{"id":1}
+}
+```
+
+Транслируемое сообщение:
+```bash
+{
+    "action": "user-join",
+    "target": {
+        "name": "new game",
+        "max_size": 3,
+        "status": "not_started",
+        "creator_id": 1,
+        "id": 1
+    },
+    "sender": {
+        "id": 1,
+        "name": "Natasha Belova"
+    }
+}
+```
+
+Ошибки:
+
+* Максимальное количество участников в игре.
+  
+     Сообщение (отправляется клиенту, который отправил сообщение на присоединение к игре):
+
+     ```bash
+     {
+    "action": "error-join",
+    "message": "maximum number of participants",
+    "target": {
+        "id": 1
+    },
+    "sender": null
+}
+     ```
+
+
+
+
+
