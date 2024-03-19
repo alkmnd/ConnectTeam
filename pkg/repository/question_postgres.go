@@ -39,10 +39,10 @@ func (r *QuestionPostgres) GetAll(topicId int) ([]connectteam.Question, error) {
 	return questions, err
 }
 
-func (r *QuestionPostgres) GetAllWithLimit(topicId int, limit int) ([]connectteam.Question, error) {
+func (r *QuestionPostgres) GetRandWithLimit(topicId int, limit int) ([]connectteam.Question, error) {
 	var questions []connectteam.Question
 
-	query := fmt.Sprintf("SELECT id, topic_id, content FROM %s WHERE topic_id = $1 ORDER BY RAND() LIMIT $1", questionsTable)
+	query := fmt.Sprintf("SELECT id, topic_id, content FROM %s WHERE topic_id = $1 ORDER BY RANDOM() LIMIT $2", questionsTable)
 	err := r.db.Select(&questions, query, topicId, limit)
 	return questions, err
 }

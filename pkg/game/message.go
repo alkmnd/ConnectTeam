@@ -15,11 +15,17 @@ const UserJoinedAction = "user-join"
 const UserLeftAction = "user-left"
 
 type Message struct {
-	Action  string `json:"action"`
-	Message string `json:"message"`
-	Target  *Game  `json:"target"`
-	Sender  *User  `json:"sender"`
-	// time
+	Action  string          `json:"action"`
+	Payload json.RawMessage `json:"message,omitempty"`
+	Target  *Game           `json:"target"`
+	Sender  *User           `json:"sender"`
+}
+
+type MessageReceive struct {
+	Action  string          `json:"action"`
+	Message json.RawMessage `json:"message,omitempty"`
+	Target  *Game           `json:"target"`
+	Sender  string          `json:"sender"`
 }
 
 func (message *Message) encode() []byte {

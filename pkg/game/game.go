@@ -14,7 +14,8 @@ type Game struct {
 	register   chan *Client
 	unregister chan *Client
 	broadcast  chan *Message
-	ID         int `json:"id"`
+	ID         int     `json:"id"`
+	Users      []*User `json:"users,omitempty"`
 }
 
 type Topic struct {
@@ -31,6 +32,7 @@ func NewGame(name string, id int, creator int, status string) *Game {
 		Creator: creator,
 		Status:  status,
 		MaxSize: 3,
+		Users:   make([]*User, 0),
 		// state
 		clients:    make(map[*Client]bool),
 		register:   make(chan *Client),
@@ -77,6 +79,7 @@ func (game *Game) listUsersInGame(client *Client) {
 	for existingClient := range game.clients {
 		message := &Message{
 			Action: UserJoinedAction,
+			Target: game,
 			Sender: &existingClient.User,
 		}
 		game.broadcastToClientsInGame(message.encode())
@@ -94,9 +97,10 @@ func (game *Game) notifyClientJoined(client *Client) {
 	message := &Message{
 		Action:  JoinGameAction,
 		Target:  game,
-		Message: "",
+		Payload: []byte{},
 		Sender:  &client.User,
 	}
+	log.Println("notifyClientJoined")
 
 	game.broadcastToClientsInGame(message.encode())
 }
@@ -108,11 +112,19 @@ func (game *Game) registerClientInGame(client *Client) {
 	//	return
 	//}
 	if len(game.clients) < game.MaxSize {
-		game.notifyClientJoined(client)
 		game.clients[client] = true
-		game.listUsersInGame(client)
+		game.Users = append(game.Users, &client.User)
+		game.notifyClientJoined(client)
+		//game.listUsersInGame(client)
 		return
 	}
+
+	//message := &Message{
+	//	Action:  Error,
+	//	Target:  game,
+	//	Payload: []byte{},
+	//	Sender:  &client.User,
+	//}
 
 	log.Println("registerClientInGame max number of users in game")
 	return
