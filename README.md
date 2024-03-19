@@ -1158,7 +1158,8 @@ status(string): "ok" if there is no error.
 #### 1. Подключение к игре
 
 Сообщение для отпраки на сервер:
-```bash{
+```bash
+{
     "action": "join-game", 
     "target": {"id":1},
     "sender":{"id":1}
