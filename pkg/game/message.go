@@ -16,7 +16,7 @@ const UserLeftAction = "user-left"
 
 type Message struct {
 	Action  string          `json:"action"`
-	Payload json.RawMessage `json:"message,omitempty"`
+	Payload json.RawMessage `json:"payload,omitempty"`
 	Target  *Game           `json:"target"`
 	Sender  *User           `json:"sender"`
 }
