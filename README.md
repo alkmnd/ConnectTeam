@@ -1165,10 +1165,10 @@ status(string): "ok" if there is no error.
 }
 ```
 
-Транслируемое сообщение:
+Транслируемое сообщение (отправляется всем участникам игры, в том числе тому кто присоединяется):
 ```bash
 {
-    "action": "user-join",
+    "action": "join-game",
     "target": {
         "name": "new game",
         "max_size": 3,
@@ -1191,14 +1191,169 @@ status(string): "ok" if there is no error.
 
      ```bash
      {
-    "action": "error-join",
+    "action": "error",
     "message": "maximum number of participants",
     "target": {
         "id": 1
     },
     "sender": null
+   }
+   ```
+
+#### Выбор темы (для организатора)
+
+Сообщение для отправки на сервер:
+*  message: массив из выбранных тем, в структуру передается только id темы. 
+   
+```bash
+{
+    "action": "select-topic", 
+    "target": {
+        "id":1
+    },
+    "sender":{"id":1},
+    "message": [ 
+            {"id":1}, 
+            {"id":2}
+        ]
 }
 ```
+
+Транслируемое сообщение (всем участникам):
+```bash
+{
+    "action": "select-topic",
+    "message": [
+        {
+            "id": 1
+        },
+        {
+            "id": 2
+        }
+    ],
+    "target": {
+        "name": "new game",
+        "max_size": 3,
+        "status": "not_started",
+        "creator_id": 1,
+        "rounds": [
+            {
+                "id": 1
+            },
+            {
+                "id": 2
+            }
+        ],
+        "id": 1
+    },
+    "sender": {
+        "id": 1,
+        "name": "Natasha Belova"
+    }
+}
+```
+Ошибки (транслируются только совершившим действие):
+
+*  Пользователь не является организатором
+     ```bash
+     {
+    "action": "error",
+    "message": "message.Sender.Id != game.Creator",
+    "target": {
+        "id": 1
+    },
+    "sender": null
+   }
+   ```
+
+* Не удалось распарсить темы в payload
+
+```bash
+ {
+    "action": "error",
+    "message": "incorrect payload",
+    "target": {
+        "id": 1
+    },
+    "sender": null
+   }
+```
+
+#### 3. Запуск игры 
+
+Сообщение для отправки на сервер (можно добавить sender, вообще не принципиально, я без него узнаю что за клиент):
+
+```bash
+{
+    "action": "start-game", 
+    "target": {
+        "id":1
+    }
+}
+```
+
+Транслируемое сообщение (всем участникам):
+
+```bash
+{
+    "action": "start-game",
+    "message": {
+        "name": "new game",
+        "max_size": 3,
+        "status": "in_progress",
+        "creator_id": 1,
+        "rounds": [
+            {
+                "id": 1,
+                "questions": [
+                    "Q1"
+                ]
+            },
+            {
+                "id": 2,
+                "questions": [
+                    "Q2"
+                ]
+            }
+        ],
+        "id": 1
+    },
+    "target": {
+        "id": 1
+    },
+    "sender": {
+        "id": 1,
+        "name": "Natasha Belova"
+    }
+}
+```
+
+Ошибки:
+
+* Не выбраны темы (=> не составлены раунды)
+
+#### Workflkow
+
+1. Подключение к серверу 
+2. Присоединение к игре
+
+Если пользователь организатор:
+
+3. Выбор темы 
+4. Запуск игры 
+
+
+   
+
+
+
+
+
+
+
+
+
+
 
 
 
