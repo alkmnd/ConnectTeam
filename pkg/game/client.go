@@ -33,13 +33,13 @@ type Client struct {
 	wsServer *WsServer
 	send     chan []byte
 	games    map[*Game]bool
-	User     User
+	User     *User
 }
 
 func newClient(conn *websocket.Conn, wsServer *WsServer, user User) *Client {
 	return &Client{
 		ID:       uuid.New(),
-		User:     user,
+		User:     &user,
 		conn:     conn,
 		wsServer: wsServer,
 		games:    make(map[*Game]bool),
@@ -63,7 +63,7 @@ func (client *Client) disconnect() {
 	}
 }
 
-// ServeWs handles websocket requests from clients requests.
+// ServeWs handles websocket requests from Clients requests.
 func ServeWs(wsServer *WsServer, w http.ResponseWriter, r *http.Request) {
 	//name, ok := r.URL.Query()["name"]
 	//
@@ -199,7 +199,7 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 	}
 
 	// Attach the client object as the sender of the message.
-	message.Sender = &client.User
+	message.Sender = client.User
 
 	switch message.Action {
 
@@ -241,7 +241,7 @@ func (client *Client) handleStartGameMessage(message Message) {
 		log.Println("handleStartGameMessage unknown game")
 		return
 	}
-	if len(game.Rounds) == 0 {
+	if len(game.Topics) == 0 {
 		var messageError Message
 		messageError.Action = Error
 		messageError.Target = message.Target
@@ -252,17 +252,17 @@ func (client *Client) handleStartGameMessage(message Message) {
 	}
 	questions := make(map[int][]connectteam.Question)
 
-	for i, _ := range game.Rounds {
-		questions[game.Rounds[i].Id], _ = client.wsServer.repos.Question.GetRandWithLimit(game.Rounds[i].Id, len(game.clients))
-		game.Rounds[i].Questions = make([]string, len(game.clients))
-		for j := 0; j < len(game.clients); j++ {
-			game.Rounds[i].Questions[j] = questions[game.Rounds[i].Id][j].Content
+	for i, _ := range game.Topics {
+		questions[game.Topics[i].Id], _ = client.wsServer.repos.Question.GetRandWithLimit(game.Topics[i].Id, len(game.Clients))
+		game.Topics[i].Questions = make([]string, len(game.Clients))
+		for j := 0; j < len(game.Clients); j++ {
+			game.Topics[i].Questions[j] = questions[game.Topics[i].Id][j].Content
 		}
 	}
 	messageSend.Target = game
 
 	//bytes, err := json.Marshal(game)
-	//log.Println(json.Unmarshal(bytes, &game.Rounds))
+	//log.Println(json.Unmarshal(bytes, &game.Topics))
 	if err != nil {
 		return
 	}
@@ -283,7 +283,7 @@ func (client *Client) handleSelectTopicGameMessage(message Message) {
 		return
 	}
 
-	if err := json.Unmarshal(message.Payload, &game.Rounds); err != nil {
+	if err := json.Unmarshal(message.Payload, &game.Topics); err != nil {
 		var messageError Message
 		messageError.Action = Error
 		messageError.Target = message.Target
@@ -294,6 +294,7 @@ func (client *Client) handleSelectTopicGameMessage(message Message) {
 		return
 	}
 
+	println("handleSelectTopicGameMessage")
 	message.Target = game
 
 	// TODO: добавить title у топиков
@@ -307,7 +308,14 @@ func (client *Client) handleJoinGameMessage(message Message) {
 
 	game := client.wsServer.findGame(gameId)
 
-	if len(game.clients) == game.MaxSize {
+	//var messageSuccess Message
+	//for i := range game.Users {
+	//	if game.Users[i].Id == client.User.Id {
+	//		return
+	//	}
+	//}
+
+	if len(game.Users) == game.MaxSize {
 		var messageError Message
 		messageError.Action = Error
 		messageError.Target = message.Target
@@ -316,6 +324,7 @@ func (client *Client) handleJoinGameMessage(message Message) {
 		return
 	}
 
+	//client.send
 	client.games[game] = true
 
 	game.register <- client
