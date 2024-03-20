@@ -253,10 +253,15 @@ func (client *Client) handleStartGameMessage(message Message) {
 	questions := make(map[int][]connectteam.Question)
 
 	for i, _ := range game.Topics {
-		questions[game.Topics[i].Id], _ = client.wsServer.repos.Question.GetRandWithLimit(game.Topics[i].Id, len(game.Clients))
+		questions[game.Topics[i].Id], err = client.wsServer.repos.Question.GetRandWithLimit(game.Topics[i].Id, len(game.Clients))
+		if err != nil {
+			continue
+		}
 		game.Topics[i].Questions = make([]string, len(game.Clients))
 		for j := 0; j < len(game.Clients); j++ {
-			game.Topics[i].Questions[j] = questions[game.Topics[i].Id][j].Content
+			if questions[game.Topics[i].Id] != nil {
+				game.Topics[i].Questions[j] = questions[game.Topics[i].Id][j].Content
+			}
 		}
 	}
 	messageSend.Target = game
@@ -292,6 +297,12 @@ func (client *Client) handleSelectTopicGameMessage(message Message) {
 		client.send <- messageError.encode()
 		log.Printf("handleSelectTopicMessage %s", messageError.Payload)
 		return
+	}
+
+	for i := range game.Topics {
+		log.Println("get topics from db")
+		topic, _ := client.wsServer.repos.GetTopic(game.Topics[i].Id)
+		game.Topics[i].Title = topic.Title
 	}
 
 	println("handleSelectTopicGameMessage")
