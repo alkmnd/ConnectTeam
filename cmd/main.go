@@ -19,7 +19,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-var upgrader = websocket.Upgrader{}
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
 
 func main() {
 	if err := initConfig(); err != nil {
@@ -68,6 +72,7 @@ func main() {
 	handlers := handler.NewHandler(services)
 
 	wsServer := game.NewWebsocketServer(repos, services)
+
 	go wsServer.Run()
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {

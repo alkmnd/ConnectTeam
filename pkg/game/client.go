@@ -14,6 +14,9 @@ import (
 )
 
 var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
 	ReadBufferSize:  4096,
 	WriteBufferSize: 4096,
 }
@@ -227,6 +230,7 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 
 func (client *Client) handleStartGameMessage(message Message) {
 	//  меняем статус,
+	var messageSend Message
 	gameId := message.Target.ID
 
 	game := client.wsServer.findGame(gameId)
@@ -255,14 +259,14 @@ func (client *Client) handleStartGameMessage(message Message) {
 			game.Rounds[i].Questions[j] = questions[game.Rounds[i].Id][j].Content
 		}
 	}
+	messageSend.Target = game
 
-	bytes, err := json.Marshal(game)
-	log.Println(json.Unmarshal(bytes, &game.Rounds))
+	//bytes, err := json.Marshal(game)
+	//log.Println(json.Unmarshal(bytes, &game.Rounds))
 	if err != nil {
 		return
 	}
-	message.Payload = bytes
-	game.broadcast <- &message
+	game.broadcast <- &messageSend
 }
 
 func (client *Client) handleSelectTopicGameMessage(message Message) {
@@ -284,10 +288,13 @@ func (client *Client) handleSelectTopicGameMessage(message Message) {
 		messageError.Action = Error
 		messageError.Target = message.Target
 		messageError.Payload, _ = json.Marshal("incorrect payload")
+		log.Printf("handleSelectTopicMessage %s", err.Error())
 		client.send <- messageError.encode()
 		log.Printf("handleSelectTopicMessage %s", messageError.Payload)
 		return
 	}
+
+	// TODO: добавить title у топиков
 	game.broadcast <- &message
 }
 
