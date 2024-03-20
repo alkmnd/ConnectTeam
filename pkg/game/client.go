@@ -294,6 +294,8 @@ func (client *Client) handleSelectTopicGameMessage(message Message) {
 		return
 	}
 
+	message.Target = game
+
 	// TODO: добавить title у топиков
 	game.broadcast <- &message
 }
