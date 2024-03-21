@@ -1,16 +1,17 @@
 package game
 
 import (
+	"encoding/json"
 	"log"
 )
 
 type Game struct {
-	Name       string `json:"name,omitempty"`
-	clients    map[*Client]bool
-	MaxSize    int     `json:"max_size,omitempty"`
-	Status     string  `json:"status,omitempty"`
-	Creator    int     `json:"creator_id,omitempty"`
-	Rounds     []Topic `json:"rounds,omitempty"`
+	Name       string           `json:"name,omitempty"`
+	Clients    map[*Client]bool `json:"-"`
+	MaxSize    int              `json:"max_size,omitempty"`
+	Status     string           `json:"status,omitempty"`
+	Creator    int              `json:"creator_id,omitempty"`
+	Topics     []Topic          `json:"topics,omitempty"`
 	register   chan *Client
 	unregister chan *Client
 	broadcast  chan *Message
@@ -28,13 +29,13 @@ func NewGame(name string, id int, creator int, status string) *Game {
 	return &Game{
 		ID:      id,
 		Name:    name,
-		Rounds:  make([]Topic, 0),
+		Topics:  make([]Topic, 0),
 		Creator: creator,
 		Status:  status,
 		MaxSize: 3,
 		Users:   make([]*User, 0),
 		// state
-		clients:    make(map[*Client]bool),
+		Clients:    make(map[*Client]bool),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
 		broadcast:  make(chan *Message),
@@ -76,11 +77,11 @@ type UserList struct {
 }
 
 func (game *Game) listUsersInGame(client *Client) {
-	for existingClient := range game.clients {
+	for existingClient := range game.Clients {
 		message := &Message{
 			Action: UserJoinedAction,
 			Target: game,
-			Sender: &existingClient.User,
+			Sender: existingClient.User,
 		}
 		game.broadcastToClientsInGame(message.encode())
 	}
@@ -88,7 +89,7 @@ func (game *Game) listUsersInGame(client *Client) {
 
 func (game *Game) notifyClientJoined(client *Client) {
 	//var users UserList
-	//for i, _ := range game.clients {
+	//for i, _ := range game.Clients {
 	//	log.Println("notifyClientJoined")
 	//	users.Users = append(users.Users, i.User)
 	//}
@@ -98,26 +99,69 @@ func (game *Game) notifyClientJoined(client *Client) {
 		Action:  JoinGameAction,
 		Target:  game,
 		Payload: []byte{},
-		Sender:  &client.User,
+		Sender:  client.User,
 	}
 	log.Println("notifyClientJoined")
 
 	game.broadcastToClientsInGame(message.encode())
 }
 
+func (game *Game) notifyClient(client *Client, message *Message) {
+	client.send <- message.encode()
+}
+
 func (game *Game) registerClientInGame(client *Client) {
-	log.Println("client joined")
+	log.Println("client try to join")
 	//if game.Status == "in-progress" {
 	//	log.Println("registerClientInGame max number of users in game")
 	//	return
 	//}
-	if len(game.clients) < game.MaxSize {
-		game.clients[client] = true
-		game.Users = append(game.Users, &client.User)
-		game.notifyClientJoined(client)
-		//game.listUsersInGame(client)
+	//if len(game.Clients) < game.MaxSize {
+
+	for i := range game.Users {
+		if game.Users[i].Id == client.User.Id {
+			message := &Message{
+				Action:  UserJoinedAction,
+				Target:  game,
+				Payload: []byte{},
+				Sender:  client.User,
+			}
+			game.Clients[client] = true
+			println("blyaa")
+			game.notifyClient(client, message)
+			log.Println("client already register")
+			return
+		}
+	}
+
+	if game.Status == "in_progress" {
+		payload, _ := json.Marshal("game in progress")
+		message := &Message{
+			Action: Error,
+			Target: &Game{
+				ID: game.ID,
+			},
+			Payload: payload,
+			Sender:  client.User,
+		}
+		game.notifyClient(client, message)
 		return
 	}
+
+	message := &Message{
+		Action:  UserJoinedAction,
+		Target:  game,
+		Payload: []byte{},
+		Sender:  client.User,
+	}
+
+	game.Users = append(game.Users, client.User)
+	log.Println("client joined")
+	game.Clients[client] = true
+	game.notifyClient(client, message)
+	game.notifyClientJoined(client)
+	//game.listUsersInGame(client)
+	//}
 
 	//message := &Message{
 	//	Action:  Error,
@@ -126,18 +170,23 @@ func (game *Game) registerClientInGame(client *Client) {
 	//	Sender:  &client.User,
 	//}
 
-	log.Println("registerClientInGame max number of users in game")
 	return
 }
 
 func (game *Game) unregisterClientInGame(client *Client) {
-	if _, ok := game.clients[client]; ok {
-		delete(game.clients, client)
+	if _, ok := game.Clients[client]; ok {
+		delete(game.Clients, client)
 	}
+
+	//for i := range game.Users {
+	//	if game.Users
+	//
+	//	delete(game.Clients, client)
+	//}
 }
 
 func (game *Game) broadcastToClientsInGame(message []byte) {
-	for client := range game.clients {
+	for client := range game.Clients {
 		log.Printf("broadcast message to client %s", client.GetName())
 		client.send <- message
 	}

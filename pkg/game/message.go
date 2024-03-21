@@ -11,7 +11,8 @@ const SendMessageAction = "send-message"
 const SelectTopicAction = "select-topic"
 const StartGameAction = "start-game"
 const Error = "error"
-const UserJoinedAction = "user-join"
+const UserJoinedAction = "join-success"
+
 const UserLeftAction = "user-left"
 
 type Message struct {
@@ -31,7 +32,7 @@ type MessageReceive struct {
 func (message *Message) encode() []byte {
 	json, err := json.Marshal(message)
 	if err != nil {
-		println("meow")
+		println("123")
 		log.Println(err)
 	}
 

@@ -62,6 +62,7 @@ type Topic interface {
 	GetAll() ([]connectteam.Topic, error)
 	DeleteTopic(id int) error
 	UpdateTopic(id int, title string) error
+	GetTopic(topicId int) (topic connectteam.Topic, err error)
 }
 
 type Question interface {
