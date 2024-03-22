@@ -126,9 +126,9 @@ func (game *Game) registerClientInGame(client *Client) {
 				Payload: []byte{},
 				Sender:  client.User,
 			}
-			game.Clients[client] = true
 			println("blyaa")
 			game.notifyClient(client, message)
+			game.Clients[client] = true
 			log.Println("client already register")
 			return
 		}
@@ -157,9 +157,9 @@ func (game *Game) registerClientInGame(client *Client) {
 
 	game.Users = append(game.Users, client.User)
 	log.Println("client joined")
+	game.notifyClientJoined(client)
 	game.Clients[client] = true
 	game.notifyClient(client, message)
-	game.notifyClientJoined(client)
 	//game.listUsersInGame(client)
 	//}
 
