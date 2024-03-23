@@ -244,9 +244,14 @@ func (client *Client) handleUserStartAnswerMessage(message Message) {
 
 func (client *Client) handleStartRoundMessage(message Message) {
 	var messageSend *Message
-
+	log.Println("handleStartRoundMessage 1")
 	gameId := message.Target.ID
 	game := client.wsServer.findGame(gameId)
+	game.Round = &Round{
+		Topic:              &Topic{},
+		UsersQuestions:     make([]*UsersQuestions, 0),
+		UsersQuestionsLeft: make([]*UsersQuestions, 0),
+	}
 	// TODO: check if user is creator
 	if len(game.Topics) == 0 {
 		// error
@@ -257,14 +262,11 @@ func (client *Client) handleStartRoundMessage(message Message) {
 		// error
 		return
 	}
-
 	var topicFound *Topic
 	var ind int
+
 	for i := range game.Topics {
 		if game.Topics[i].Id == topic.Id {
-			topic.Id = game.Topics[i].Id
-			topic.Title = game.Topics[i].Title
-			topic.Questions = game.Topics[i].Questions
 			topicFound = &game.Topics[i]
 			ind = i
 			break
@@ -274,7 +276,7 @@ func (client *Client) handleStartRoundMessage(message Message) {
 		// error
 		return
 	}
-	if len(game.Users) != len(topic.Questions) {
+	if len(game.Users) != len(topicFound.Questions) {
 		// error
 		return
 	}
@@ -284,7 +286,7 @@ func (client *Client) handleStartRoundMessage(message Message) {
 		game.Round.UsersQuestions = append(game.Round.UsersQuestions, &UsersQuestions{
 			User: game.Users[i],
 			// TODO: choose random elem
-			Question: topic.Questions[i],
+			Question: topicFound.Questions[i],
 			Number:   cnt,
 		})
 
@@ -293,9 +295,7 @@ func (client *Client) handleStartRoundMessage(message Message) {
 	}
 
 	game.Topics = append(game.Topics[:ind], game.Topics[ind:]...)
-	game.Round.Topic = topic
-	game.Round.UserQuestionsLeft = make([]*UsersQuestions, 0)
-
+	game.Round.Topic = topicFound
 	respondent := goterators.Filter(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
 		return item.User.Id == game.Creator
 	})[0]
@@ -303,14 +303,14 @@ func (client *Client) handleStartRoundMessage(message Message) {
 	payload, _ := json.Marshal(respondent)
 
 	messageSend = &Message{
-		Action:  SendQuestionToUserAction,
+		Action:  StartRoundAction,
 		Target:  game,
 		Payload: payload,
 	}
 
-	game.Round.UsersQuestions = goterators.Filter(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
-		return item.User.Id != game.Creator
-	})
+	//game.Round.UsersQuestions = goterators.Filter(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
+	//	return item.User.Id != game.Creator
+	//})
 	game.broadcast <- messageSend
 }
 

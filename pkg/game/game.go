@@ -23,15 +23,15 @@ type Game struct {
 
 // UsersQuestions Генерируются в начале раунда.
 type UsersQuestions struct {
-	Number   int
+	Number   int    `json:"number"`
 	User     *User  `json:"user"`
 	Question string `json:"question"`
 }
 
 type Round struct {
-	Topic             *Topic            `json:"topic"`
-	UsersQuestions    []*UsersQuestions `json:"users-questions"`
-	UserQuestionsLeft []*UsersQuestions `json:"users-questions-left"`
+	Topic              *Topic            `json:"topic"`
+	UsersQuestions     []*UsersQuestions `json:"users-questions"`
+	UsersQuestionsLeft []*UsersQuestions `json:"users-questions-left"`
 }
 
 type Topic struct {
@@ -191,6 +191,12 @@ func (game *Game) registerClientInGame(client *Client) {
 func (game *Game) unregisterClientInGame(client *Client) {
 	if _, ok := game.Clients[client]; ok {
 		delete(game.Clients, client)
+	}
+
+	for i := range game.Users {
+		if game.Users[i].Id == client.User.Id {
+			game.Users = append(game.Users[:i], game.Users[i:]...)
+		}
 	}
 
 	//for i := range game.Users {
