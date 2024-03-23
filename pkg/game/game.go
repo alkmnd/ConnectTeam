@@ -12,11 +12,26 @@ type Game struct {
 	Status     string           `json:"status,omitempty"`
 	Creator    int              `json:"creator_id,omitempty"`
 	Topics     []Topic          `json:"topics,omitempty"`
+	RoundsLeft []*Round         `json:"rounds_left"`
+	Round      *Round           `json:"round"`
 	register   chan *Client
 	unregister chan *Client
 	broadcast  chan *Message
 	ID         int     `json:"id"`
 	Users      []*User `json:"users,omitempty"`
+}
+
+// UsersQuestions Генерируются в начале раунда.
+type UsersQuestions struct {
+	Number   int
+	User     *User  `json:"user"`
+	Question string `json:"question"`
+}
+
+type Round struct {
+	Topic             *Topic            `json:"topic"`
+	UsersQuestions    []*UsersQuestions `json:"users-questions"`
+	UserQuestionsLeft []*UsersQuestions `json:"users-questions-left"`
 }
 
 type Topic struct {

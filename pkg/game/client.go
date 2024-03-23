@@ -4,13 +4,14 @@ import (
 	connectteam "ConnectTeam"
 	"encoding/json"
 	"fmt"
+
+	"github.com/google/uuid"
+	"github.com/gorilla/websocket"
+	"github.com/ledongthuc/goterators"
 	"log"
 	"net/http"
 	//"encoding/binary"
 	"time"
-
-	"github.com/google/uuid"
-	"github.com/gorilla/websocket"
 )
 
 var upgrader = websocket.Upgrader{
@@ -225,7 +226,92 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 	case SelectTopicAction:
 		log.Println("selectTopicAction")
 		client.handleSelectTopicGameMessage(message)
+
+	case StartRoundAction:
+		client.handleStartRoundMessage(message)
+
+	case UserStartAnswerAction:
+		client.handleUserStartAnswerMessage(message)
 	}
+
+}
+
+func (client *Client) handleUserStartAnswerMessage(message Message) {
+	gameId := message.Target.ID
+	game := client.wsServer.findGame(gameId)
+	game.broadcast <- &message
+}
+
+func (client *Client) handleStartRoundMessage(message Message) {
+	var messageSend *Message
+
+	gameId := message.Target.ID
+	game := client.wsServer.findGame(gameId)
+	// TODO: check if user is creator
+	if len(game.Topics) == 0 {
+		// error
+		return
+	}
+	var topic *Topic
+	if err := json.Unmarshal(message.Payload, &topic); err != nil {
+		// error
+		return
+	}
+
+	var topicFound *Topic
+	var ind int
+	for i := range game.Topics {
+		if game.Topics[i].Id == topic.Id {
+			topic.Id = game.Topics[i].Id
+			topic.Title = game.Topics[i].Title
+			topic.Questions = game.Topics[i].Questions
+			topicFound = &game.Topics[i]
+			ind = i
+			break
+		}
+	}
+	if topicFound == nil {
+		// error
+		return
+	}
+	if len(game.Users) != len(topic.Questions) {
+		// error
+		return
+	}
+
+	cnt := 1
+	for i := range game.Users {
+		game.Round.UsersQuestions = append(game.Round.UsersQuestions, &UsersQuestions{
+			User: game.Users[i],
+			// TODO: choose random elem
+			Question: topic.Questions[i],
+			Number:   cnt,
+		})
+
+		cnt++
+
+	}
+
+	game.Topics = append(game.Topics[:ind], game.Topics[ind:]...)
+	game.Round.Topic = topic
+	game.Round.UserQuestionsLeft = make([]*UsersQuestions, 0)
+
+	respondent := goterators.Filter(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
+		return item.User.Id == game.Creator
+	})[0]
+
+	payload, _ := json.Marshal(respondent)
+
+	messageSend = &Message{
+		Action:  SendQuestionToUserAction,
+		Target:  game,
+		Payload: payload,
+	}
+
+	game.Round.UsersQuestions = goterators.Filter(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
+		return item.User.Id != game.Creator
+	})
+	game.broadcast <- messageSend
 }
 
 func (client *Client) handleStartGameMessage(message Message) {
@@ -253,17 +339,19 @@ func (client *Client) handleStartGameMessage(message Message) {
 	questions := make(map[int][]connectteam.Question)
 
 	for i, _ := range game.Topics {
-		questions[game.Topics[i].Id], err = client.wsServer.repos.Question.GetRandWithLimit(game.Topics[i].Id, len(game.Clients))
+		questions[game.Topics[i].Id], err = client.wsServer.repos.Question.GetRandWithLimit(game.Topics[i].Id, len(game.Users))
 		if err != nil {
 			continue
 		}
-		game.Topics[i].Questions = make([]string, len(game.Clients))
-		for j := 0; j < len(game.Clients); j++ {
+		game.Topics[i].Questions = make([]string, len(game.Users))
+		for j := 0; j < len(game.Users); j++ {
 			if questions[game.Topics[i].Id] != nil {
 				game.Topics[i].Questions[j] = questions[game.Topics[i].Id][j].Content
 			}
 		}
 	}
+	//game.RoundsLeft = len(game.Clients)
+	messageSend.Action = StartGameAction
 	messageSend.Target = game
 
 	//bytes, err := json.Marshal(game)

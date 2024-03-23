@@ -12,6 +12,11 @@ const SelectTopicAction = "select-topic"
 const StartGameAction = "start-game"
 const Error = "error"
 const UserJoinedAction = "join-success"
+const StartRoundAction = "start-round"
+const RoundStartedAction = "round-start"
+const SendQuestionToUserAction = "send-question-to-user"
+const UserStartAnswerAction = "start-answer"
+const UserEndAnswerAction = "end-answer"
 
 const UserLeftAction = "user-left"
 
