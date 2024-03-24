@@ -232,8 +232,80 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 
 	case UserStartAnswerAction:
 		client.handleUserStartAnswerMessage(message)
+	case UserEndAnswerAction:
+		client.handleUserEndAnswerMessage(message)
+	case RateAction:
+		client.handleRateMessage(message)
+	case EndGameAction:
 	}
 
+}
+
+type ratePayload struct {
+	Value  int `json:"value"`
+	UserId int `json:"user_id"`
+}
+
+func (client *Client) handleRateMessage(message Message) {
+	gameId := message.Target.ID
+	game := client.wsServer.findGame(gameId)
+
+	var ratePayload ratePayload
+	err := json.Unmarshal(message.Payload, &ratePayload)
+	if err != nil {
+		return
+	}
+
+	usersQuestions := goterators.Filter(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
+		return item.User.Id == ratePayload.UserId
+	})[0]
+
+	if message.Sender.Id == ratePayload.UserId {
+		return
+	}
+	if usersQuestions.Rates == nil {
+		usersQuestions.Rates = make([]Rates, 0)
+	}
+
+	message.Target = game
+
+	usersQuestions.Rates = append(usersQuestions.Rates, Rates{
+		Value: ratePayload.Value,
+	})
+
+	if len(game.Users) == len(game.Round.UsersQuestions) {
+		game.RoundsLeft = append(game.RoundsLeft, game.Round)
+		game.broadcast <- &Message{
+			Action: RoundEndAction,
+			Target: game,
+		}
+		return
+	}
+
+	if len(usersQuestions.Rates) == len(game.Users)-1 {
+		game.Round.UsersQuestionsLeft = append(game.Round.UsersQuestions, usersQuestions)
+		game.broadcast <- &Message{
+			Action: EndRateAction,
+			Target: game,
+		}
+		return
+	}
+
+	game.broadcast <- &message
+}
+
+func (client *Client) handleUserEndAnswerMessage(message Message) {
+	gameId := message.Target.ID
+	game := client.wsServer.findGame(gameId)
+
+	if len(game.Round.UsersQuestions) == 1 {
+		game.broadcast <- &Message{
+			Action: RoundEndAction,
+			Target: game,
+		}
+		return
+	}
+	game.broadcast <- &message
 }
 
 func (client *Client) handleUserStartAnswerMessage(message Message) {
@@ -244,7 +316,6 @@ func (client *Client) handleUserStartAnswerMessage(message Message) {
 
 func (client *Client) handleStartRoundMessage(message Message) {
 	var messageSend *Message
-	log.Println("handleStartRoundMessage 1")
 	gameId := message.Target.ID
 	game := client.wsServer.findGame(gameId)
 	game.Round = &Round{
@@ -294,7 +365,7 @@ func (client *Client) handleStartRoundMessage(message Message) {
 
 	}
 
-	game.Topics = append(game.Topics[:ind], game.Topics[ind:]...)
+	game.Topics = append(game.Topics[:ind], game.Topics[ind+1:]...)
 	game.Round.Topic = topicFound
 	respondent := goterators.Filter(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
 		return item.User.Id == game.Creator
