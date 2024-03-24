@@ -4,6 +4,7 @@ import (
 	connectteam "ConnectTeam"
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"log"
 )
 
 type GamePostgres struct {
@@ -68,8 +69,9 @@ func (r *GamePostgres) GetGameWithInvitationCode(code string) (game connectteam.
 }
 
 func (r *GamePostgres) GetGames(page int, userId int) (games []connectteam.Game, err error) {
-	query := fmt.Sprintf(`SELECT * FROM %s g
+	query := fmt.Sprintf(`SELECT id, creator_id, invitation_code, name, start_date, status FROM %s g
 	JOIN %s p ON p.game_id = g.id WHERE p.user_id=$1 ORDER BY start_date DESC LIMIT $2 OFFSET $3`, gamesTable, gamesUsersTable)
+	log.Println(limit * page)
 	err = r.db.Select(&games, query, userId, limit, limit*page)
 	return games, err
 }
