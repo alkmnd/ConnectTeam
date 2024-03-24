@@ -236,6 +236,8 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 		client.handleUserEndAnswerMessage(message)
 	case RateAction:
 		client.handleRateMessage(message)
+	case StartStageAction:
+		client.handleStartStageMessage(message)
 	case EndGameAction:
 	}
 
@@ -246,6 +248,33 @@ type ratePayload struct {
 	UserId int `json:"user_id"`
 }
 
+func (client *Client) handleStartStageMessage(message Message) {
+
+	gameId := message.Target.ID
+	game := client.wsServer.findGame(gameId)
+
+	if len(game.Users) == len(game.Round.UsersQuestionsLeft)-1 {
+		game.RoundsLeft = append(game.RoundsLeft, game.Round)
+		game.broadcast <- &Message{
+			Action: RoundEndAction,
+			Target: game,
+		}
+		return
+	}
+	respondent := goterators.Filter(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
+		return item.User.Id == game.Creator
+	})[0]
+
+	payload, _ := json.Marshal(respondent)
+
+	game.broadcast <- &Message{
+		Action:  StartStageAction,
+		Target:  game,
+		Payload: payload,
+		Sender:  message.Sender,
+	}
+
+}
 func (client *Client) handleRateMessage(message Message) {
 	gameId := message.Target.ID
 	game := client.wsServer.findGame(gameId)
@@ -273,15 +302,6 @@ func (client *Client) handleRateMessage(message Message) {
 		Value: ratePayload.Value,
 	})
 
-	if len(game.Users) == len(game.Round.UsersQuestionsLeft)-1 {
-		game.RoundsLeft = append(game.RoundsLeft, game.Round)
-		game.broadcast <- &Message{
-			Action: RoundEndAction,
-			Target: game,
-		}
-		return
-	}
-
 	if len(usersQuestions.Rates) == len(game.Users)-1 {
 		game.Round.UsersQuestionsLeft = append(game.Round.UsersQuestions, usersQuestions)
 		game.broadcast <- &Message{
@@ -298,13 +318,13 @@ func (client *Client) handleUserEndAnswerMessage(message Message) {
 	gameId := message.Target.ID
 	game := client.wsServer.findGame(gameId)
 
-	if len(game.Round.UsersQuestions) == 1 {
-		game.broadcast <- &Message{
-			Action: RoundEndAction,
-			Target: game,
-		}
-		return
-	}
+	//if len(game.Round.UsersQuestions) == 1 {
+	//	game.broadcast <- &Message{
+	//		Action: RoundEndAction,
+	//		Target: game,
+	//	}
+	//	return
+	//}
 	game.broadcast <- &message
 }
 
@@ -365,16 +385,16 @@ func (client *Client) handleStartRoundMessage(message Message) {
 
 	topicFound.Used = true
 	game.Round.Topic = topicFound
-	respondent := goterators.Filter(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
-		return item.User.Id == game.Creator
-	})[0]
-
-	payload, _ := json.Marshal(respondent)
+	//respondent := goterators.Filter(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
+	//	return item.User.Id == game.Creator
+	//})[0]
+	//
+	//payload, _ := json.Marshal(respondent)
 
 	messageSend = &Message{
-		Action:  StartRoundAction,
-		Target:  game,
-		Payload: payload,
+		Action: StartRoundAction,
+		Target: game,
+		//Payload: payload,
 	}
 
 	//game.Round.UsersQuestions = goterators.Filter(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
