@@ -273,7 +273,7 @@ func (client *Client) handleRateMessage(message Message) {
 		Value: ratePayload.Value,
 	})
 
-	if len(game.Users) == len(game.Round.UsersQuestions) {
+	if len(game.Users) == len(game.Round.UsersQuestionsLeft)-1 {
 		game.RoundsLeft = append(game.RoundsLeft, game.Round)
 		game.broadcast <- &Message{
 			Action: RoundEndAction,
