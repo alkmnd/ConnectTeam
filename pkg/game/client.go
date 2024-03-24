@@ -334,12 +334,10 @@ func (client *Client) handleStartRoundMessage(message Message) {
 		return
 	}
 	var topicFound *Topic
-	var ind int
 
 	for i := range game.Topics {
 		if game.Topics[i].Id == topic.Id {
 			topicFound = &game.Topics[i]
-			ind = i
 			break
 		}
 	}
@@ -365,7 +363,7 @@ func (client *Client) handleStartRoundMessage(message Message) {
 
 	}
 
-	game.Topics = append(game.Topics[:ind], game.Topics[ind+1:]...)
+	topicFound.Used = true
 	game.Round.Topic = topicFound
 	respondent := goterators.Filter(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
 		return item.User.Id == game.Creator

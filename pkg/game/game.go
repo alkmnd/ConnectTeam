@@ -26,7 +26,7 @@ type UsersQuestions struct {
 	Number   int     `json:"number"`
 	User     *User   `json:"user"`
 	Question string  `json:"question"`
-	Rates    []Rates `json:"rates"`
+	Rates    []Rates `json:"rates,omitempty"`
 }
 
 type Rates struct {
@@ -41,6 +41,7 @@ type Round struct {
 
 type Topic struct {
 	Id        int      `json:"id"`
+	Used      bool     `json:"used"`
 	Title     string   `json:"title,omitempty"`
 	Questions []string `json:"questions,omitempty"`
 }
