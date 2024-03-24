@@ -238,7 +238,8 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 		client.handleRateMessage(message)
 	case StartStageAction:
 		client.handleStartStageMessage(message)
-	case EndGameAction:
+		//case EndGameAction:
+		//	client.handleEndGameMessage(message)
 	}
 
 }
@@ -248,11 +249,31 @@ type ratePayload struct {
 	UserId int `json:"user_id"`
 }
 
+//func (client *Client) handleEndGameMessage(message Message) {
+//	gameId := message.Target.ID
+//	game := client.wsServer.findGame(gameId)
+//
+//	// сохраняем результаты
+//	// меняем статус в бд на ended
+//	// транслируем сообщение с результатами
+//
+//}
+
 func (client *Client) handleStartStageMessage(message Message) {
 
 	gameId := message.Target.ID
 	game := client.wsServer.findGame(gameId)
 
+	if len(game.Topics) == 0 {
+		//for i := range game.RoundsLeft {
+		//	f
+		//}
+		game.Status = "ended"
+		game.broadcast <- &Message{
+			Action: EndGameAction,
+			Target: game,
+		}
+	}
 	if len(game.Round.UsersQuestions) == 0 {
 		game.RoundsLeft = append(game.RoundsLeft, game.Round)
 		game.broadcast <- &Message{
@@ -363,16 +384,21 @@ func (client *Client) handleStartRoundMessage(message Message) {
 	var messageSend *Message
 	gameId := message.Target.ID
 	game := client.wsServer.findGame(gameId)
+
+	if len(game.Topics) == 0 {
+		game.broadcast <- &Message{
+			Action: EndGameAction,
+			Target: game,
+		}
+		return
+	}
+
 	game.Round = &Round{
 		Topic:              &Topic{},
 		UsersQuestions:     make([]*UsersQuestions, 0),
 		UsersQuestionsLeft: make([]*UsersQuestions, 0),
 	}
 	// TODO: check if user is creator
-	if len(game.Topics) == 0 {
-		// error
-		return
-	}
 	var topic *Topic
 	if err := json.Unmarshal(message.Payload, &topic); err != nil {
 		// error
@@ -410,11 +436,6 @@ func (client *Client) handleStartRoundMessage(message Message) {
 
 	topicFound.Used = true
 	game.Round.Topic = topicFound
-	//respondent := goterators.Filter(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
-	//	return item.User.Id == game.Creator
-	//})[0]
-	//
-	//payload, _ := json.Marshal(respondent)
 
 	messageSend = &Message{
 		Action: StartRoundAction,
@@ -516,7 +537,7 @@ func (client *Client) handleSelectTopicGameMessage(message Message) {
 
 func (client *Client) handleJoinGameMessage(message Message) {
 	// TODO:  проверить есть ли этот пользователь в игре по id клиента
-	//gameName := message.MessageSend
+
 	gameId := message.Target.ID
 
 	game := client.wsServer.findGame(gameId)
@@ -549,5 +570,6 @@ func (client *Client) handleLeaveGameMessage(message Message) {
 		delete(client.games, game)
 	}
 
+	message.Action = UserLeftAction
 	game.unregister <- client
 }
