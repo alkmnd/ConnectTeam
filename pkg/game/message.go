@@ -20,6 +20,7 @@ const UserEndAnswerAction = "end-answer"
 const RateAction = "rate-user"
 const EndRateAction = "rate-end"
 const EndGameAction = "end-game"
+const StartStageAction = "start-stage"
 
 const UserLeftAction = "user-left"
 
