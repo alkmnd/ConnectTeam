@@ -50,7 +50,6 @@ func (server *WsServer) Run() {
 
 func (server *WsServer) findGame(id int) *Game {
 	var foundGame *Game
-	log.Println(id)
 	for game := range server.games {
 		if game.GetId() == id {
 			foundGame = game

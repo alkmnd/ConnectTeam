@@ -12,8 +12,8 @@ type Game struct {
 	Status     string           `json:"status,omitempty"`
 	Creator    int              `json:"creator_id,omitempty"`
 	Topics     []Topic          `json:"topics,omitempty"`
-	RoundsLeft []*Round         `json:"rounds_left"`
-	Round      *Round           `json:"round"`
+	RoundsLeft []*Round         `json:"-"`
+	Round      *Round           `json:"round,omitempty"`
 	register   chan *Client
 	unregister chan *Client
 	broadcast  chan *Message
@@ -23,19 +23,25 @@ type Game struct {
 
 // UsersQuestions Генерируются в начале раунда.
 type UsersQuestions struct {
-	Number   int    `json:"number"`
-	User     *User  `json:"user"`
-	Question string `json:"question"`
+	Number   int     `json:"number"`
+	User     *User   `json:"user"`
+	Question string  `json:"question"`
+	Rates    []Rates `json:"rates,omitempty"`
+}
+
+type Rates struct {
+	Value int `json:"value"`
 }
 
 type Round struct {
 	Topic              *Topic            `json:"topic"`
 	UsersQuestions     []*UsersQuestions `json:"users-questions"`
-	UsersQuestionsLeft []*UsersQuestions `json:"users-questions-left"`
+	UsersQuestionsLeft []*UsersQuestions `json:"-"`
 }
 
 type Topic struct {
 	Id        int      `json:"id"`
+	Used      bool     `json:"used"`
 	Title     string   `json:"title,omitempty"`
 	Questions []string `json:"questions,omitempty"`
 }
@@ -56,10 +62,6 @@ func NewGame(name string, id int, creator int, status string) *Game {
 		broadcast:  make(chan *Message),
 	}
 }
-
-// Action
-// state
-// respondent
 
 func (game *Game) GetId() int {
 	return game.ID
