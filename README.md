@@ -1707,7 +1707,7 @@ status(string): "ok" if there is no error.
 }
 ```
 
-**Broadcasted Message (game is ended, all rounds is left):**
+**Broadcasted Message (game is ended, all rounds are ended):**
 
 ```bash
 {
