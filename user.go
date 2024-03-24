@@ -22,6 +22,13 @@ type UserCredentials struct {
 	PasswordHash string `json:"password_hash" db:"password_hash"`
 }
 
+type Rates struct {
+	UserId   int    `json:"user_id" db:"user_id"`
+	GameId   int    `json:"game_id" db:"game_id"`
+	Value    int    `json:"value" db:"value"`
+	Question string `json:"question" db:"question"`
+}
+
 type UserPublic struct {
 	Id    int    `json:"id" db:"id"`
 	Email string `json:"email" db:"email"`

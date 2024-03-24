@@ -21,6 +21,14 @@ CREATE TABLE users
     profile_image varchar(256)
 );
 
+CREATE TABLE rates
+(
+    user_id int REFERENCES users (id) ON DELETE CASCADE,
+    game_id int REFERENCES games (id) ON DELETE CASCADE,
+    value int,
+    question varchar(256)
+);
+
 CREATE TABLE verification_codes
 (
     user_id int REFERENCES users (id) ON DELETE CASCADE,

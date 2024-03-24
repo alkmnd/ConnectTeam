@@ -3,6 +3,7 @@ package game
 import (
 	"encoding/json"
 	"log"
+	"time"
 )
 
 const JoinGameAction = "join-game"
@@ -19,7 +20,7 @@ const UserStartAnswerAction = "start-answer"
 const UserEndAnswerAction = "end-answer"
 const RateAction = "rate-user"
 const EndRateAction = "rate-end"
-const EndGameAction = "end-game"
+const EndGameAction = "game-end"
 const StartStageAction = "start-stage"
 
 const UserLeftAction = "user-left"
@@ -29,6 +30,7 @@ type Message struct {
 	Payload json.RawMessage `json:"payload,omitempty"`
 	Target  *Game           `json:"target"`
 	Sender  *User           `json:"sender"`
+	Time    time.Time       `json:"time,omitempty"`
 }
 
 type MessageReceive struct {
