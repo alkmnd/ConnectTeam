@@ -264,10 +264,9 @@ func (client *Client) handleStartStageMessage(message Message) {
 	gameId := message.Target.ID
 	game := client.wsServer.findGame(gameId)
 
-	if len(game.Topics) == 0 {
-		//for i := range game.RoundsLeft {
-		//	f
-		//}
+	if len(goterators.Filter(game.Topics, func(item Topic) bool {
+		return item.Used == false
+	})) == 0 {
 		game.Status = "ended"
 		game.broadcast <- &Message{
 			Action: EndGameAction,
@@ -385,7 +384,9 @@ func (client *Client) handleStartRoundMessage(message Message) {
 	gameId := message.Target.ID
 	game := client.wsServer.findGame(gameId)
 
-	if len(game.Topics) == 0 {
+	if len(goterators.Filter(game.Topics, func(item Topic) bool {
+		return item.Used == false
+	})) == 0 {
 		game.broadcast <- &Message{
 			Action: EndGameAction,
 			Target: game,
