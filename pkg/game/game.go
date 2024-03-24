@@ -36,7 +36,7 @@ type Rates struct {
 type Round struct {
 	Topic              *Topic            `json:"topic"`
 	UsersQuestions     []*UsersQuestions `json:"users-questions"`
-	UsersQuestionsLeft []*UsersQuestions `json:"-"`
+	UsersQuestionsLeft []*UsersQuestions `json:"users-questions-left"`
 }
 
 type Topic struct {
