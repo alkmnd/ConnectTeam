@@ -268,6 +268,7 @@ func (client *Client) handleStartStageMessage(message Message) {
 		//for i := range game.RoundsLeft {
 		//	f
 		//}
+		game.Status = "ended"
 		game.broadcast <- &Message{
 			Action: EndGameAction,
 			Target: game,
