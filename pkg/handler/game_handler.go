@@ -97,11 +97,11 @@ func (h *Handler) getCreatedGames(c *gin.Context) {
 		return
 	}
 
-	_, err = h.services.GetUserPlan(id)
-	if err != nil {
-		newErrorResponse(c, http.StatusForbidden, "user has no plan")
-		return
-	}
+	//_, err = h.services.GetUserPlan(id)
+	//if err != nil {
+	//	newErrorResponse(c, http.StatusForbidden, "user has no plan")
+	//	return
+	//}
 
 	games, err := h.services.Game.GetCreatedGames(page, id)
 
@@ -284,11 +284,11 @@ func (h *Handler) getGames(c *gin.Context) {
 		return
 	}
 
-	_, err = h.services.GetUserPlan(id)
-	if err != nil {
-		newErrorResponse(c, http.StatusForbidden, "user has no plan")
-		return
-	}
+	//_, err = h.services.GetUserPlan(id)
+	//if err != nil {
+	//	newErrorResponse(c, http.StatusForbidden, "user has no plan")
+	//	return
+	//}
 	games, err := h.services.Game.GetGames(page, id)
 
 	if err != nil {
