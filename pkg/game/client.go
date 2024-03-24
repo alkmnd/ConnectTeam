@@ -253,7 +253,7 @@ func (client *Client) handleStartStageMessage(message Message) {
 	gameId := message.Target.ID
 	game := client.wsServer.findGame(gameId)
 
-	if len(game.Users) == len(game.Round.UsersQuestionsLeft)-1 {
+	if len(game.Round.UsersQuestions) == 0 {
 		game.RoundsLeft = append(game.RoundsLeft, game.Round)
 		game.broadcast <- &Message{
 			Action: RoundEndAction,
@@ -261,9 +261,30 @@ func (client *Client) handleStartStageMessage(message Message) {
 		}
 		return
 	}
-	respondent := goterators.Filter(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
-		return item.User.Id == game.Creator
-	})[0]
+
+	//if len(game.Users) == len(game.Round.UsersQuestionsLeft) {
+	//	game.RoundsLeft = append(game.RoundsLeft, game.Round)
+	//	game.broadcast <- &Message{
+	//		Action: RoundEndAction,
+	//		Target: game,
+	//	}
+	//	return
+	//}
+	var respondent *UsersQuestions
+	var err error
+	if len(game.Round.UsersQuestionsLeft) == 0 {
+		respondent, _, err = goterators.Find(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
+
+			return item.User.Id == game.Creator
+
+		})
+
+		if err != nil {
+			return
+		}
+	} else {
+		respondent = game.Round.UsersQuestions[0]
+	}
 
 	payload, _ := json.Marshal(respondent)
 
@@ -303,7 +324,11 @@ func (client *Client) handleRateMessage(message Message) {
 	})
 
 	if len(usersQuestions.Rates) == len(game.Users)-1 {
-		game.Round.UsersQuestionsLeft = append(game.Round.UsersQuestions, usersQuestions)
+		log.Println("game.Round.UsersQuestionsLeft = append(game.Round.UsersQuestions, usersQuestions)")
+		game.Round.UsersQuestionsLeft = append(game.Round.UsersQuestionsLeft, usersQuestions)
+		game.Round.UsersQuestions = goterators.Filter(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
+			return item.User.Id != usersQuestions.User.Id
+		})
 		game.broadcast <- &Message{
 			Action: EndRateAction,
 			Target: game,
