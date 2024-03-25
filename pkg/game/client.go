@@ -264,15 +264,15 @@ func (client *Client) handleStartStageMessage(message Message) {
 	gameId := message.Target.ID
 	game := client.wsServer.findGame(gameId)
 
-	//if len(goterators.Filter(game.Topics, func(item Topic) bool {
-	//	return item.Used == false
-	//})) == 0 {
-	//	game.Status = "ended"
-	//	game.broadcast <- &Message{
-	//		Action: EndGameAction,
-	//		Target: game,
-	//	}
-	//}
+	if len(goterators.Filter(game.Topics, func(item Topic) bool {
+		return item.Used == false
+	})) == 0 && len(game.Round.UsersQuestions) == 0 {
+		game.Status = "ended"
+		game.broadcast <- &Message{
+			Action: EndGameAction,
+			Target: game,
+		}
+	}
 	if len(game.Round.UsersQuestions) == 0 {
 		game.RoundsLeft = append(game.RoundsLeft, game.Round)
 		game.broadcast <- &Message{
