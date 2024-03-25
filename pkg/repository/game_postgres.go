@@ -35,7 +35,7 @@ func (r *GamePostgres) GetCreatedGames(page int, userId int) (games []connecttea
 }
 
 func (r *GamePostgres) CreateParticipant(userId int, gameId int) error {
-	query := fmt.Sprintf(`INSERT INTO %s (user_id, game_id) VALUES ($1, $2)
+	query := fmt.Sprintf(`INSERT INTO %s (user_id, game_id) VALUES ($1, $2) ON CONFLICT (user_id, game_id) DO NOTHING
 		RETURNING *`, gamesUsersTable)
 
 	_, err := r.db.Exec(query, userId, gameId)

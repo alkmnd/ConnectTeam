@@ -58,7 +58,7 @@ func (r *PlanPostgres) GetPlanInvitationCode(code string) (id int, err error) {
 	query := fmt.Sprintf(`SELECT holder_id FROM %s WHERE status='active' and invitation_code=$1 and holder_id=user_id LIMIT 1`, plansUsersTable)
 	err = r.db.Select(&id, query, code)
 	if err != nil {
-		println("cjkf")
+		return 0, err
 	}
 	return id, err
 }

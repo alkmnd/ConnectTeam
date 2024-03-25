@@ -10,3 +10,4 @@ DROP TABLE IF EXISTS plan_invitation_codes;
 DROP TABLE IF EXISTS users;
 DROP TYPE IF EXISTS access;
 DROP TYPE IF EXISTS user_role;
+DROP TYPE IF EXISTS plan_status;
