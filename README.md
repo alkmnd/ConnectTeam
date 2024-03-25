@@ -78,8 +78,6 @@ go run cmd/main.go
 
    3.11. [Delete User From Subscription](#delete-user-from-sub)
 
-   3.12. Check If User Can Get Trial
-
 
 4. [Topic](#topic)
    
@@ -1155,18 +1153,19 @@ status(string): "ok" if there is no error.
 <a id='ws-server'></a>
 ### 7. Websocket Server 
 
-#### 1. Подключение к игре
+#### 1. Connect to the Game
 
-Сообщение для отпраки на сервер:
+**Message to send on server:**
 ```bash
 {
     "action": "join-game", 
-    "target": {"id":1},
-    "sender":{"id":1}
+    "target": {
+        "id":1
+    }
 }
 ```
 
-Транслируемое сообщение (отправляется всем участникам игры, в том числе тому кто присоединяется):
+**Broadcasted Message:**
 ```bash
 {
     "action": "join-game",
@@ -1176,7 +1175,35 @@ status(string): "ok" if there is no error.
         "status": "not_started",
         "creator_id": 1,
         "id": 1,
-       "users": [
+        "users": [
+            {
+                "id": 1,
+                "name": "Natasha Belova"
+            },
+            {
+                "id": 2,
+                "name": "Test Test"
+            }
+        ]
+    },
+    "sender": {
+        "id": 2,
+        "name": "Test Test"
+    }
+}
+```
+
+**Received Message:**
+```bash
+{
+    "action": "join-success",
+    "target": {
+        "name": "new game",
+        "max_size": 3,
+        "status": "not_started",
+        "creator_id": 1,
+        "id": 1,
+        "users": [
             {
                 "id": 1,
                 "name": "Natasha Belova"
@@ -1190,35 +1217,16 @@ status(string): "ok" if there is no error.
 }
 ```
 
-Ошибки:
+#### 2. Select Topics for the Game 
 
-* Максимальное количество участников в игре.
-  
-     Сообщение (отправляется клиенту, который отправил сообщение на присоединение к игре):
-
-     ```bash
-     {
-    "action": "error",
-    "payload": "maximum number of participants",
-    "target": {
-        "id": 1
-    },
-    "sender": null
-   }
-   ```
-
-#### Выбор темы (для организатора)
-
-Сообщение для отправки на сервер:
-*  message: массив из выбранных тем, в структуру передается только id темы. 
-   
+**Message to send on server:**
 ```bash
 {
     "action": "select-topic", 
     "target": {
         "id":1
     },
-    "sender":{"id":1},
+    "sender":{"id":1}, 
     "payload": [ 
             {"id":1}, 
             {"id":2}
@@ -1226,7 +1234,7 @@ status(string): "ok" if there is no error.
 }
 ```
 
-Транслируемое сообщение (всем участникам):
+**Broadcasted Message:**
 ```bash
 {
     "action": "select-topic",
@@ -1243,59 +1251,41 @@ status(string): "ok" if there is no error.
         "max_size": 3,
         "status": "not_started",
         "creator_id": 1,
-        "rounds": [
+        "topics": [
             {
-                "id": 1
+                "id": 1,
+                "used": false,
+                "title": "Topic1"
             },
             {
-                "id": 2
+                "id": 2,
+                "used": false,
+                "title": "Topic2"
             }
         ],
         "id": 1,
-      "users": [
+        "users": [
             {
                 "id": 1,
                 "name": "Natasha Belova"
+            },
+            {
+                "id": 2,
+                "name": "т е"
             }
         ]
     },
     "sender": {
         "id": 1,
         "name": "Natasha Belova"
-    }
+    },
+    "time": "0001-01-01T00:00:00Z"
 }
 ```
-Ошибки (транслируются только совершившим действие):
 
-*  Пользователь не является организатором
-     ```bash
-     {
-    "action": "error",
-    "payload": "message.Sender.Id != game.Creator",
-    "target": {
-        "id": 1
-    },
-    "sender": null
-   }
-   ```
+#### 3. Start Game 
 
-* Не удалось распарсить темы в payload
-
-```bash
- {
-    "action": "error",
-    "payload": "incorrect payload",
-    "target": {
-        "id": 1
-    },
-    "sender": null
-   }
-```
-
-#### 3. Запуск игры 
-
-Сообщение для отправки на сервер (можно добавить sender, вообще не принципиально, я без него узнаю что за клиент):
-
+**Message to send on server:**
 ```bash
 {
     "action": "start-game", 
@@ -1305,27 +1295,32 @@ status(string): "ok" if there is no error.
 }
 ```
 
-Транслируемое сообщение (всем участникам):
-
+**Broadcasted Message:**
 ```bash
 {
-    "action": "",
+    "action": "start-game",
     "target": {
         "name": "new game",
         "max_size": 3,
         "status": "in_progress",
         "creator_id": 1,
-        "rounds": [
+        "topics": [
             {
                 "id": 1,
+                "used": false,
+                "title": "Topic1",
                 "questions": [
-                    "Q1"
+                    "",
+                    ""
                 ]
             },
             {
                 "id": 2,
+                "used": false,
+                "title": "Topic2",
                 "questions": [
-                    "Q2"
+                    "",
+                    ""
                 ]
             }
         ],
@@ -1334,36 +1329,713 @@ status(string): "ok" if there is no error.
             {
                 "id": 1,
                 "name": "Natasha Belova"
+            },
+            {
+                "id": 2,
+                "name": "т е"
             }
         ]
     },
-    "sender": null
+    "sender": null,
+    "time": "0001-01-01T00:00:00Z"
 }
 ```
 
-Ошибки:
+#### 4. Start Round 
 
-* Не выбраны темы (=> не составлены раунды)
+**Message to send on server:**
+```bash
+{
+    "action": "start-round", 
+    "target": {
+        "id":1
+    }, 
+    "payload": {
+        "id":2
+    }
+}
+```
 
-#### Workflkow
+**Broadcasted Message:**
+```bash
+{
+    "action": "start-round",
+    "target": {
+        "name": "new game",
+        "max_size": 3,
+        "status": "in_progress",
+        "creator_id": 1,
+        "topics": [
+            {
+                "id": 1,
+                "used": true,
+                "title": "Topic1",
+                "questions": [
+                    "",
+                    ""
+                ]
+            },
+            {
+                "id": 2,
+                "used": false,
+                "title": "Topic2",
+                "questions": [
+                    "",
+                    ""
+                ]
+            }
+        ],
+        "round": {
+            "topic": {
+                "id": 1,
+                "used": true,
+                "title": "Topic1",
+                "questions": [
+                    "",
+                    ""
+                ]
+            },
+            "users-questions": [
+                {
+                    "number": 1,
+                    "user": {
+                        "id": 1,
+                        "name": "Natasha Belova"
+                    },
+                    "question": ""
+                },
+                {
+                    "number": 2,
+                    "user": {
+                        "id": 2,
+                        "name": "т е"
+                    },
+                    "question": ""
+                }
+            ],
+            "users-questions-left": []
+        },
+        "id": 1,
+        "users": [
+            {
+                "id": 1,
+                "name": "Natasha Belova"
+            },
+            {
+                "id": 2,
+                "name": "т е"
+            }
+        ]
+    },
+    "sender": null,
+    "time": "0001-01-01T00:00:00Z"
+}
+```
 
-1. Подключение к серверу 
-2. Присоединение к игре
+#### 4. Start Stage (Answer and Rating)
 
-Если пользователь организатор:
+**Message to send on server:**
+```bash
+{
+   "action": "start-stage", 
+    "target": {
+        "id":1
+    }, 
+    "sender": {
+        "id":1
+    }
+}
+```
 
-3. Выбор темы 
-4. Запуск игры 
+**Broadcasted Message (round is not ended):**
+```bash
+{{
+    "action": "start-stage",
+    "payload": {
+        "number": 1,
+        "user": {
+            "id": 1,
+            "name": "Natasha Belova"
+        },
+        "question": ""
+    },
+    "target": {
+        "name": "new game",
+        "max_size": 3,
+        "status": "in_progress",
+        "creator_id": 1,
+        "topics": [
+            {
+                "id": 1,
+                "used": true,
+                "title": "Topic1",
+                "questions": [
+                    "",
+                    ""
+                ]
+            },
+            {
+                "id": 2,
+                "used": false,
+                "title": "Topic2",
+                "questions": [
+                    "",
+                    ""
+                ]
+            }
+        ],
+        "round": {
+            "topic": {
+                "id": 1,
+                "used": true,
+                "title": "Topic1",
+                "questions": [
+                    "",
+                    ""
+                ]
+            },
+            "users-questions": [
+                {
+                    "number": 1,
+                    "user": {
+                        "id": 1,
+                        "name": "Natasha Belova"
+                    },
+                    "question": ""
+                },
+                {
+                    "number": 2,
+                    "user": {
+                        "id": 2,
+                        "name": "т е"
+                    },
+                    "question": ""
+                }
+            ],
+            "users-questions-left": []
+        },
+        "id": 1,
+        "users": [
+            {
+                "id": 1,
+                "name": "Natasha Belova"
+            },
+            {
+                "id": 2,
+                "name": "т е"
+            }
+        ]
+    },
+    "sender": {
+        "id": 1,
+        "name": "Natasha Belova"
+    },
+    "time": "0001-01-01T00:00:00Z"
+}
+```
 
+**Broadcasted Message (round is not ended):**
+```bash
+{{
+    "action": "start-stage",
+    "payload": {
+        "number": 1,
+        "user": {
+            "id": 1,
+            "name": "Natasha Belova"
+        },
+        "question": ""
+    },
+    "target": {
+        "name": "new game",
+        "max_size": 3,
+        "status": "in_progress",
+        "creator_id": 1,
+        "topics": [
+            {
+                "id": 1,
+                "used": true,
+                "title": "Topic1",
+                "questions": [
+                    "",
+                    ""
+                ]
+            },
+            {
+                "id": 2,
+                "used": false,
+                "title": "Topic2",
+                "questions": [
+                    "",
+                    ""
+                ]
+            }
+        ],
+        "round": {
+            "topic": {
+                "id": 1,
+                "used": true,
+                "title": "Topic1",
+                "questions": [
+                    "",
+                    ""
+                ]
+            },
+            "users-questions": [
+                {
+                    "number": 1,
+                    "user": {
+                        "id": 1,
+                        "name": "Natasha Belova"
+                    },
+                    "question": ""
+                },
+                {
+                    "number": 2,
+                    "user": {
+                        "id": 2,
+                        "name": "т е"
+                    },
+                    "question": ""
+                }
+            ],
+            "users-questions-left": []
+        },
+        "id": 1,
+        "users": [
+            {
+                "id": 1,
+                "name": "Natasha Belova"
+            },
+            {
+                "id": 2,
+                "name": "т е"
+            }
+        ]
+    },
+    "sender": {
+        "id": 1,
+        "name": "Natasha Belova"
+    },
+    "time": "0001-01-01T00:00:00Z"
+}
+```
 
-   
+**Broadcasted Message (round is ended, but game is not):**
+```bash
+{
+    "action": "round-end",
+    "target": {
+        "name": "new game",
+        "max_size": 3,
+        "status": "in_progress",
+        "creator_id": 1,
+        "topics": [
+            {
+                "id": 1,
+                "used": true,
+                "title": "Topic1",
+                "questions": [
+                    "",
+                    ""
+                ]
+            },
+            {
+                "id": 2,
+                "used": false,
+                "title": "Topic2",
+                "questions": [
+                    "",
+                    ""
+                ]
+            }
+        ],
+        "round": {
+            "topic": {
+                "id": 1,
+                "used": true,
+                "title": "Topic1",
+                "questions": [
+                    "",
+                    ""
+                ]
+            },
+            "users-questions": null,
+            "users-questions-left": [
+                {
+                    "number": 1,
+                    "user": {
+                        "id": 1,
+                        "name": "Natasha Belova"
+                    },
+                    "question": "",
+                    "rates": [
+                        {
+                            "value": 5
+                        }
+                    ]
+                },
+                {
+                    "number": 2,
+                    "user": {
+                        "id": 2,
+                        "name": "т е"
+                    },
+                    "question": "",
+                    "rates": [
+                        {
+                            "value": 5
+                        }
+                    ]
+                }
+            ]
+        },
+        "id": 1,
+        "users": [
+            {
+                "id": 1,
+                "name": "Natasha Belova"
+            },
+            {
+                "id": 2,
+                "name": "т е"
+            }
+        ]
+    },
+    "sender": null,
+    "time": "0001-01-01T00:00:00Z"
+}
+```
 
+**Broadcasted Message (game is ended, all rounds are ended):**
 
+```bash
+{
+    "action": "game-end",
+    "target": {
+        "name": "new game",
+        "max_size": 3,
+        "status": "ended",
+        "creator_id": 1,
+        "topics": [
+            {
+                "id": 1,
+                "used": true,
+                "title": "Topic1",
+                "questions": [
+                    "",
+                    ""
+                ]
+            },
+            {
+                "id": 2,
+                "used": true,
+                "title": "Topic2",
+                "questions": [
+                    "",
+                    ""
+                ]
+            }
+        ],
+        "round": {
+            "topic": {
+                "id": 2,
+                "used": true,
+                "title": "Topic2",
+                "questions": [
+                    "",
+                    ""
+                ]
+            },
+            "users-questions": null,
+            "users-questions-left": [
+                {
+                    "number": 1,
+                    "user": {
+                        "id": 1,
+                        "name": "Natasha Belova"
+                    },
+                    "question": "",
+                    "rates": [
+                        {
+                            "value": 5
+                        }
+                    ]
+                },
+                {
+                    "number": 2,
+                    "user": {
+                        "id": 2,
+                        "name": "т е"
+                    },
+                    "question": "",
+                    "rates": [
+                        {
+                            "value": 5
+                        }
+                    ]
+                }
+            ]
+        },
+        "id": 1,
+        "users": [
+            {
+                "id": 1,
+                "name": "Natasha Belova"
+            },
+            {
+                "id": 2,
+                "name": "т е"
+            }
+        ]
+    },
+    "sender": null,
+    "time": "0001-01-01T00:00:00Z"
+}
+{
+    "action": "round-end",
+    "target": {
+        "name": "new game",
+        "max_size": 3,
+        "status": "ended",
+        "creator_id": 1,
+        "topics": [
+            {
+                "id": 1,
+                "used": true,
+                "title": "Topic1",
+                "questions": [
+                    "",
+                    ""
+                ]
+            },
+            {
+                "id": 2,
+                "used": true,
+                "title": "Topic2",
+                "questions": [
+                    "",
+                    ""
+                ]
+            }
+        ],
+        "round": {
+            "topic": {
+                "id": 2,
+                "used": true,
+                "title": "Topic2",
+                "questions": [
+                    "",
+                    ""
+                ]
+            },
+            "users-questions": null,
+            "users-questions-left": [
+                {
+                    "number": 1,
+                    "user": {
+                        "id": 1,
+                        "name": "Natasha Belova"
+                    },
+                    "question": "",
+                    "rates": [
+                        {
+                            "value": 5
+                        }
+                    ]
+                },
+                {
+                    "number": 2,
+                    "user": {
+                        "id": 2,
+                        "name": "т е"
+                    },
+                    "question": "",
+                    "rates": [
+                        {
+                            "value": 5
+                        }
+                    ]
+                }
+            ]
+        },
+        "id": 1,
+        "users": [
+            {
+                "id": 1,
+                "name": "Natasha Belova"
+            },
+            {
+                "id": 2,
+                "name": "т е"
+            }
+        ]
+    },
+    "sender": null,
+    "time": "0001-01-01T00:00:00Z"
+}
+```
 
+#### 5. Start Answer 
 
+**Message to send on server:**
+```bash
+{
+   "action": "start-answer", 
+    "target": {
+        "id":1
+    }, 
+    "sender": {
+        "id":1
+    }
+}
+```
 
+**Broadcasted Message:**
+```bash
+{
+    "action": "start-answer",
+    "target": {
+        "id": 1
+    },
+    "sender": {
+        "id": 2,
+        "name": "т е"
+    },
+    "time": "0001-01-01T00:00:00Z"
+}
+```
 
+#### 7. End Answer
 
+**Message to send on server:**
+```bash
+{
+   "action": "end-answer", 
+    "target": {
+        "id":1
+    }, 
+    "sender": {
+        "id":1
+    }
+}
+```
+
+**Broadcasted Message:**
+```bash
+{
+    "action": "end-answer",
+    "target": {
+        "id": 1
+    },
+    "sender": {
+        "id": 2,
+        "name": "т е"
+    },
+    "time": "0001-01-01T00:00:00Z"
+}
+```
+
+#### 8. Rate User 
+
+**Message to send on server:**
+```bash
+{
+   "action": "rate-user", 
+    "target": {
+        "id":1
+    }, 
+    "sender": {
+        "id":1
+    }, "payload": {"user_id":2, "value":5}
+}
+```
+
+**Broadcasted Message:**
+```bash
+{
+    "action": "rate-end",
+    "target": {
+        "name": "new game",
+        "max_size": 3,
+        "status": "ended",
+        "creator_id": 1,
+        "topics": [
+            {
+                "id": 1,
+                "used": true,
+                "title": "Topic1",
+                "questions": [
+                    "",
+                    ""
+                ]
+            },
+            {
+                "id": 2,
+                "used": true,
+                "title": "Topic2",
+                "questions": [
+                    "",
+                    ""
+                ]
+            }
+        ],
+        "round": {
+            "topic": {
+                "id": 2,
+                "used": true,
+                "title": "Topic2",
+                "questions": [
+                    "",
+                    ""
+                ]
+            },
+            "users-questions": null,
+            "users-questions-left": [
+                {
+                    "number": 1,
+                    "user": {
+                        "id": 1,
+                        "name": "Natasha Belova"
+                    },
+                    "question": "",
+                    "rates": [
+                        {
+                            "value": 5
+                        }
+                    ]
+                },
+                {
+                    "number": 2,
+                    "user": {
+                        "id": 2,
+                        "name": "т е"
+                    },
+                    "question": "",
+                    "rates": [
+                        {
+                            "value": 5
+                        }
+                    ]
+                }
+            ]
+        },
+        "id": 1,
+        "users": [
+            {
+                "id": 1,
+                "name": "Natasha Belova"
+            },
+            {
+                "id": 2,
+                "name": "т е"
+            }
+        ]
+    },
+    "sender": null,
+    "time": "0001-01-01T00:00:00Z"
+}
+```
 
 
 

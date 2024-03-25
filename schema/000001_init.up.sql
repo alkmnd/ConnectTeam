@@ -21,13 +21,6 @@ CREATE TABLE users
     profile_image varchar(256)
 );
 
-CREATE TABLE rates
-(
-    user_id int REFERENCES users (id) ON DELETE CASCADE,
-    game_id int REFERENCES games (id) ON DELETE CASCADE,
-    value int,
-    question varchar(256)
-);
 
 CREATE TABLE verification_codes
 (
@@ -82,9 +75,17 @@ CREATE TABLE games
 CREATE TABLE games_users
 (
     game_id int references games (id) on delete cascade,
-    user_id int references users (id) on delete cascade
+    user_id int references users (id) on delete cascade,
+    primary key (game_id, user_id)
 );
 
+CREATE TABLE rates
+(
+    user_id int REFERENCES users (id) ON DELETE CASCADE,
+    game_id int REFERENCES games (id) ON DELETE CASCADE,
+    value int,
+    question varchar(256)
+);
 
 CREATE OR REPLACE FUNCTION update_subscription()
 RETURNS TRIGGER AS $$
