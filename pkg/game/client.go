@@ -266,7 +266,7 @@ func (client *Client) handleStartStageMessage(message Message) {
 
 	if len(goterators.Filter(game.Topics, func(item Topic) bool {
 		return item.Used == false
-	})) == 0 {
+	})) == 0 && len(game.Round.UsersQuestions) == 0 {
 		game.Status = "ended"
 		game.broadcast <- &Message{
 			Action: EndGameAction,
