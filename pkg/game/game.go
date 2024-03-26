@@ -105,12 +105,6 @@ func (game *Game) listUsersInGame(client *Client) {
 }
 
 func (game *Game) notifyClientJoined(client *Client) {
-	//var users UserList
-	//for i, _ := range game.Clients {
-	//	log.Println("notifyClientJoined")
-	//	users.Users = append(users.Users, i.User)
-	//}
-	//bytes, _ := json.Marshal(users)
 
 	message := &Message{
 		Action:  JoinGameAction,
@@ -129,11 +123,6 @@ func (game *Game) notifyClient(client *Client, message *Message) {
 
 func (game *Game) registerClientInGame(client *Client) {
 	log.Println("client try to join")
-	//if game.Status == "in-progress" {
-	//	log.Println("registerClientInGame max number of users in game")
-	//	return
-	//}
-	//if len(game.Clients) < game.MaxSize {
 
 	for i := range game.Users {
 		if game.Users[i].Id == client.User.Id {
@@ -143,9 +132,10 @@ func (game *Game) registerClientInGame(client *Client) {
 				Payload: []byte{},
 				Sender:  client.User,
 			}
-			println("blyaa")
+
 			game.notifyClient(client, message)
 			game.Clients[client] = true
+
 			log.Println("client already register")
 			return
 		}
@@ -201,11 +191,6 @@ func (game *Game) unregisterClientInGame(client *Client) {
 		}
 	}
 
-	//for i := range game.Users {
-	//	if game.Users
-	//
-	//	delete(game.Clients, client)
-	//}
 }
 
 func (game *Game) broadcastToClientsInGame(message []byte) {

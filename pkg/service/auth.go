@@ -51,8 +51,7 @@ func (s *AuthService) GenerateToken(login, password string, isEmail bool) (strin
 		return "", "", errors.New("invalid login data")
 	}
 	if !user.IsVerified {
-		println("meow")
-		return "", "", errors.New("User is not verified")
+		return "", "", errors.New("user is not verified")
 	}
 
 	if err != nil {
