@@ -272,6 +272,8 @@ func (client *Client) handleStartStageMessage(message Message) {
 			Action: EndGameAction,
 			Target: game,
 		}
+
+		return
 	}
 	if len(game.Round.UsersQuestions) == 0 {
 		game.RoundsLeft = append(game.RoundsLeft, game.Round)
