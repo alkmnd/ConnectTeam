@@ -332,18 +332,13 @@ func (client *Client) handleRateMessage(message Message) {
 		return item.User.Id == ratePayload.UserId
 	})[0]
 
-	if message.Sender.Id == ratePayload.UserId {
+	if client.User.Id == ratePayload.UserId {
 		return
-	}
-	if usersQuestions.Rates == nil {
-		usersQuestions.Rates = make([]Rates, 0)
 	}
 
 	message.Target = game
 
-	usersQuestions.Rates = append(usersQuestions.Rates, Rates{
-		Value: ratePayload.Value,
-	})
+	usersQuestions.Rates[client.User.Id] = ratePayload.Value
 
 	if len(usersQuestions.Rates) == len(game.Users)-1 {
 		log.Println("game.Round.UsersQuestionsLeft = append(game.Round.UsersQuestions, usersQuestions)")
@@ -364,6 +359,20 @@ func (client *Client) handleRateMessage(message Message) {
 func (client *Client) handleUserEndAnswerMessage(message Message) {
 	gameId := message.Target.ID
 	game := client.wsServer.findGame(gameId)
+
+	stage, _, err := goterators.Find(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
+		return item.User.Id == client.User.Id
+	})
+
+	if err != nil {
+		return
+	}
+
+	for i := range game.Users {
+		if game.Users[i].Id != client.User.Id {
+			stage.Rates[game.Users[i].Id] = 0
+		}
+	}
 
 	//if len(game.Round.UsersQuestions) == 1 {
 	//	game.broadcast <- &Message{
@@ -431,6 +440,7 @@ func (client *Client) handleStartRoundMessage(message Message) {
 			// TODO: choose random elem
 			Question: topicFound.Questions[i],
 			Number:   cnt,
+			Rates:    make(map[int]int),
 		})
 
 		cnt++

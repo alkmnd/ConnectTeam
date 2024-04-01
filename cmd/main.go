@@ -13,17 +13,21 @@ import (
 
 	"os"
 
-	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
-var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
+// @title           ConnectTeam API
+// @version         1.0
+// @description     API Server for ConnectTeam App
+
+// @host      localhost:8000
+// @BasePath  /
+
+// @securityDefinitions.apiKey  apiKeyAuth
+// @in header
+// @name Authorization
 
 func main() {
 	if err := initConfig(); err != nil {
