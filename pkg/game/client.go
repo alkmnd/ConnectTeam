@@ -583,6 +583,9 @@ func (client *Client) handleLeaveGameMessage(message Message) {
 		delete(client.games, game)
 	}
 
-	message.Action = UserLeftAction
+	var messageReceive Message
+	messageReceive.Action = UserLeftAction
+	messageReceive.Sender = client.User
+	game.broadcast <- &messageReceive
 	game.unregister <- client
 }
