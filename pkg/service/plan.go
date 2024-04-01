@@ -43,6 +43,7 @@ func (s *PlanService) GetUserSubscriptions(userId int) ([]connectteam.UserPlan, 
 
 	return userPlans, nil
 }
+
 func (s *PlanService) CreateTrialPlan(userId int) (userPlan connectteam.UserPlan, err error) {
 	err = s.repo.DeleteOnConfirmPlan(userId)
 	if err != nil {

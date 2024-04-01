@@ -3,9 +3,12 @@ package handler
 import (
 	"ConnectTeam/pkg/service"
 	"github.com/gin-contrib/cors"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"time"
 
+	_ "ConnectTeam/docs"
 	"github.com/gin-gonic/gin"
+	"github.com/swaggo/files"
 )
 
 type Handler struct {
@@ -17,6 +20,8 @@ func NewHandler(services *service.Service) *Handler {
 }
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173"},
 		AllowMethods:     []string{"PUT", "PATCH", "POST", "GET", "DELETE"},

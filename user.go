@@ -8,14 +8,13 @@ import (
 var ErrNoRecord = errors.New("models: подходящей записи не найдено")
 
 type User struct {
-	Id    int    `json:"id" db:"id"`
-	Email string `json:"email" db:"email"`
-	// PhoneNumber string `json:"phone_number" db:"phone_number"`
+	Id         int    `json:"id" db:"id" swagger:"_"`
+	Email      string `json:"email" db:"email" binding:"required"`
 	FirstName  string `json:"first_name" db:"first_name" binding:"required"`
 	SecondName string `json:"second_name" db:"second_name" binding:"required"`
 	Password   string `json:"password" binding:"required"`
 	IsVerified bool   `json:"-" db:"is_verified"`
-	Access     string `json:"access" db:"access"`
+	Access     string `json:"access" db:"access" swagger:"_"`
 }
 type UserCredentials struct {
 	Email        string `json:"email" db:"email"`
