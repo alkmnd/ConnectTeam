@@ -46,6 +46,10 @@ func (s *GameService) CreateParticipant(userId int, gameId int) error {
 	return s.repo.CreateParticipant(userId, gameId)
 }
 
+func (s *GameService) GetResults(gameId int) (results []connectteam.UserResult, err error) {
+	return s.repo.GetResults(gameId)
+}
+
 func (s *GameService) GetCreatedGames(page int, userId int) ([]connectteam.Game, error) {
 	return s.repo.GetCreatedGames(page, userId)
 }
