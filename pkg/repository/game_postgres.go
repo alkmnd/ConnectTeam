@@ -30,7 +30,7 @@ func (r *GamePostgres) CreateGame(game connectteam.Game) (connectteam.Game, erro
 
 func (r *GamePostgres) SaveResults(gameId int, userId int, rate int) error {
 	query := fmt.Sprintf("INSERT INTO %s (game_id, user_id, srate) values ($1, $2, $3)", resultsTable)
-	_, err := r.db.Exec(query, userId, gameId)
+	_, err := r.db.Exec(query, gameId, userId, rate)
 	return err
 }
 
@@ -56,6 +56,14 @@ func (r *GamePostgres) GetGame(gameId int) (game connectteam.Game, err error) {
 
 func (r *GamePostgres) StartGame(gameId int) error {
 	query := fmt.Sprintf(`UPDATE %s SET status = 'in_progress' WHERE id = %d`, gamesTable, gameId)
+
+	_, err := r.db.Exec(query)
+
+	return err
+}
+
+func (r *GamePostgres) EndGame(gameId int) error {
+	query := fmt.Sprintf(`UPDATE %s SET status = 'ended' WHERE id = %d`, gamesTable, gameId)
 
 	_, err := r.db.Exec(query)
 
