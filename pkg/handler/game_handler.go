@@ -120,7 +120,7 @@ type getResultsResponse struct {
 }
 
 func (h *Handler) getResults(c *gin.Context) {
-	id, err := getUserId(c)
+	_, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
