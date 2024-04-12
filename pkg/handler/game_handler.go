@@ -115,6 +115,46 @@ func (h *Handler) getCreatedGames(c *gin.Context) {
 	})
 }
 
+type getResultsResponse struct {
+	Data []connectteam.UserResult `json:"data"`
+}
+
+func (h *Handler) getResults(c *gin.Context) {
+	_, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	access, err := getUserAccess(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if access != string(connectteam.UserAccess) {
+		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
+		return
+	}
+
+	gameId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	results, err := h.services.GetResults(gameId)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, getResultsResponse{
+		Data: results,
+	})
+}
+
 func (h *Handler) deleteGame(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {

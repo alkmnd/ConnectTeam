@@ -77,6 +77,7 @@ type Game interface {
 	DeleteGame(gameId int) error
 	GetGameWithInvitationCode(code string) (connectteam.Game, error)
 	GetGames(page int, userId int) ([]connectteam.Game, error)
+	GetResults(gameId int) (results []connectteam.UserResult, err error)
 }
 
 type Service struct {

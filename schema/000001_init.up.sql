@@ -79,12 +79,25 @@ CREATE TABLE games_users
     primary key (game_id, user_id)
 );
 
-CREATE TABLE rates
+
+CREATE TABLE results
 (
     user_id int REFERENCES users (id) ON DELETE CASCADE,
     game_id int REFERENCES games (id) ON DELETE CASCADE,
     value int,
-    question varchar(256)
+);
+
+CREATE TABLE tags
+(
+    id uuid DEFAULT gen_random_uuid(),
+    name varchar(256)
+);
+
+CREATE TABLE tags_questions
+(
+    tag_id uuid REFERENCES tags(id) ON DELETE CASCADE,
+    question_id int REFERENCES questions(id) ON DELETE CASCADE,
+    primary key (tag_id, question_id)
 );
 
 CREATE OR REPLACE FUNCTION update_subscription()

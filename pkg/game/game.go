@@ -17,8 +17,9 @@ type Game struct {
 	register   chan *Client
 	unregister chan *Client
 	broadcast  chan *Message
-	ID         int     `json:"id"`
-	Users      []*User `json:"users,omitempty"`
+	ID         int         `json:"id"`
+	Users      []*User     `json:"users,omitempty"`
+	Results    map[int]int `json:"-"`
 }
 
 // UsersQuestions Генерируются в начале раунда.

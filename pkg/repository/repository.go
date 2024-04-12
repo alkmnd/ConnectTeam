@@ -82,6 +82,8 @@ type Game interface {
 	GetGameWithInvitationCode(code string) (game connectteam.Game, err error)
 	GetGames(page int, userId int) (games []connectteam.Game, err error)
 	StartGame(gameId int) error
+	SaveResults(gameId int, userId int, rate int) error
+	GetResults(gameId int) (results []connectteam.UserResult, err error)
 }
 
 type Repository struct {

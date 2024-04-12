@@ -21,6 +21,11 @@ type UserCredentials struct {
 	PasswordHash string `json:"password_hash" db:"password_hash"`
 }
 
+type UserResult struct {
+	UserId int `json:"user_id" db:"user_id"`
+	Value  int `json:"value" db:"value"`
+}
+
 type Rates struct {
 	UserId   int    `json:"user_id" db:"user_id"`
 	GameId   int    `json:"game_id" db:"game_id"`

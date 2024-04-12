@@ -19,6 +19,7 @@ const (
 	questionsTable    = "questions"
 	gamesTable        = "games"
 	gamesUsersTable   = "games_users"
+	resultsTable      = "resultsTable"
 )
 
 type Config struct {

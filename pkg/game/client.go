@@ -238,8 +238,8 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 		client.handleRateMessage(message)
 	case StartStageAction:
 		client.handleStartStageMessage(message)
-		//case EndGameAction:
-		//	client.handleEndGameMessage(message)
+	case EndGameAction:
+		client.handleEndGameMessage(message)
 	}
 
 }
@@ -249,15 +249,22 @@ type ratePayload struct {
 	UserId int `json:"user_id"`
 }
 
-//func (client *Client) handleEndGameMessage(message Message) {
-//	gameId := message.Target.ID
-//	game := client.wsServer.findGame(gameId)
-//
-//	// сохраняем результаты
-//	// меняем статус в бд на ended
-//	// транслируем сообщение с результатами
-//
-//}
+func (client *Client) handleEndGameMessage(message Message) {
+	gameId := message.Target.ID
+	game := client.wsServer.findGame(gameId)
+
+	game.Status = "ended"
+	for i := range game.Users {
+		_ = client.wsServer.repos.SaveResults(gameId, game.Users[i].Id, game.Results[game.Users[i].Id])
+	}
+	game.broadcast <- &Message{
+		Action: EndGameAction,
+		Target: game,
+	}
+
+	return
+
+}
 
 func (client *Client) handleStartStageMessage(message Message) {
 
@@ -268,6 +275,9 @@ func (client *Client) handleStartStageMessage(message Message) {
 		return item.Used == false
 	})) == 0 && len(game.Round.UsersQuestions) == 0 {
 		game.Status = "ended"
+		for i := range game.Users {
+			_ = client.wsServer.repos.SaveResults(gameId, game.Users[i].Id, game.Results[game.Users[i].Id])
+		}
 		game.broadcast <- &Message{
 			Action: EndGameAction,
 			Target: game,
@@ -339,6 +349,12 @@ func (client *Client) handleRateMessage(message Message) {
 	message.Target = game
 
 	usersQuestions.Rates[client.User.Id] = ratePayload.Value
+	_, ok := game.Results[ratePayload.UserId]
+	if !ok {
+		game.Results[ratePayload.UserId] = ratePayload.Value
+	} else {
+		game.Results[ratePayload.UserId] += ratePayload.Value
+	}
 
 	if len(usersQuestions.Rates) == len(game.Users)-1 {
 		log.Println("game.Round.UsersQuestionsLeft = append(game.Round.UsersQuestions, usersQuestions)")
@@ -583,9 +599,10 @@ func (client *Client) handleLeaveGameMessage(message Message) {
 		delete(client.games, game)
 	}
 
-	var messageReceive Message
-	messageReceive.Action = UserLeftAction
-	messageReceive.Sender = client.User
-	game.broadcast <- &messageReceive
+	var messageSend Message
+	messageSend.Action = UserLeftAction
+	messageSend.Sender = client.User
+	messageSend.Target = game
+	game.broadcast <- &messageSend
 	game.unregister <- client
 }
