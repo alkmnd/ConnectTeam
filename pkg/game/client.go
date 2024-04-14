@@ -306,9 +306,7 @@ func (client *Client) handleStartStageMessage(message Message) {
 	var err error
 	if len(game.Round.UsersQuestionsLeft) == 0 {
 		respondent, _, err = goterators.Find(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
-
 			return item.User.Id == game.Creator
-
 		})
 
 		if err != nil {
@@ -357,7 +355,6 @@ func (client *Client) handleRateMessage(message Message) {
 	}
 
 	if len(usersQuestions.Rates) == len(game.Users)-1 {
-		log.Println("game.Round.UsersQuestionsLeft = append(game.Round.UsersQuestions, usersQuestions)")
 		game.Round.UsersQuestionsLeft = append(game.Round.UsersQuestionsLeft, usersQuestions)
 		game.Round.UsersQuestions = goterators.Filter(game.Round.UsersQuestions, func(item *UsersQuestions) bool {
 			return item.User.Id != usersQuestions.User.Id
@@ -458,7 +455,6 @@ func (client *Client) handleStartRoundMessage(message Message) {
 			Number:   cnt,
 			Rates:    make(map[int]int),
 		})
-
 		cnt++
 
 	}
@@ -599,10 +595,10 @@ func (client *Client) handleLeaveGameMessage(message Message) {
 		delete(client.games, game)
 	}
 
+	game.unregister <- client
 	var messageSend Message
 	messageSend.Action = UserLeftAction
 	messageSend.Sender = client.User
 	messageSend.Target = game
 	game.broadcast <- &messageSend
-	game.unregister <- client
 }
