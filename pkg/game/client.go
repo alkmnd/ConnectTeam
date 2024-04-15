@@ -330,6 +330,10 @@ func (client *Client) handleRateMessage(message Message) {
 	gameId := message.Target.ID
 	game := client.wsServer.findGame(gameId)
 
+	if game.Results == nil {
+		game.Results = make(map[int]int)
+	}
+
 	var ratePayload ratePayload
 	err := json.Unmarshal(message.Payload, &ratePayload)
 	if err != nil {
