@@ -189,14 +189,14 @@ func (game *Game) unregisterClientInGame(client *Client) {
 
 	for i := range game.Users {
 		if game.Users[i].Id == client.User.Id {
-			game.Users = append(game.Users[:i], game.Users[i:]...)
+			game.Users = append(game.Users[:i], game.Users[i+1:]...)
 		}
 	}
 
 	if game.Round != nil && game.Round.UsersQuestions != nil {
 		for i := range game.Round.UsersQuestions {
 			if game.Round.UsersQuestions[i].User.Id == client.User.Id {
-				game.Users = append(game.Users[:i], game.Users[i:]...)
+				game.Users = append(game.Users[:i], game.Users[i+1:]...)
 				delete(game.Round.UsersQuestions[i].Rates, game.Round.UsersQuestions[i].User.Id)
 			}
 		}
