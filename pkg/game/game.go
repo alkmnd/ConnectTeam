@@ -30,11 +30,6 @@ type UsersQuestions struct {
 	Rates    map[int]int `json:"-"`
 }
 
-//type Rates struct {
-//	Value int `json:"value"`
-//	UserId int `json:"user_id""`
-//}
-
 type Round struct {
 	Topic              *Topic            `json:"topic"`
 	UsersQuestions     []*UsersQuestions `json:"users-questions"`

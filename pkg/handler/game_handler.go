@@ -200,8 +200,7 @@ func (h *Handler) deleteGame(c *gin.Context) {
 func (h *Handler) getGame(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
+		id = 0
 	}
 
 	gameId, err := strconv.Atoi(c.Param("id"))

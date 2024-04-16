@@ -56,6 +56,7 @@ type Topic interface {
 	GetAll() ([]connectteam.Topic, error)
 	DeleteTopic(id int) error
 	UpdateTopic(id int, title string) error
+	GetTopic(id int) (connectteam.Topic, error)
 }
 
 type Question interface {
@@ -63,6 +64,7 @@ type Question interface {
 	DeleteQuestion(id int) error
 	GetAll(topicId int) ([]connectteam.Question, error)
 	UpdateQuestion(content string, id int) (connectteam.Question, error)
+	GetRandWithLimit(topicId int, limit int) ([]connectteam.Question, error)
 }
 
 type Uploader interface {
@@ -78,6 +80,9 @@ type Game interface {
 	GetGameWithInvitationCode(code string) (connectteam.Game, error)
 	GetGames(page int, userId int) ([]connectteam.Game, error)
 	GetResults(gameId int) (results []connectteam.UserResult, err error)
+	StartGame(gameId int) error
+	EndGame(gameId int) error
+	SaveResults(gameId int, userId int, rate int) error
 }
 
 type Service struct {

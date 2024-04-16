@@ -108,7 +108,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		question.DELETE("/:id", h.deleteQuestion)
 		question.PATCH("/:id", h.updateQuestion)
 	}
-	game := router.Group("games", h.userIdentity)
+	game := router.Group("/games", h.userIdentity)
 	{
 		game.POST("/", h.createGame)
 		game.GET("/all/:page", h.getGames)
@@ -118,6 +118,24 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		game.POST("/:code", h.addUserAsParticipant)
 		game.GET("/results/:id", h.getResults)
 		//game.POST(":id/topics", h.addTopicToGame)
+	}
+	httpService := router.Group("/api")
+	{
+		game := httpService.Group("/games")
+		{
+			game.GET("/:id", h.getGame)
+			game.PATCH("/start/:id", h.startGame)
+			game.POST("/results", h.saveResults)
+			game.PATCH("/end/:id", h.endGame)
+		}
+		topic := httpService.Group("/topics")
+		{
+			topic.GET("/:id", h.getTopic)
+		}
+		question := httpService.Group("/questions")
+		{
+			question.GET("/", h.getRandWithLimit)
+		}
 	}
 
 	return router

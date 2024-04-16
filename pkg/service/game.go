@@ -15,6 +15,10 @@ func NewGameService(repo repository.Game) *GameService {
 	return &GameService{repo: repo}
 }
 
+func (s *GameService) SaveResults(gameId int, userId int, rate int) error {
+	return s.repo.SaveResults(gameId, userId, rate)
+}
+
 func (s *GameService) CreateGame(creatorId int, startDateString string, name string) (game connectteam.Game, err error) {
 
 	game.InvitationCode, err = generateInviteCode()
@@ -44,6 +48,14 @@ func (s *GameService) CreateGame(creatorId int, startDateString string, name str
 
 func (s *GameService) CreateParticipant(userId int, gameId int) error {
 	return s.repo.CreateParticipant(userId, gameId)
+}
+
+func (s *GameService) StartGame(gameId int) error {
+	return s.repo.StartGame(gameId)
+}
+
+func (s *GameService) EndGame(gameId int) error {
+	return s.repo.EndGame(gameId)
 }
 
 func (s *GameService) GetResults(gameId int) (results []connectteam.UserResult, err error) {

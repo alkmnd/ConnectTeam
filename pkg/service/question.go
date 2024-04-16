@@ -22,6 +22,10 @@ func (s *QuestionService) CreateQuestion(content string, topicId int) (int, erro
 	return s.repo.CreateQuestion(content, topicId)
 }
 
+func (s *QuestionService) GetRandWithLimit(topicId int, limit int) ([]connectteam.Question, error) {
+	return s.repo.GetRandWithLimit(topicId, limit)
+}
+
 func (s *QuestionService) DeleteQuestion(id int) error {
 	return s.repo.DeleteQuestion(id)
 }
