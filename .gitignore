@@ -3,3 +3,4 @@
 /.database/
 /.localstack/
 /.idea/
+.DS_Store
