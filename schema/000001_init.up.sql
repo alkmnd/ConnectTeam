@@ -89,7 +89,7 @@ CREATE TABLE results
 
 CREATE TABLE tags
 (
-    id uuid DEFAULT gen_random_uuid(),
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     name varchar(256)
 );
 
