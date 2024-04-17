@@ -3,6 +3,7 @@ CREATE TYPE plans AS ENUM ('basic', 'advanced', 'premium');
 CREATE TYPE access AS ENUM ('super_admin', 'admin', 'user');
 CREATE TYPE plan_status AS ENUM ('active', 'expired', 'on_confirm');
 CREATE TYPE game_status AS ENUM ('not_started', 'in_progress', 'ended');
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE users
 (
@@ -89,7 +90,7 @@ CREATE TABLE results
 
 CREATE TABLE tags
 (
-    id uuid DEFAULT gen_random_uuid(),
+    id uuid DEFAULT uuid_generate_v4(),
     name varchar(256)
 );
 
