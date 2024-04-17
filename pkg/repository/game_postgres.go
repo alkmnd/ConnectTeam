@@ -29,7 +29,7 @@ func (r *GamePostgres) CreateGame(game connectteam.Game) (connectteam.Game, erro
 }
 
 func (r *GamePostgres) SaveResults(gameId int, userId int, rate int) error {
-	query := fmt.Sprintf("INSERT INTO %s (game_id, user_id, value) values ($1, $2, $3)", resultsTable)
+	query := fmt.Sprintf("INSERT INTO %s (game_id, user_id, value) values ($1, $2, $3) ON CONFLICT (user_id, game_id) DO NOTHING", resultsTable)
 	_, err := r.db.Exec(query, gameId, userId, rate)
 	return err
 }
