@@ -120,6 +120,11 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		game.GET("/results/:id", h.getResults)
 		//game.POST(":id/topics", h.addTopicToGame)
 	}
+
+	tags := router.Group("/tags", h.userIdentity)
+	{
+		tags.GET("/", h.getAllTags)
+	}
 	httpService := router.Group("/api")
 	{
 		game := httpService.Group("/games")
