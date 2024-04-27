@@ -13,9 +13,19 @@ type User struct {
 	FirstName  string `json:"first_name" db:"first_name" binding:"required"`
 	SecondName string `json:"second_name" db:"second_name" binding:"required"`
 	Password   string `json:"password" binding:"required"`
-	IsVerified bool   `json:"-" db:"is_verified"`
 	Access     string `json:"access" db:"access" swagger:"_"`
 }
+
+type UserSignUpRequest struct {
+	Id               int    `json:"id" db:"id" swagger:"_"`
+	Email            string `json:"email" db:"email" binding:"required"`
+	FirstName        string `json:"first_name" db:"first_name" binding:"required"`
+	SecondName       string `json:"second_name" db:"second_name" binding:"required"`
+	Password         string `json:"password" binding:"required"`
+	VerificationCode string `json:"verification_code" binding:"required"`
+	Access           string `json:"access" db:"access" swagger:"_"`
+}
+
 type UserCredentials struct {
 	Email        string `json:"email" db:"email"`
 	PasswordHash string `json:"password_hash" db:"password_hash"`

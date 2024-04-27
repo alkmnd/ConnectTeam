@@ -13,7 +13,6 @@ CREATE TABLE users
     description varchar(256),
     password_hash varchar(256),
     access access,
-    is_verified boolean DEFAULT false,
     company_name varchar(256),
     company_info varchar(256),
     company_url varchar(256),
@@ -24,9 +23,9 @@ CREATE TABLE users
 
 CREATE TABLE verification_codes
 (
-    user_id int REFERENCES users (id) ON DELETE CASCADE,
+    email varchar(256),
     code VARCHAR(10),
-    PRIMARY KEY (user_id)
+    PRIMARY KEY (email)
 );
 
 CREATE TABLE plan_invitation_codes

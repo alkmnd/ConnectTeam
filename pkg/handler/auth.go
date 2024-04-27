@@ -21,7 +21,7 @@ import (
 // @Failure      500  {object}  errorResponse
 // @Router       /auth/sign-up [post]
 func (h *Handler) signUp(c *gin.Context) {
-	var input connectteam.User
+	var input connectteam.UserSignUpRequest
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error()+"Incorrect format")
@@ -91,43 +91,41 @@ func (h *Handler) verifyEmailOnRegistration(c *gin.Context) {
 		return
 	}
 
-	id, err := h.services.Authorization.VerifyEmail(input)
+	err := h.services.Authorization.VerifyEmail(input)
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"id": id,
-	})
+	c.Status(http.StatusOK)
 }
 
-func (h *Handler) verifyUser(c *gin.Context) {
-	var input connectteam.VerifyUser
-
-	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	println(input.Id)
-
-	err := h.services.Authorization.VerifyUser(input)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"id": input.Id,
-	})
-}
+//func (h *Handler) verifyUser(c *gin.Context) {
+//	var input connectteam.VerifyUser
+//
+//	if err := c.BindJSON(&input); err != nil {
+//		newErrorResponse(c, http.StatusBadRequest, err.Error())
+//		return
+//	}
+//
+//	println(input.Id)
+//
+//	err := h.services.Authorization.VerifyUser(input)
+//	if err != nil {
+//		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+//		return
+//	}
+//
+//	if err != nil {
+//		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+//		return
+//	}
+//
+//	c.JSON(http.StatusOK, map[string]interface{}{
+//		"id": input.Id,
+//	})
+//}
 
 // func (h *Handler) signUpWithPhone(c *gin.Context) {
 // 	var input connectteam.User

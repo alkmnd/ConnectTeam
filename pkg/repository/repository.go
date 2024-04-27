@@ -12,11 +12,11 @@ type Authorization interface {
 	GetUserWithEmail(email, password string) (connectteam.User, error)
 	GetIdWithEmail(email string) (int, error)
 	GetUserWithPhone(phoneNumber, password string) (connectteam.User, error)
-	VerifyUser(verifyUser connectteam.VerifyUser) error
-	GetVerificationCode(id int) (string, error)
-	CreateVerificationCode(id int, code string) error
+	//VerifyUser(verifyUser connectteam.VerifyUser) error
+	GetVerificationCode(email string) (string, error)
+	CreateVerificationCode(email string, code string) error
 	CheckIfExist(id int) (bool, error)
-	DeleteVerificationCode(id int, code string) error
+	DeleteVerificationCode(email string, code string) error
 }
 
 type User interface {
@@ -25,11 +25,11 @@ type User interface {
 	GetUsersList() ([]connectteam.UserPublic, error)
 	GetPassword(id int) (string, error)
 	UpdatePasswordWithId(newPassword string, id int) error
-	GetVerificationCode(id int) (string, error)
+	GetVerificationCode(email string) (string, error)
 	GetEmailWithId(id int) (string, error)
 	UpdateEmail(email string, id int) error
-	CreateVerificationCode(id int, code string) error
-	DeleteVerificationCode(id int, code string) error
+	CreateVerificationCode(email string, code string) error
+	DeleteVerificationCode(email string, code string) error
 	CheckIfExist(email string) (bool, error)
 	UpdateUserFirstName(id int, firstName string) error
 	UpdateUserSecondName(id int, secondName string) error

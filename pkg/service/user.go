@@ -145,28 +145,28 @@ func (s *UserService) CheckEmailOnChange(id int, email string, password string) 
 		return errors.New("email is already taken")
 	}
 
-	db_password, err := s.repo.GetPassword(id)
+	dbPassword, err := s.repo.GetPassword(id)
 	if err != nil {
 		println(id)
 		println(password)
-		println(db_password)
+		println(dbPassword)
 		return errors.New("invalid password")
 	}
 
-	if db_password != generatePasswordHash(password) {
+	if dbPassword != generatePasswordHash(password) {
 
 		return errors.New("wrong password")
 
 	}
 
-	code, err := CreateVerificationCode(id, email)
+	code, err := CreateVerificationCode(email)
 
 	if err != nil {
 		log.Printf("smtp error: %s", err)
 		return err
 	}
 
-	err = s.repo.CreateVerificationCode(id, code)
+	err = s.repo.CreateVerificationCode(email, code)
 
 	if err != nil {
 		log.Printf("smtp error: %s", err)
@@ -182,16 +182,16 @@ func (s *UserService) UpdateEmail(id int, newEmail string, code string) error {
 	if newEmail == "" {
 		return errors.New("invalid email")
 	}
-	db_code, err := s.repo.GetVerificationCode(id)
+	dbCode, err := s.repo.GetVerificationCode(newEmail)
 	if err != nil {
 		return errors.New("verification code is not sent")
 	}
 
-	if code != db_code {
+	if code != dbCode {
 		return errors.New("wrong verification code")
 	}
 
-	err = s.repo.DeleteVerificationCode(id, code)
+	err = s.repo.DeleteVerificationCode(newEmail, code)
 	if err != nil {
 		return errors.New("no such row")
 	}
@@ -199,8 +199,8 @@ func (s *UserService) UpdateEmail(id int, newEmail string, code string) error {
 	return s.repo.UpdateEmail(newEmail, id)
 }
 
-func (s *UserService) DeleteVerificationCode(id int, code string) error {
-	return s.repo.DeleteVerificationCode(id, code)
+func (s *UserService) DeleteVerificationCode(email string, code string) error {
+	return s.repo.DeleteVerificationCode(email, code)
 }
 
 func (s *UserService) UpdatePersonalData(id int, user connectteam.UserPersonalInfo) error {

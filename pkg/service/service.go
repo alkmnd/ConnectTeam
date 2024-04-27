@@ -12,13 +12,13 @@ import (
 )
 
 type Authorization interface {
-	CreateUser(user connectteam.User) (int, error)
+	CreateUser(user connectteam.UserSignUpRequest) (int, error)
 	GenerateToken(login, password string, isEmail bool) (string, string, error)
 	ParseToken(token string) (int, string, error)
 	VerifyPhone(verifyPhone connectteam.VerifyPhone) (string, error)
-	VerifyUser(verifyUser connectteam.VerifyUser) error
-	VerifyEmail(verifyEmail connectteam.VerifyEmail) (int, error)
-	DeleteVerificationCode(id int, code string) error
+	//VerifyUser(verifyUser connectteam.VerifyUser) error
+	VerifyEmail(verifyEmail connectteam.VerifyEmail) error
+	DeleteVerificationCode(email string, code string) error
 }
 
 type User interface {
@@ -27,7 +27,7 @@ type User interface {
 	GetUsersList() ([]connectteam.UserPublic, error)
 	UpdatePassword(oldPassword string, newPassword string, id int) error
 	UpdateEmail(id int, newEmail string, code string) error
-	DeleteVerificationCode(id int, code string) error
+	DeleteVerificationCode(email string, code string) error
 	CheckEmailOnChange(id int, email string, password string) error
 	UpdatePersonalData(id int, user connectteam.UserPersonalInfo) error
 	UpdateCompanyData(id int, company connectteam.UserCompanyData) error

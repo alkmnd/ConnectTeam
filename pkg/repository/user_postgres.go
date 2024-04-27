@@ -80,26 +80,24 @@ func (r *UserPostgres) UpdateEmail(email string, id int) error {
 	return err
 }
 
-func (r *UserPostgres) GetVerificationCode(id int) (string, error) {
+func (r *UserPostgres) GetVerificationCode(email string) (string, error) {
 	var code string
-	query := fmt.Sprintf("SELECT code from %s WHERE user_id = $1", codesTable)
-	err := r.db.Get(&code, query, id)
+	query := fmt.Sprintf("SELECT code from %s WHERE email = $1", codesTable)
+	err := r.db.Get(&code, query, email)
 	println("meow " + code)
 
 	return code, err
 }
 
-func (r *UserPostgres) CreateVerificationCode(user_id int, code string) error {
-	query := fmt.Sprintf("INSERT INTO %s (user_id, code) values ($1, $2) ON CONFLICT (user_id) DO UPDATE SET code = $2", codesTable)
-	_, err := r.db.Exec(query, user_id, code)
+func (r *UserPostgres) CreateVerificationCode(email string, code string) error {
+	query := fmt.Sprintf("INSERT INTO %s (email, code) values ($1, $2) ON CONFLICT (email) DO UPDATE SET code = $2", codesTable)
+	_, err := r.db.Exec(query, email, code)
 	return err
 }
 
-func (r *UserPostgres) DeleteVerificationCode(id int, code string) error {
-	println(id)
-	println("postgres: " + code)
-	query := fmt.Sprintf("DELETE FROM %s WHERE user_id = $1 AND code=$2", codesTable)
-	_, err := r.db.Exec(query, id, code)
+func (r *UserPostgres) DeleteVerificationCode(email string, code string) error {
+	query := fmt.Sprintf("DELETE FROM %s WHERE email = $1 AND code=$2", codesTable)
+	_, err := r.db.Exec(query, email, code)
 	return err
 }
 

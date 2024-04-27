@@ -34,9 +34,23 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 	return &AuthService{repo: repo}
 }
 
-func (s *AuthService) CreateUser(user connectteam.User) (int, error) {
+func (s *AuthService) CreateUser(user connectteam.UserSignUpRequest) (int, error) {
 	user.Password = generatePasswordHash(user.Password)
-	return s.repo.CreateUser(user)
+	dbCode, err := s.repo.GetVerificationCode(user.Email)
+	if err != nil {
+		return 0, errors.New("wrong verification code")
+	}
+	if dbCode != user.VerificationCode {
+		return 0, errors.New("wrong verification code")
+	}
+	repoUser := connectteam.User{
+		Email:      user.Email,
+		Password:   user.Password,
+		FirstName:  user.FirstName,
+		SecondName: user.SecondName,
+		Access:     string(connectteam.UserAccess),
+	}
+	return s.repo.CreateUser(repoUser)
 }
 
 func (s *AuthService) GenerateToken(login, password string, isEmail bool) (string, string, error) {
@@ -49,9 +63,6 @@ func (s *AuthService) GenerateToken(login, password string, isEmail bool) (strin
 	}
 	if err != nil {
 		return "", "", errors.New("invalid login data")
-	}
-	if !user.IsVerified {
-		return "", "", errors.New("user is not verified")
 	}
 
 	if err != nil {
@@ -96,7 +107,7 @@ func (s *AuthService) VerifyPhone(verifyPhone connectteam.VerifyPhone) (string, 
 	return "1234", nil
 }
 
-func CreateVerificationCode(id int, email string) (string, error) {
+func CreateVerificationCode(email string) (string, error) {
 	from := os.Getenv("EMAIL")
 	password := os.Getenv("EMAIL_PASSWORD")
 	to := email
@@ -118,52 +129,52 @@ func CreateVerificationCode(id int, email string) (string, error) {
 
 }
 
-func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) (int, error) {
+func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) error {
 
-	id, err := s.repo.GetIdWithEmail(verifyEmail.Email)
+	//id, err := s.repo.GetIdWithEmail(verifyEmail.Email)
+	//
+	//if err != nil {
+	//	log.Printf("smtp error: %s", err)
+	//	return 0, errors.New("no user with such email")
+	//}
+
+	confirmationCode, err := CreateVerificationCode(verifyEmail.Email)
 
 	if err != nil {
 		log.Printf("smtp error: %s", err)
-		return 0, errors.New("no user with such email")
+		return err
 	}
 
-	confirmationCode, err := CreateVerificationCode(id, verifyEmail.Email)
+	err = s.repo.CreateVerificationCode(verifyEmail.Email, confirmationCode)
 
 	if err != nil {
 		log.Printf("smtp error: %s", err)
-		return 0, err
-	}
-
-	err = s.repo.CreateVerificationCode(id, confirmationCode)
-
-	if err != nil {
-		log.Printf("smtp error: %s", err)
-		return 0, errors.New("error while generating code")
+		return errors.New("error while generating code")
 	}
 
 	log.Printf("verification code: %s", confirmationCode)
 
-	return id, err
+	return err
 }
 
-func (s *AuthService) VerifyUser(verifyUser connectteam.VerifyUser) error {
-	code, err := s.repo.GetVerificationCode(verifyUser.Id)
-	if err != nil {
-		return errors.New("wrong verification code")
-	}
-
-	if code != verifyUser.Code {
-
-		return errors.New("wrong verification code")
-	}
-
-	err = s.repo.DeleteVerificationCode(verifyUser.Id, verifyUser.Code)
-	if err != nil {
-		return errors.New("no such row")
-	}
-
-	return s.repo.VerifyUser(verifyUser)
-}
+//func (s *AuthService) VerifyUser(verifyUser connectteam.VerifyUser) error {
+//	code, err := s.repo.GetVerificationCode(verifyUser.Id)
+//	if err != nil {
+//		return errors.New("wrong verification code")
+//	}
+//
+//	if code != verifyUser.Code {
+//
+//		return errors.New("wrong verification code")
+//	}
+//
+//	err = s.repo.DeleteVerificationCode(verifyUser.Id, verifyUser.Code)
+//	if err != nil {
+//		return errors.New("no such row")
+//	}
+//
+//	return s.repo.VerifyUser(verifyUser)
+//}
 
 func (s *AuthService) ParseToken(accessToken string) (int, string, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
@@ -185,6 +196,6 @@ func (s *AuthService) ParseToken(accessToken string) (int, string, error) {
 	return claims.UserId, claims.Role, nil
 }
 
-func (s *AuthService) DeleteVerificationCode(id int, code string) error {
-	return s.repo.DeleteVerificationCode(id, code)
+func (s *AuthService) DeleteVerificationCode(email string, code string) error {
+	return s.repo.DeleteVerificationCode(email, code)
 }

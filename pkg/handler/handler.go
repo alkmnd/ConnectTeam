@@ -32,7 +32,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	}))
 	auth := router.Group("/auth")
 	{
-		auth.POST("/verify-user", h.verifyUser)
+		//auth.POST("/verify-user", h.verifyUser)
 		auth.POST("/verify-email", h.verifyEmailOnRegistration)
 		// verify := auth.Group("/verify")
 		// {
