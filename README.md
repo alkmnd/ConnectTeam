@@ -99,7 +99,9 @@ go run cmd/main.go
    
    5.4. [Update Question](#q_update)
 
-6. [Game](#game)
+   5.5. [Update Question Tags](#update_tags)
+
+7. [Game](#game)
 
    6.1. [Create Game](#create-game)
 
@@ -115,7 +117,7 @@ go run cmd/main.go
 
    6.7. [Get Game](#gate-game)
 
-7. [WebSocket Server](#ws-server)
+8. [WebSocket Server](#ws-server)
    
 
 
@@ -1069,6 +1071,36 @@ status(string): "ok" if there is no error.
 
 <a id='update_tags'>
 #### 5.5. Update Question Tags
+
+**Method:** `PUT`
+
+**Endpoint:** `/questions/:id/tags`
+
+**Description:** Updtes question tags.
+
+**Example Request Body:**
+```bash
+{
+    "tags": [
+        {"id":"03b08d29-de92-46cc-b944-2be7f7257090"}, 
+        {"id":"b99c359f-e75e-4c3f-a101-f1d1c6676002"}, 
+        {"id":"03b08d29-de92-46cc-b944-2be7f7257090"}
+    ]
+}
+```
+
+**Example Response Body:**
+```bash
+{
+    "data": [
+        {
+            "id": "03b08d29-de92-46cc-b944-2be7f7257090",
+            "name": "Коммуникабельность"
+        }
+    ]
+}
+```
+
 
 <a id='game'></a>
 ### 6. Game
