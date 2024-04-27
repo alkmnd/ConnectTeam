@@ -4,6 +4,7 @@ import (
 	connectteam "ConnectTeam"
 	"ConnectTeam/pkg/repository"
 	"ConnectTeam/pkg/repository/filestorage"
+	"ConnectTeam/pkg/service/models"
 	"ConnectTeam/pkg/service/uploader"
 	"context"
 	"io"
@@ -62,9 +63,11 @@ type Topic interface {
 type Question interface {
 	CreateQuestion(content string, topicId int) (int, error)
 	DeleteQuestion(id int) error
-	GetAll(topicId int) ([]connectteam.Question, error)
+	GetAll(topicId int) ([]models.Question, error)
 	UpdateQuestion(content string, id int) (connectteam.Question, error)
-	GetRandWithLimit(topicId int, limit int) ([]connectteam.Question, error)
+	GetRandWithLimit(topicId int, limit int) ([]models.Question, error)
+	GetAllTags() ([]models.Tag, error)
+	UpdateQuestionTags(questionId int, tags []models.Tag) ([]models.Tag, error)
 }
 
 type Uploader interface {

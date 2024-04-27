@@ -107,6 +107,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		question.DELETE("/:id", h.deleteQuestion)
 		question.PATCH("/:id", h.updateQuestion)
+		question.PUT("/:id/tags", h.updateQuestionTags)
 	}
 	game := router.Group("/games", h.userIdentity)
 	{

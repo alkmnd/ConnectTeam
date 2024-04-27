@@ -8,18 +8,17 @@ import (
 )
 
 const (
-	usersTable = "users"
-)
-
-const (
-	codesTable        = "verification_codes"
-	plansUsersTable   = "subscriptions"
-	planRequestsTable = "plan_requests"
-	topicsTable       = "topics"
-	questionsTable    = "questions"
-	gamesTable        = "games"
-	gamesUsersTable   = "games_users"
-	resultsTable      = "results"
+	usersTable         = "users"
+	codesTable         = "verification_codes"
+	plansUsersTable    = "subscriptions"
+	planRequestsTable  = "plan_requests"
+	topicsTable        = "topics"
+	questionsTable     = "questions"
+	gamesTable         = "games"
+	gamesUsersTable    = "games_users"
+	resultsTable       = "results"
+	tagsTable          = "tags"
+	tagsQuestionsTable = "tags_questions"
 )
 
 type Config struct {

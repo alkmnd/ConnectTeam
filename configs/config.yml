@@ -10,3 +10,4 @@ db:
 storage:
   endpoint: "localstack:4563"
   bucket: "file-storage"
+

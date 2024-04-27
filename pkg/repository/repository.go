@@ -2,6 +2,7 @@ package repository
 
 import (
 	connectteam "ConnectTeam"
+	"ConnectTeam/pkg/repository/models"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -71,6 +72,9 @@ type Question interface {
 	GetAll(topicId int) ([]connectteam.Question, error)
 	UpdateQuestion(content string, id int) (connectteam.Question, error)
 	GetRandWithLimit(topicId int, limit int) ([]connectteam.Question, error)
+	GetQuestionTags(questionId int) ([]models.Tag, error)
+	UpdateQuestionTags(questionId int, tags []models.Tag) ([]models.Tag, error)
+	GetAllTags() ([]models.Tag, error)
 }
 
 type Game interface {

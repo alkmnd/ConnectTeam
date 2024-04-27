@@ -2,12 +2,21 @@ package repository
 
 import (
 	connectteam "ConnectTeam"
+	"ConnectTeam/pkg/repository/models"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 )
 
 type QuestionPostgres struct {
 	db *sqlx.DB
+}
+
+func (r *QuestionPostgres) GetQuestionTags(questionId int) ([]models.Tag, error) {
+	var tags []models.Tag
+
+	query := fmt.Sprintf("SELECT id, name FROM %s t JOIN %s tq ON t.id = tq.tag_id WHERE tq.question_id = $1", tagsTable, tagsQuestionsTable)
+	err := r.db.Select(&tags, query, questionId)
+	return tags, err
 }
 
 func NewQuestionPostgres(db *sqlx.DB) *QuestionPostgres {
@@ -22,6 +31,65 @@ func (r *QuestionPostgres) CreateQuestion(content string, topicId int) (int, err
 		return 0, err
 	}
 	return id, nil
+}
+
+func (r *QuestionPostgres) GetAllTags() ([]models.Tag, error) {
+	var tags []models.Tag
+	query := fmt.Sprintf("SELECT id, name FROM %s", tagsTable)
+	err := r.db.Select(&tags, query)
+	return tags, err
+
+}
+
+func (r *QuestionPostgres) UpdateQuestionTags(questionId int, tags []models.Tag) ([]models.Tag, error) {
+	tx, err := r.db.Beginx()
+	if err != nil {
+		return tags, err
+	}
+
+	defer func() {
+		if err != nil {
+			err := tx.Rollback()
+			if err != nil {
+				return
+			}
+			return
+		}
+		err := tx.Commit()
+		if err != nil {
+			return
+		}
+	}()
+
+	query := fmt.Sprintf("DELETE FROM %s WHERE question_id = $1", tagsQuestionsTable)
+	_, err = tx.Exec(query, questionId)
+	if err != nil {
+		err := tx.Rollback()
+		if err != nil {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	for i := range tags {
+		query := fmt.Sprintf("INSERT INTO %s (tag_id, question_id) VALUES ($1, $2) ON CONFLICT (tag_id, question_id) DO NOTHING", tagsQuestionsTable)
+		_, err := tx.Exec(query, tags[i].Id, questionId)
+		if err != nil {
+			err := tx.Rollback()
+			if err != nil {
+				return nil, err
+			}
+			return nil, err
+		}
+	}
+
+	_ = tx.Commit()
+
+	query = fmt.Sprintf("SELECT id, name FROM %s t JOIN %s tq ON t.id = tq.tag_id WHERE tq.question_id = $1", tagsTable, tagsQuestionsTable)
+	err = r.db.Select(&tags, query, questionId)
+
+	return tags, err
+
 }
 
 func (r *QuestionPostgres) DeleteQuestion(id int) error {

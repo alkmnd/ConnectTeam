@@ -84,7 +84,7 @@ CREATE TABLE results
 (
     user_id int REFERENCES users (id) ON DELETE CASCADE,
     game_id int REFERENCES games (id) ON DELETE CASCADE,
-    primary key (game_id, user_id)
+    primary key (game_id, user_id),
     value int
 );
 

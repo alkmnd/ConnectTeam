@@ -101,5 +101,6 @@ func (h *Handler) getRandWithLimit(c *gin.Context) {
 	c.JSON(http.StatusOK, getQuestionsResponse{
 		Data: questions,
 	})
-
 }
+
+// TODO: getAllTags
