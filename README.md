@@ -1006,17 +1006,23 @@ status(string): "ok" if there is no error.
 
 **Example Response:**
 ```bash
-{
-    "data": [
+"data": [
         {
-            "id": 2,
+            "id": 1,
+            "content": "test1",
             "topic_id": 1,
-            "content": "Q1"
+            "tags": [
+                {
+                    "Id": "b99c359f-e75e-4c3f-a101-f1d1c6676002",
+                    "Name": "Находчивость"
+                }
+            ]
         },
         {
-            "id": 3,
+            "id": 2,
+            "content": "test2",
             "topic_id": 1,
-            "content": "Q2"
+            "tags": null
         }
     ]
 }
@@ -1060,6 +1066,9 @@ status(string): "ok" if there is no error.
     "content": "New content???"
 }
 ```
+
+<a id='update_tags'>
+#### 5.5. Update Question Tags
 
 <a id='game'></a>
 ### 6. Game
