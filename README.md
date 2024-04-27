@@ -1069,7 +1069,7 @@ status(string): "ok" if there is no error.
 }
 ```
 
-<a id='update_tags'>
+<a id='update_tags'></a>
 #### 5.5. Update Question Tags
 
 **Method:** `PUT`
