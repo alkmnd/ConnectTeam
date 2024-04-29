@@ -63,17 +63,17 @@ func (r *GamePostgres) GetResults(gameId uuid.UUID) (results []connectteam.UserR
 }
 
 func (r *GamePostgres) StartGame(gameId uuid.UUID) error {
-	query := fmt.Sprintf(`UPDATE %s SET status = 'in_progress' WHERE id = %d`, gamesTable, gameId)
+	query := fmt.Sprintf(`UPDATE %s SET status = 'in_progress' WHERE id = $1`, gamesTable)
 
-	_, err := r.db.Exec(query)
+	_, err := r.db.Exec(query, gameId)
 
 	return err
 }
 
 func (r *GamePostgres) EndGame(gameId uuid.UUID) error {
-	query := fmt.Sprintf(`UPDATE %s SET status = 'ended' WHERE id = %d`, gamesTable, gameId)
+	query := fmt.Sprintf(`UPDATE %s SET status = 'ended' WHERE id = $1`, gamesTable)
 
-	_, err := r.db.Exec(query)
+	_, err := r.db.Exec(query, gameId)
 
 	return err
 }
@@ -99,9 +99,9 @@ func (r *GamePostgres) GetGames(page int, userId uuid.UUID) (games []connectteam
 }
 
 func (r *GamePostgres) CancelGame(gameId uuid.UUID) error {
-	query := fmt.Sprintf(`UPDATE %s SET status = 'cancelled' WHERE id = %d`, gamesTable, gameId)
+	query := fmt.Sprintf(`UPDATE %s SET status = 'cancelled' WHERE id = $1`, gamesTable)
 
-	_, err := r.db.Exec(query)
+	_, err := r.db.Exec(query, gameId)
 
 	return err
 }

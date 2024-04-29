@@ -11,7 +11,6 @@ import (
 
 func (h *Handler) getUserActivePlan(c *gin.Context) {
 	id, err := getUserId(c)
-	println(id)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

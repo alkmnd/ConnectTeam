@@ -108,6 +108,6 @@ func NewService(repos *repository.Repository, fileStorage *filestorage.FileStora
 		Topic:         NewTopicService(repos.Topic),
 		Question:      NewQuestionService(repos.Question),
 		Uploader:      uploader.NewUploader(fileStorage),
-		Game:          NewGameService(repos.Game),
+		Game:          NewGameService(repos.Game, repos.Notification),
 	}
 }

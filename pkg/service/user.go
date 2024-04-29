@@ -148,9 +148,6 @@ func (s *UserService) CheckEmailOnChange(id uuid.UUID, email string, password st
 
 	dbPassword, err := s.repo.GetPassword(id)
 	if err != nil {
-		println(id)
-		println(password)
-		println(dbPassword)
 		return errors.New("invalid password")
 	}
 

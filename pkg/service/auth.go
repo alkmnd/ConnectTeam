@@ -128,7 +128,7 @@ func CreateVerificationCode(email string) (string, error) {
 
 func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) error {
 
-	//id, err := s.repo.GetIdWithEmail(verifyEmail.Email)
+	//id, err := s.gameRepo.GetIdWithEmail(verifyEmail.Email)
 	//
 	//if err != nil {
 	//	log.Printf("smtp error: %s", err)
@@ -155,7 +155,7 @@ func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) error {
 }
 
 //func (s *AuthService) VerifyUser(verifyUser connectteam.VerifyUser) error {
-//	code, err := s.repo.GetVerificationCode(verifyUser.Id)
+//	code, err := s.gameRepo.GetVerificationCode(verifyUser.Id)
 //	if err != nil {
 //		return errors.New("wrong verification code")
 //	}
@@ -165,12 +165,12 @@ func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) error {
 //		return errors.New("wrong verification code")
 //	}
 //
-//	err = s.repo.DeleteVerificationCode(verifyUser.Id, verifyUser.Code)
+//	err = s.gameRepo.DeleteVerificationCode(verifyUser.Id, verifyUser.Code)
 //	if err != nil {
 //		return errors.New("no such row")
 //	}
 //
-//	return s.repo.VerifyUser(verifyUser)
+//	return s.gameRepo.VerifyUser(verifyUser)
 //}
 
 func (s *AuthService) ParseToken(accessToken string) (uuid.UUID, string, error) {

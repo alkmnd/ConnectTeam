@@ -9,15 +9,16 @@ import (
 )
 
 type GameService struct {
-	repo repository.Game
+	gameRepo         repository.Game
+	notificationRepo repository.Notification
 }
 
-func NewGameService(repo repository.Game) *GameService {
-	return &GameService{repo: repo}
+func NewGameService(gameRepo repository.Game, notificationRepo repository.Notification) *GameService {
+	return &GameService{gameRepo: gameRepo, notificationRepo: notificationRepo}
 }
 
 func (s *GameService) SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int) error {
-	return s.repo.SaveResults(gameId, userId, rate)
+	return s.gameRepo.SaveResults(gameId, userId, rate)
 }
 
 func (s *GameService) CreateGame(creatorId uuid.UUID, startDateString string, name string) (game connectteam.Game, err error) {
@@ -44,47 +45,47 @@ func (s *GameService) CreateGame(creatorId uuid.UUID, startDateString string, na
 	}
 	game.Name = name
 
-	return s.repo.CreateGame(game)
+	return s.gameRepo.CreateGame(game)
 }
 
 func (s *GameService) CreateParticipant(userId uuid.UUID, gameId uuid.UUID) error {
-	return s.repo.CreateParticipant(userId, gameId)
+	return s.gameRepo.CreateParticipant(userId, gameId)
 }
 
 func (s *GameService) StartGame(gameId uuid.UUID) error {
-	return s.repo.StartGame(gameId)
+	return s.gameRepo.StartGame(gameId)
 }
 
 func (s *GameService) EndGame(gameId uuid.UUID) error {
-	return s.repo.EndGame(gameId)
+	return s.gameRepo.EndGame(gameId)
 }
 
 func (s *GameService) GetResults(gameId uuid.UUID) (results []connectteam.UserResult, err error) {
-	return s.repo.GetResults(gameId)
+	return s.gameRepo.GetResults(gameId)
 }
 
 func (s *GameService) GetCreatedGames(page int, userId uuid.UUID) ([]connectteam.Game, error) {
-	return s.repo.GetCreatedGames(page, userId)
+	return s.gameRepo.GetCreatedGames(page, userId)
 }
 
 func (s *GameService) GetGame(gameId uuid.UUID) (connectteam.Game, error) {
-	return s.repo.GetGame(gameId)
+	return s.gameRepo.GetGame(gameId)
 }
 
 func (s *GameService) DeleteGame(gameId uuid.UUID) error {
-	return s.repo.DeleteGame(gameId)
+	return s.gameRepo.DeleteGame(gameId)
 }
 
 func (s *GameService) GetGameWithInvitationCode(code string) (connectteam.Game, error) {
-	return s.repo.GetGameWithInvitationCode(code)
+	return s.gameRepo.GetGameWithInvitationCode(code)
 }
 
 func (s *GameService) GetGames(page int, userId uuid.UUID) ([]connectteam.Game, error) {
-	return s.repo.GetGames(page, userId)
+	return s.gameRepo.GetGames(page, userId)
 }
 
 func (s *GameService) CancelGame(gameId uuid.UUID, userId uuid.UUID) error {
-	game, err := s.repo.GetGame(gameId)
+	game, err := s.gameRepo.GetGame(gameId)
 	if err != nil {
 		return err
 	}
@@ -92,5 +93,10 @@ func (s *GameService) CancelGame(gameId uuid.UUID, userId uuid.UUID) error {
 	if game.CreatorId != userId {
 		return errors.New("permission denied")
 	}
-	return s.repo.CancelGame(gameId)
+	err = s.gameRepo.CancelGame(gameId)
+	if err != nil {
+		return err
+	}
+
+	return s.notificationRepo.CreateGameCancelNotification(gameId, userId)
 }

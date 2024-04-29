@@ -4,6 +4,7 @@ import (
 	connectteam "ConnectTeam"
 	"ConnectTeam/pkg/repository/models"
 	"github.com/google/uuid"
+	"github.com/redis/go-redis/v9"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -92,6 +93,15 @@ type Game interface {
 	CancelGame(gameId uuid.UUID) error
 }
 
+type Notification interface {
+	GetNotifications(userId uuid.UUID) error
+	CreateGameCancelNotification(gameId uuid.UUID, userId uuid.UUID) error
+	CreateGameStartNotification(gameId uuid.UUID, userId uuid.UUID) error
+	CreateGameInviteNotification(gameId uuid.UUID, userId uuid.UUID) error
+	CreateSubInviteNotification(holderId uuid.UUID, userId uuid.UUID) error
+	CreateDeleteFromSubNotification(holderId uuid.UUID, userId uuid.UUID) error
+}
+
 type Repository struct {
 	Authorization
 	User
@@ -99,9 +109,10 @@ type Repository struct {
 	Topic
 	Question
 	Game
+	Notification
 }
 
-func NewRepository(db *sqlx.DB) *Repository {
+func NewRepository(db *sqlx.DB, rdb *redis.Client) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
 		User:          NewUserPostgres(db),
@@ -109,5 +120,6 @@ func NewRepository(db *sqlx.DB) *Repository {
 		Topic:         NewTopicPostgres(db),
 		Question:      NewQuestionPostgres(db),
 		Game:          NewGamePostgres(db),
+		Notification:  NewNotification(rdb),
 	}
 }

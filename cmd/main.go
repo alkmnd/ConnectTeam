@@ -6,6 +6,7 @@ import (
 	"ConnectTeam/pkg/handler"
 	"ConnectTeam/pkg/repository"
 	"ConnectTeam/pkg/repository/filestorage"
+	"ConnectTeam/pkg/repository/redis"
 	"ConnectTeam/pkg/service"
 	"github.com/minio/minio-go"
 	"log"
@@ -53,7 +54,16 @@ func main() {
 	})
 
 	if err != nil {
-		logrus.Println("1")
+		logrus.Fatalf("error %s", err.Error())
+	}
+
+	rdb, err := redis.NewRedisClient(redis.Config{
+		Host:     viper.GetString("redis.host"),
+		Port:     viper.GetString("redis.port"),
+		Password: os.Getenv("REDIS_PASSWORD"),
+	})
+
+	if err != nil {
 		logrus.Fatalf("error %s", err.Error())
 	}
 
@@ -71,7 +81,7 @@ func main() {
 		viper.GetString("storage.endpoint"),
 	)
 
-	repos := repository.NewRepository(db)
+	repos := repository.NewRepository(db, rdb)
 	services := service.NewService(repos, fileStorage)
 	handlers := handler.NewHandler(services)
 

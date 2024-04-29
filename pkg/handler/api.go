@@ -3,16 +3,17 @@ package handler
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"net/http"
 	"strconv"
 )
 
 type saveResultsInput struct {
-	Results map[int]int `json:"results"`
+	Results map[uuid.UUID]int `json:"results"`
 }
 
 func (h *Handler) saveResults(c *gin.Context) {
-	gameId, err := strconv.Atoi(c.Param("id"))
+	gameId, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -34,7 +35,7 @@ func (h *Handler) saveResults(c *gin.Context) {
 }
 
 func (h *Handler) endGame(c *gin.Context) {
-	gameId, err := strconv.Atoi(c.Param("id"))
+	gameId, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -50,7 +51,7 @@ func (h *Handler) endGame(c *gin.Context) {
 }
 
 func (h *Handler) startGame(c *gin.Context) {
-	gameId, err := strconv.Atoi(c.Param("id"))
+	gameId, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -66,7 +67,7 @@ func (h *Handler) startGame(c *gin.Context) {
 }
 
 func (h *Handler) getTopic(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -85,7 +86,7 @@ func (h *Handler) getTopic(c *gin.Context) {
 }
 
 func (h *Handler) getRandWithLimit(c *gin.Context) {
-	topicId, err := strconv.Atoi(c.Param("topic_id"))
+	topicId, err := uuid.Parse(c.Param("topic_id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

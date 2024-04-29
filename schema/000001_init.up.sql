@@ -6,7 +6,7 @@ CREATE TYPE game_status AS ENUM ('not_started', 'in_progress', 'ended', 'cancell
 
 CREATE TABLE users
 (
-    id uuid DEFAULT gen_random_uuid(),
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY ,
     email varchar(256) UNIQUE,
     first_name varchar(256),
     second_name varchar(256),
@@ -36,7 +36,7 @@ CREATE TABLE plan_invitation_codes
 
 CREATE TABLE subscriptions
 (
-    id uuid DEFAULT gen_random_uuid(),
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY ,
     plan_type plans,
     user_id uuid references users (id) on delete cascade,
     holder_id uuid references users (id) on delete cascade,
@@ -50,21 +50,21 @@ CREATE TABLE subscriptions
 
 CREATE TABLE topics
 (
-    id uuid DEFAULT gen_random_uuid(),
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     title varchar(256)
 );
 
 CREATE TABLE questions
 (
-    id uuid DEFAULT gen_random_uuid(),
-    topic_id int references topics (id) on delete cascade,
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY ,
+    topic_id uuid references topics (id) on delete cascade,
     content varchar(256)
 );
 
 CREATE TABLE games
 (
-    id uuid DEFAULT gen_random_uuid(),
-    creator_id int references users (id) on delete cascade,
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY ,
+    creator_id uuid references users (id) on delete cascade,
     name varchar(256),
     start_date timestamp,
     invitation_code varchar(256),
