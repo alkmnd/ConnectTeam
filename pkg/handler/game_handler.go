@@ -3,6 +3,7 @@ package handler
 import (
 	connectteam "ConnectTeam"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"net/http"
 	"strconv"
 )
@@ -137,7 +138,7 @@ func (h *Handler) getResults(c *gin.Context) {
 		return
 	}
 
-	gameId, err := strconv.Atoi(c.Param("id"))
+	gameId, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -173,7 +174,7 @@ func (h *Handler) deleteGame(c *gin.Context) {
 		return
 	}
 
-	gameId, err := strconv.Atoi(c.Param("id"))
+	gameId, err := uuid.Parse(c.Param("id"))
 
 	game, err := h.services.Game.GetGame(gameId)
 
@@ -200,10 +201,10 @@ func (h *Handler) deleteGame(c *gin.Context) {
 func (h *Handler) getGame(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {
-		id = 0
+		id = uuid.Nil
 	}
 
-	gameId, err := strconv.Atoi(c.Param("id"))
+	gameId, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -247,7 +248,7 @@ func (h *Handler) addUserAsParticipant(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	if game.Id == 0 {
+	if game.Id == uuid.Nil {
 		newErrorResponse(c, http.StatusNotFound, "incorrect invitation code")
 		return
 	}
@@ -269,7 +270,7 @@ func (h *Handler) validateGameInvitationCode(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	if game.Id == 0 || len(code) == 0 {
+	if game.Id == uuid.Nil || len(code) == 0 {
 		newErrorResponse(c, http.StatusNotFound, "incorrect invitation code")
 		return
 	}

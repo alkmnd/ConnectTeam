@@ -6,6 +6,7 @@ import (
 	repoModels "ConnectTeam/pkg/repository/models"
 	"ConnectTeam/pkg/service/models"
 	"errors"
+	"github.com/google/uuid"
 )
 
 type QuestionService struct {
@@ -16,15 +17,15 @@ func NewQuestionService(repo repository.Question) *QuestionService {
 	return &QuestionService{repo: repo}
 }
 
-func (s *QuestionService) CreateQuestion(content string, topicId int) (int, error) {
+func (s *QuestionService) CreateQuestion(content string, topicId uuid.UUID) (uuid.UUID, error) {
 	if len(content) == 0 {
-		return 0, errors.New("empty string")
+		return uuid.Nil, errors.New("empty string")
 	}
 
 	return s.repo.CreateQuestion(content, topicId)
 }
 
-func (s *QuestionService) GetRandWithLimit(topicId int, limit int) ([]models.Question, error) {
+func (s *QuestionService) GetRandWithLimit(topicId uuid.UUID, limit int) ([]models.Question, error) {
 	var questions []models.Question
 	repoQuestions, err := s.repo.GetRandWithLimit(topicId, limit)
 	if err != nil {
@@ -57,11 +58,11 @@ func (s *QuestionService) GetRandWithLimit(topicId int, limit int) ([]models.Que
 	return questions, nil
 }
 
-func (s *QuestionService) DeleteQuestion(id int) error {
+func (s *QuestionService) DeleteQuestion(id uuid.UUID) error {
 	return s.repo.DeleteQuestion(id)
 }
 
-func (s *QuestionService) GetAll(topicId int) ([]models.Question, error) {
+func (s *QuestionService) GetAll(topicId uuid.UUID) ([]models.Question, error) {
 	var questions []models.Question
 	repoQuestions, err := s.repo.GetAll(topicId)
 	if err != nil {
@@ -94,7 +95,7 @@ func (s *QuestionService) GetAll(topicId int) ([]models.Question, error) {
 	return questions, nil
 }
 
-func (s *QuestionService) UpdateQuestion(content string, id int) (connectteam.Question, error) {
+func (s *QuestionService) UpdateQuestion(content string, id uuid.UUID) (connectteam.Question, error) {
 	var q connectteam.Question
 	if len(content) == 0 {
 		return q, errors.New("empty string")
@@ -119,7 +120,7 @@ func (s *QuestionService) GetAllTags() ([]models.Tag, error) {
 	return tags, nil
 }
 
-func (s *QuestionService) UpdateQuestionTags(questionId int, tags []models.Tag) ([]models.Tag, error) {
+func (s *QuestionService) UpdateQuestionTags(questionId uuid.UUID, tags []models.Tag) ([]models.Tag, error) {
 	var repoTags []repoModels.Tag
 	for i := range tags {
 		repoTags = append(repoTags, repoModels.Tag{

@@ -3,6 +3,7 @@ package game
 import (
 	"ConnectTeam/pkg/repository"
 	"ConnectTeam/pkg/service"
+	"github.com/google/uuid"
 	"log"
 )
 
@@ -48,7 +49,7 @@ func (server *WsServer) Run() {
 	}
 }
 
-func (server *WsServer) findGame(id int) *Game {
+func (server *WsServer) findGame(id uuid.UUID) *Game {
 	var foundGame *Game
 	for game := range server.games {
 		if game.GetId() == id {
@@ -96,7 +97,7 @@ func (server *WsServer) unregisterClient(client *Client) {
 	}
 }
 
-func (server *WsServer) findGameByID(ID int) *Game {
+func (server *WsServer) findGameByID(ID uuid.UUID) *Game {
 	var foundGame *Game
 	for game := range server.games {
 		if game.GetId() == ID {

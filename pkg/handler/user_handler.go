@@ -2,26 +2,20 @@ package handler
 
 import (
 	connectteam "ConnectTeam"
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"log"
 	"net/http"
-	"strconv"
-
-	"github.com/gin-gonic/gin"
 )
 
 func (h *Handler) getCurrentUser(c *gin.Context) {
-	id, ok := c.Get(userCtx)
-	if !ok {
-		newErrorResponse(c, http.StatusInternalServerError, "user id not found")
-		return
-	}
-	assert_id, ok := id.(int)
-	if !ok {
-		newErrorResponse(c, http.StatusBadRequest, "Incorrect auth header")
+	id, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	user, err := h.services.User.GetUserById(assert_id)
+	user, err := h.services.User.GetUserById(id)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -44,13 +38,13 @@ func (h *Handler) getCurrentUser(c *gin.Context) {
 }
 
 func (h *Handler) getUserById(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
 	}
 	var user connectteam.UserPublic
-	println(id)
+
 	user, err = h.services.User.GetUserById(id)
 
 	if err != nil {
@@ -85,7 +79,7 @@ func (h *Handler) restorePasswordAuthorized(c *gin.Context) {
 }
 
 type changeAccessInput struct {
-	Id     int                     `json:"id,string" binding:"required"`
+	Id     uuid.UUID               `json:"id,string" binding:"required"`
 	Access connectteam.AccessLevel `json:"access" binding:"required"`
 }
 
@@ -237,7 +231,6 @@ func (h *Handler) changePersonalData(c *gin.Context) {
 
 	id, err := getUserId(c)
 	if err != nil {
-		println("1")
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -249,7 +242,6 @@ func (h *Handler) changePersonalData(c *gin.Context) {
 
 	err = h.services.UpdatePersonalData(id, input)
 	if err != nil {
-
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -262,7 +254,6 @@ func (h *Handler) changeCompanyData(c *gin.Context) {
 
 	id, err := getUserId(c)
 	if err != nil {
-		println("1")
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

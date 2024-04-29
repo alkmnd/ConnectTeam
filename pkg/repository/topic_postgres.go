@@ -3,6 +3,7 @@ package repository
 import (
 	// connectteam "ConnectTeam"
 	"fmt"
+	"github.com/google/uuid"
 
 	connectteam "ConnectTeam"
 
@@ -17,12 +18,12 @@ func NewTopicPostgres(db *sqlx.DB) *TopicPostgres {
 	return &TopicPostgres{db: db}
 }
 
-func (r *TopicPostgres) CreateTopic(topic connectteam.Topic) (int, error) {
-	var id int
+func (r *TopicPostgres) CreateTopic(topic connectteam.Topic) (uuid.UUID, error) {
+	var id uuid.UUID
 	query := fmt.Sprintf("INSERT INTO %s (title) values ($1) RETURNING id", topicsTable)
 	row := r.db.QueryRow(query, topic.Title)
 	if err := row.Scan(&id); err != nil {
-		return 0, err
+		return uuid.Nil, err
 	}
 	return id, nil
 }
@@ -35,20 +36,20 @@ func (r *TopicPostgres) GetAll() ([]connectteam.Topic, error) {
 	return topics, err
 }
 
-func (r *TopicPostgres) GetTopic(topicId int) (topic connectteam.Topic, err error) {
+func (r *TopicPostgres) GetTopic(topicId uuid.UUID) (topic connectteam.Topic, err error) {
 	query := fmt.Sprintf("SELECT * FROM %s WHERE id=$1", topicsTable)
 	err = r.db.Get(&topic, query, topicId)
 	return topic, err
 }
 
-func (r *TopicPostgres) DeleteTopic(id int) error {
+func (r *TopicPostgres) DeleteTopic(id uuid.UUID) error {
 	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1", topicsTable)
 	_, err := r.db.Exec(query, id)
 
 	return err
 }
 
-func (r *TopicPostgres) UpdateTopic(id int, title string) error {
+func (r *TopicPostgres) UpdateTopic(id uuid.UUID, title string) error {
 
 	query := fmt.Sprintf(`UPDATE %s SET title = $1 WHERE id = %d`, topicsTable, id)
 

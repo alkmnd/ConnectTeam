@@ -6,7 +6,7 @@ CREATE TYPE game_status AS ENUM ('not_started', 'in_progress', 'ended');
 
 CREATE TABLE users
 (
-    id serial not null PRIMARY KEY,
+    id uuid DEFAULT gen_random_uuid(),
     email varchar(256) UNIQUE,
     first_name varchar(256),
     second_name varchar(256),
@@ -30,16 +30,16 @@ CREATE TABLE verification_codes
 
 CREATE TABLE plan_invitation_codes
 (
-    holder_id int references users (id) on delete cascade,
+    holder_id uuid references users (id) on delete cascade,
     invitation_code varchar(256) unique
 );
 
 CREATE TABLE subscriptions
 (
-    id serial not null PRIMARY KEY,
+    id uuid DEFAULT gen_random_uuid(),
     plan_type plans,
-    user_id int references users (id) on delete cascade,
-    holder_id int references users (id) on delete cascade,
+    user_id uuid references users (id) on delete cascade,
+    holder_id uuid references users (id) on delete cascade,
     expiry_date timestamp,
     duration int,
     plan_access varchar(256),
@@ -50,20 +50,20 @@ CREATE TABLE subscriptions
 
 CREATE TABLE topics
 (
-    id serial not null PRIMARY KEY,
+    id uuid DEFAULT gen_random_uuid(),
     title varchar(256)
 );
 
 CREATE TABLE questions
 (
-    id serial not null PRIMARY KEY,
+    id uuid DEFAULT gen_random_uuid(),
     topic_id int references topics (id) on delete cascade,
     content varchar(256)
 );
 
 CREATE TABLE games
 (
-    id serial not null PRIMARY KEY,
+    id uuid DEFAULT gen_random_uuid(),
     creator_id int references users (id) on delete cascade,
     name varchar(256),
     start_date timestamp,
@@ -73,16 +73,16 @@ CREATE TABLE games
 
 CREATE TABLE games_users
 (
-    game_id int references games (id) on delete cascade,
-    user_id int references users (id) on delete cascade,
+    game_id uuid references games (id) on delete cascade,
+    user_id uuid references users (id) on delete cascade,
     primary key (game_id, user_id)
 );
 
 
 CREATE TABLE results
 (
-    user_id int REFERENCES users (id) ON DELETE CASCADE,
-    game_id int REFERENCES games (id) ON DELETE CASCADE,
+    user_id uuid REFERENCES users (id) ON DELETE CASCADE,
+    game_id uuid REFERENCES games (id) ON DELETE CASCADE,
     primary key (game_id, user_id),
     value int
 );
@@ -96,7 +96,7 @@ CREATE TABLE tags
 CREATE TABLE tags_questions
 (
     tag_id uuid REFERENCES tags(id) ON DELETE CASCADE,
-    question_id int REFERENCES questions(id) ON DELETE CASCADE,
+    question_id uuid REFERENCES questions(id) ON DELETE CASCADE,
     primary key (tag_id, question_id)
 );
 

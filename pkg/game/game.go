@@ -2,6 +2,7 @@ package game
 
 import (
 	"encoding/json"
+	"github.com/google/uuid"
 	"log"
 )
 
@@ -10,24 +11,24 @@ type Game struct {
 	Clients    map[*Client]bool `json:"-"`
 	MaxSize    int              `json:"max_size,omitempty"`
 	Status     string           `json:"status,omitempty"`
-	Creator    int              `json:"creator_id,omitempty"`
+	Creator    uuid.UUID        `json:"creator_id,omitempty"`
 	Topics     []Topic          `json:"topics,omitempty"`
 	RoundsLeft []*Round         `json:"-"`
 	Round      *Round           `json:"round,omitempty"`
 	register   chan *Client
 	unregister chan *Client
 	broadcast  chan *Message
-	ID         int         `json:"id"`
-	Users      []*User     `json:"users,omitempty"`
-	Results    map[int]int `json:"-"`
+	ID         uuid.UUID         `json:"id"`
+	Users      []*User           `json:"users,omitempty"`
+	Results    map[uuid.UUID]int `json:"-"`
 }
 
 // UsersQuestions Генерируются в начале раунда.
 type UsersQuestions struct {
-	Number   int         `json:"number"`
-	User     *User       `json:"user"`
-	Question string      `json:"question"`
-	Rates    map[int]int `json:"-"`
+	Number   int               `json:"number"`
+	User     *User             `json:"user"`
+	Question string            `json:"question"`
+	Rates    map[uuid.UUID]int `json:"-"`
 }
 
 type Round struct {
@@ -37,13 +38,13 @@ type Round struct {
 }
 
 type Topic struct {
-	Id        int      `json:"id"`
-	Used      bool     `json:"used"`
-	Title     string   `json:"title,omitempty"`
-	Questions []string `json:"questions,omitempty"`
+	Id        uuid.UUID `json:"id"`
+	Used      bool      `json:"used"`
+	Title     string    `json:"title,omitempty"`
+	Questions []string  `json:"questions,omitempty"`
 }
 
-func NewGame(name string, id int, creator int, status string) *Game {
+func NewGame(name string, id uuid.UUID, creator uuid.UUID, status string) *Game {
 	return &Game{
 		ID:      id,
 		Name:    name,
@@ -60,7 +61,7 @@ func NewGame(name string, id int, creator int, status string) *Game {
 	}
 }
 
-func (game *Game) GetId() int {
+func (game *Game) GetId() uuid.UUID {
 	return game.ID
 }
 

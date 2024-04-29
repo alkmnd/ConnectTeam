@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
+	"github.com/google/uuid"
 	"time"
 )
 
@@ -17,12 +18,12 @@ func NewPlanService(repo repository.Plan) *PlanService {
 	return &PlanService{repo: repo}
 }
 
-func (s *PlanService) GetUserActivePlan(userId int) (connectteam.UserPlan, error) {
+func (s *PlanService) GetUserActivePlan(userId uuid.UUID) (connectteam.UserPlan, error) {
 	println(userId)
 	return s.repo.GetUserActivePlan(userId)
 }
 
-func (s *PlanService) CheckIfSubscriptionExists(userId int) (bool, error) {
+func (s *PlanService) CheckIfSubscriptionExists(userId uuid.UUID) (bool, error) {
 	var userPlans []connectteam.UserPlan
 
 	userPlans, err := s.repo.GetUserSubscriptions(userId)
@@ -33,7 +34,7 @@ func (s *PlanService) CheckIfSubscriptionExists(userId int) (bool, error) {
 	return len(userPlans) > 0, nil
 }
 
-func (s *PlanService) GetUserSubscriptions(userId int) ([]connectteam.UserPlan, error) {
+func (s *PlanService) GetUserSubscriptions(userId uuid.UUID) ([]connectteam.UserPlan, error) {
 	var userPlans []connectteam.UserPlan
 
 	userPlans, err := s.repo.GetUserSubscriptions(userId)
@@ -44,7 +45,7 @@ func (s *PlanService) GetUserSubscriptions(userId int) ([]connectteam.UserPlan, 
 	return userPlans, nil
 }
 
-func (s *PlanService) CreateTrialPlan(userId int) (userPlan connectteam.UserPlan, err error) {
+func (s *PlanService) CreateTrialPlan(userId uuid.UUID) (userPlan connectteam.UserPlan, err error) {
 	err = s.repo.DeleteOnConfirmPlan(userId)
 	if err != nil {
 		return userPlan, err
@@ -63,7 +64,7 @@ func (s *PlanService) CreateTrialPlan(userId int) (userPlan connectteam.UserPlan
 	})
 }
 
-func (s *PlanService) AddUserToAdvanced(holderPlan connectteam.UserPlan, userId int) (userPlan connectteam.UserPlan, err error) {
+func (s *PlanService) AddUserToAdvanced(holderPlan connectteam.UserPlan, userId uuid.UUID) (userPlan connectteam.UserPlan, err error) {
 	// добавить проверку на кол-во участников
 	err = s.repo.DeleteOnConfirmPlan(userId)
 	if err != nil {
@@ -95,7 +96,7 @@ func (s *PlanService) CreatePlan(request connectteam.UserPlan) (userPlan connect
 		return userPlan, err
 	}
 	activePlan, _ := s.repo.GetUserActivePlan(request.UserId)
-	if activePlan.Id != 0 {
+	if activePlan.Id != uuid.Nil {
 		if err := s.repo.SetExpiredStatus(activePlan.Id); err != nil {
 			return userPlan, err
 		}
@@ -115,13 +116,13 @@ func (s *PlanService) CreatePlan(request connectteam.UserPlan) (userPlan connect
 	return s.repo.CreatePlan(request)
 }
 
-func (s *PlanService) DeletePlan(id int) error {
+func (s *PlanService) DeletePlan(id uuid.UUID) error {
 	return s.repo.DeletePlan(id)
 }
 
-func (s *PlanService) SetPlanByAdmin(userId int, planType string, expiryDateString string) error {
+func (s *PlanService) SetPlanByAdmin(userId uuid.UUID, planType string, expiryDateString string) error {
 	activePlan, _ := s.repo.GetUserActivePlan(userId)
-	if activePlan.Id != 0 {
+	if activePlan.Id != uuid.Nil {
 		if err := s.repo.SetExpiredStatus(activePlan.Id); err != nil {
 			return err
 		}
@@ -163,7 +164,7 @@ func (s *PlanService) GetUsersPlans() ([]connectteam.UserPlan, error) {
 	return s.repo.GetUsersPlans()
 }
 
-func (s *PlanService) ConfirmPlan(id int) error {
+func (s *PlanService) ConfirmPlan(id uuid.UUID) error {
 	return s.repo.SetConfirmed(id)
 }
 
@@ -183,10 +184,10 @@ func generateInviteCode() (string, error) {
 	return inviteCode, nil
 }
 
-func (s *PlanService) GetHolderWithInvitationCode(code string) (id int, err error) {
+func (s *PlanService) GetHolderWithInvitationCode(code string) (id uuid.UUID, err error) {
 	return s.repo.GetHolderWithInvitationCode(code)
 }
 
-func (s *PlanService) DeleteUserFromSub(id int) error {
+func (s *PlanService) DeleteUserFromSub(id uuid.UUID) error {
 	return s.repo.DeleteUserFromSub(id)
 }

@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"net/http"
 	"strings"
 )
@@ -35,18 +36,18 @@ func (h *Handler) userIdentity(c *gin.Context) {
 	c.Set("access", access)
 }
 
-func getUserId(c *gin.Context) (int, error) {
+func getUserId(c *gin.Context) (uuid.UUID, error) {
 	id, ok := c.Get(userCtx)
 	if !ok {
-		return 0, errors.New("user id not found")
+		return uuid.Nil, errors.New("user id not found")
 	}
 
-	idInt, ok := id.(int)
+	castId, ok := id.(uuid.UUID)
 	if !ok {
-		return 0, errors.New("user id is of invalid type")
+		return uuid.Nil, errors.New("user id is of invalid type")
 	}
 
-	return idInt, nil
+	return castId, nil
 }
 
 func getUserAccess(c *gin.Context) (string, error) {

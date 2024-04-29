@@ -5,6 +5,7 @@ import (
 	"ConnectTeam/pkg/repository"
 	"crypto/rand"
 	"errors"
+	"github.com/google/uuid"
 	"log"
 	"math/big"
 )
@@ -17,7 +18,7 @@ func NewUserService(repo repository.User) *UserService {
 	return &UserService{repo: repo}
 }
 
-func (s *UserService) GetUserById(id int) (connectteam.UserPublic, error) {
+func (s *UserService) GetUserById(id uuid.UUID) (connectteam.UserPublic, error) {
 	user, err := s.repo.GetUserById(id)
 	return user, err
 }
@@ -63,7 +64,7 @@ func (s *UserService) RestorePassword(email string) error {
 	}
 
 	if !ifExists {
-		return errors.New("User with such email is not exist")
+		return errors.New("user with such email is not exist")
 	}
 
 	password, err := generatePassword()
@@ -86,7 +87,7 @@ func (s *UserService) RestorePassword(email string) error {
 	return nil
 }
 
-func (s *UserService) RestorePasswordAuthorized(id int) error {
+func (s *UserService) RestorePasswordAuthorized(id uuid.UUID) error {
 	var userCredentials connectteam.UserCredentials
 	userCredentials, err := s.repo.GetUserCredentials(id)
 	if err != nil {
@@ -111,7 +112,7 @@ func (s *UserService) RestorePasswordAuthorized(id int) error {
 	return nil
 }
 
-func (s *UserService) UpdateAccessWithId(id int, access connectteam.AccessLevel) error {
+func (s *UserService) UpdateAccessWithId(id uuid.UUID, access connectteam.AccessLevel) error {
 	if err := s.repo.UpdateAccessWithId(id, string(access)); err != nil {
 		return err
 	}
@@ -122,20 +123,20 @@ func (s *UserService) GetUsersList() ([]connectteam.UserPublic, error) {
 	return s.repo.GetUsersList()
 }
 
-func (s *UserService) UpdatePassword(old_password string, new_password string, id int) error {
-	db_password, err := s.repo.GetPassword(id)
+func (s *UserService) UpdatePassword(oldPassword string, newPassword string, id uuid.UUID) error {
+	dbPassword, err := s.repo.GetPassword(id)
 	if err != nil {
 		return err
 	}
 
-	if db_password != generatePasswordHash(old_password) {
+	if dbPassword != generatePasswordHash(oldPassword) {
 		return errors.New("wrong old password")
 	}
 
-	return s.repo.UpdatePasswordWithId(generatePasswordHash(new_password), id)
+	return s.repo.UpdatePasswordWithId(generatePasswordHash(newPassword), id)
 }
 
-func (s *UserService) CheckEmailOnChange(id int, email string, password string) error {
+func (s *UserService) CheckEmailOnChange(id uuid.UUID, email string, password string) error {
 	ifEmailExist, err := s.repo.CheckIfExist(email)
 	if err != nil {
 		return err
@@ -178,7 +179,7 @@ func (s *UserService) CheckEmailOnChange(id int, email string, password string) 
 	return nil
 }
 
-func (s *UserService) UpdateEmail(id int, newEmail string, code string) error {
+func (s *UserService) UpdateEmail(id uuid.UUID, newEmail string, code string) error {
 	if newEmail == "" {
 		return errors.New("invalid email")
 	}
@@ -203,7 +204,7 @@ func (s *UserService) DeleteVerificationCode(email string, code string) error {
 	return s.repo.DeleteVerificationCode(email, code)
 }
 
-func (s *UserService) UpdatePersonalData(id int, user connectteam.UserPersonalInfo) error {
+func (s *UserService) UpdatePersonalData(id uuid.UUID, user connectteam.UserPersonalInfo) error {
 	if user.FirstName != "" {
 		err := s.repo.UpdateUserFirstName(id, user.FirstName)
 		if err != nil {
@@ -221,7 +222,7 @@ func (s *UserService) UpdatePersonalData(id int, user connectteam.UserPersonalIn
 	return s.repo.UpdateUserDescription(id, user.Description)
 }
 
-func (s *UserService) UpdateCompanyData(id int, company connectteam.UserCompanyData) error {
+func (s *UserService) UpdateCompanyData(id uuid.UUID, company connectteam.UserCompanyData) error {
 	err := s.repo.UpdateCompanyName(id, company.CompanyName)
 	if err != nil {
 		return err
@@ -240,6 +241,6 @@ func (s *UserService) UpdateCompanyData(id int, company connectteam.UserCompanyD
 	return err
 }
 
-func (s *UserService) GetUserPlan(user_id int) (connectteam.UserPlan, error) {
-	return s.repo.GetUserPlan(user_id)
+func (s *UserService) GetUserPlan(userId uuid.UUID) (connectteam.UserPlan, error) {
+	return s.repo.GetUserPlan(userId)
 }

@@ -3,92 +3,92 @@ package repository
 import (
 	connectteam "ConnectTeam"
 	"ConnectTeam/pkg/repository/models"
+	"github.com/google/uuid"
 
 	"github.com/jmoiron/sqlx"
 )
 
 type Authorization interface {
-	CreateUser(user connectteam.User) (int, error)
+	CreateUser(user connectteam.User) (uuid.UUID, error)
 	GetUserWithEmail(email, password string) (connectteam.User, error)
-	GetIdWithEmail(email string) (int, error)
-	GetUserWithPhone(phoneNumber, password string) (connectteam.User, error)
+	GetIdWithEmail(email string) (uuid.UUID, error)
 	//VerifyUser(verifyUser connectteam.VerifyUser) error
 	GetVerificationCode(email string) (string, error)
 	CreateVerificationCode(email string, code string) error
-	CheckIfExist(id int) (bool, error)
+	CheckIfExist(id uuid.UUID) (bool, error)
 	DeleteVerificationCode(email string, code string) error
 }
 
 type User interface {
-	GetUserById(id int) (connectteam.UserPublic, error)
-	UpdateAccessWithId(id int, access string) error
+	GetUserById(id uuid.UUID) (connectteam.UserPublic, error)
+	UpdateAccessWithId(id uuid.UUID, access string) error
 	GetUsersList() ([]connectteam.UserPublic, error)
-	GetPassword(id int) (string, error)
-	UpdatePasswordWithId(newPassword string, id int) error
+	GetPassword(id uuid.UUID) (string, error)
+	UpdatePasswordWithId(newPassword string, id uuid.UUID) error
 	GetVerificationCode(email string) (string, error)
-	GetEmailWithId(id int) (string, error)
-	UpdateEmail(email string, id int) error
+	GetEmailWithId(id uuid.UUID) (string, error)
+	UpdateEmail(email string, id uuid.UUID) error
 	CreateVerificationCode(email string, code string) error
 	DeleteVerificationCode(email string, code string) error
 	CheckIfExist(email string) (bool, error)
-	UpdateUserFirstName(id int, firstName string) error
-	UpdateUserSecondName(id int, secondName string) error
-	UpdateUserDescription(id int, secondName string) error
-	UpdateCompanyName(id int, companyName string) error
-	UpdateCompanyInfo(id int, info string) error
-	UpdateCompanyURL(id int, companyURL string) error
-	GetUserPlan(userId int) (connectteam.UserPlan, error)
-	CreatePlanRequest(request connectteam.PlanRequest) (int, error)
-	GetUserCredentials(id int) (connectteam.UserCredentials, error)
+	UpdateUserFirstName(id uuid.UUID, firstName string) error
+	UpdateUserSecondName(id uuid.UUID, secondName string) error
+	UpdateUserDescription(id uuid.UUID, secondName string) error
+	UpdateCompanyName(id uuid.UUID, companyName string) error
+	UpdateCompanyInfo(id uuid.UUID, info string) error
+	UpdateCompanyURL(id uuid.UUID, companyURL string) error
+	GetUserPlan(userId uuid.UUID) (connectteam.UserPlan, error)
+	CreatePlanRequest(request connectteam.PlanRequest) (uuid.UUID, error)
+	GetUserCredentials(id uuid.UUID) (connectteam.UserCredentials, error)
 	UpdatePasswordWithEmail(newPassword string, email string) error
 }
 
 type Plan interface {
-	GetUserActivePlan(userId int) (connectteam.UserPlan, error)
+	GetUserActivePlan(userId uuid.UUID) (connectteam.UserPlan, error)
 	CreatePlan(request connectteam.UserPlan) (connectteam.UserPlan, error)
 	GetUsersPlans() ([]connectteam.UserPlan, error)
-	SetConfirmed(id int) error
-	DeletePlan(id int) error
-	SetExpiredStatus(id int) error
-	DeleteOnConfirmPlan(userId int) error
-	GetUserSubscriptions(userId int) ([]connectteam.UserPlan, error)
-	GetHolderWithInvitationCode(code string) (id int, err error)
-	SetExpiredStatusWithUserId(userId int) error
+	SetConfirmed(id uuid.UUID) error
+	DeletePlan(id uuid.UUID) error
+	SetExpiredStatus(id uuid.UUID) error
+	DeleteOnConfirmPlan(userId uuid.UUID) error
+	GetUserSubscriptions(userId uuid.UUID) ([]connectteam.UserPlan, error)
+	GetHolderWithInvitationCode(code string) (id uuid.UUID, err error)
+	SetExpiredStatusWithUserId(userId uuid.UUID) error
 	GetMembers(code string) (users []connectteam.UserPublic, err error)
-	DeleteUserFromSub(id int) error
+	DeleteUserFromSub(id uuid.UUID) error
 }
 
 type Topic interface {
-	CreateTopic(topic connectteam.Topic) (int, error)
+	CreateTopic(topic connectteam.Topic) (uuid.UUID, error)
 	GetAll() ([]connectteam.Topic, error)
-	DeleteTopic(id int) error
-	UpdateTopic(id int, title string) error
-	GetTopic(topicId int) (topic connectteam.Topic, err error)
+	DeleteTopic(id uuid.UUID) error
+	UpdateTopic(id uuid.UUID, title string) error
+	GetTopic(topicId uuid.UUID) (topic connectteam.Topic, err error)
 }
 
 type Question interface {
-	CreateQuestion(content string, topicId int) (int, error)
-	DeleteQuestion(id int) error
-	GetAll(topicId int) ([]connectteam.Question, error)
-	UpdateQuestion(content string, id int) (connectteam.Question, error)
-	GetRandWithLimit(topicId int, limit int) ([]connectteam.Question, error)
-	GetQuestionTags(questionId int) ([]models.Tag, error)
-	UpdateQuestionTags(questionId int, tags []models.Tag) ([]models.Tag, error)
+	CreateQuestion(content string, topicId uuid.UUID) (uuid.UUID, error)
+	DeleteQuestion(id uuid.UUID) error
+	GetAll(topicId uuid.UUID) ([]connectteam.Question, error)
+	UpdateQuestion(content string, id uuid.UUID) (connectteam.Question, error)
+	GetRandWithLimit(topicId uuid.UUID, limit int) ([]connectteam.Question, error)
+	GetQuestionTags(questionId uuid.UUID) ([]models.Tag, error)
+	UpdateQuestionTags(questionId uuid.UUID, tags []models.Tag) ([]models.Tag, error)
 	GetAllTags() ([]models.Tag, error)
 }
 
 type Game interface {
 	CreateGame(game connectteam.Game) (connectteam.Game, error)
-	GetCreatedGames(page int, userId int) (games []connectteam.Game, err error)
-	CreateParticipant(userId int, gameId int) error
-	GetGame(gameId int) (game connectteam.Game, err error)
-	DeleteGame(gameId int) error
+	GetCreatedGames(page int, userId uuid.UUID) (games []connectteam.Game, err error)
+	CreateParticipant(userId uuid.UUID, gameId uuid.UUID) error
+	GetGame(gameId uuid.UUID) (game connectteam.Game, err error)
+	DeleteGame(gameId uuid.UUID) error
 	GetGameWithInvitationCode(code string) (game connectteam.Game, err error)
-	GetGames(page int, userId int) (games []connectteam.Game, err error)
-	StartGame(gameId int) error
-	SaveResults(gameId int, userId int, rate int) error
-	GetResults(gameId int) (results []connectteam.UserResult, err error)
-	EndGame(gameId int) error
+	GetGames(page int, userId uuid.UUID) (games []connectteam.Game, err error)
+	StartGame(gameId uuid.UUID) error
+	SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int) error
+	GetResults(gameId uuid.UUID) (results []connectteam.UserResult, err error)
+	EndGame(gameId uuid.UUID) error
 }
 
 type Repository struct {

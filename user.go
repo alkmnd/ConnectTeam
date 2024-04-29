@@ -2,28 +2,29 @@ package connectteam
 
 import (
 	"errors"
+	"github.com/google/uuid"
 	"time"
 )
 
 var ErrNoRecord = errors.New("models: подходящей записи не найдено")
 
 type User struct {
-	Id         int    `json:"id" db:"id" swagger:"_"`
-	Email      string `json:"email" db:"email" binding:"required"`
-	FirstName  string `json:"first_name" db:"first_name" binding:"required"`
-	SecondName string `json:"second_name" db:"second_name" binding:"required"`
-	Password   string `json:"password" binding:"required"`
-	Access     string `json:"access" db:"access" swagger:"_"`
+	Id         uuid.UUID `json:"id" db:"id" swagger:"_"`
+	Email      string    `json:"email" db:"email" binding:"required"`
+	FirstName  string    `json:"first_name" db:"first_name" binding:"required"`
+	SecondName string    `json:"second_name" db:"second_name" binding:"required"`
+	Password   string    `json:"password" binding:"required"`
+	Access     string    `json:"access" db:"access" swagger:"_"`
 }
 
 type UserSignUpRequest struct {
-	Id               int    `json:"id" db:"id" swagger:"_"`
-	Email            string `json:"email" db:"email" binding:"required"`
-	FirstName        string `json:"first_name" db:"first_name" binding:"required"`
-	SecondName       string `json:"second_name" db:"second_name" binding:"required"`
-	Password         string `json:"password" binding:"required"`
-	VerificationCode string `json:"verification_code" binding:"required"`
-	Access           string `json:"access" db:"access" swagger:"_"`
+	Id               uuid.UUID `json:"id" db:"id" swagger:"_"`
+	Email            string    `json:"email" db:"email" binding:"required"`
+	FirstName        string    `json:"first_name" db:"first_name" binding:"required"`
+	SecondName       string    `json:"second_name" db:"second_name" binding:"required"`
+	Password         string    `json:"password" binding:"required"`
+	VerificationCode string    `json:"verification_code" binding:"required"`
+	Access           string    `json:"access" db:"access" swagger:"_"`
 }
 
 type UserCredentials struct {
@@ -32,20 +33,13 @@ type UserCredentials struct {
 }
 
 type UserResult struct {
-	UserId int `json:"user_id" db:"user_id"`
-	Value  int `json:"value" db:"value"`
-}
-
-type Rates struct {
-	UserId   int    `json:"user_id" db:"user_id"`
-	GameId   int    `json:"game_id" db:"game_id"`
-	Value    int    `json:"value" db:"value"`
-	Question string `json:"question" db:"question"`
+	UserId uuid.UUID `json:"user_id" db:"user_id"`
+	Value  uuid.UUID `json:"value" db:"value"`
 }
 
 type UserPublic struct {
-	Id    int    `json:"id" db:"id"`
-	Email string `json:"email" db:"email"`
+	Id    uuid.UUID `json:"id" db:"id"`
+	Email string    `json:"email" db:"email"`
 	// PhoneNumber string `json:"phone_number" db:"phone_number"`
 	FirstName    string `json:"first_name" db:"first_name" binding:"required"`
 	SecondName   string `json:"second_name" db:"second_name" binding:"required"`
@@ -85,10 +79,10 @@ func (pt *PlanType) Scan(value interface{}) error {
 }
 
 type UserPlan struct {
-	Id             int       `json:"id,omitempty" db:"id"`
+	Id             uuid.UUID `json:"id,omitempty" db:"id"`
 	PlanType       string    `json:"plan_type,omitempty" db:"plan_type"`
-	UserId         int       `json:"user_id,omitempty" db:"user_id"`
-	HolderId       int       `json:"holder_id,omitempty" db:"holder_id"`
+	UserId         uuid.UUID `json:"user_id,omitempty" db:"user_id"`
+	HolderId       uuid.UUID `json:"holder_id,omitempty" db:"holder_id"`
 	ExpiryDate     time.Time `json:"expiry_date,omitempty" db:"expiry_date"`
 	Duration       int       `json:"duration,omitempty" db:"duration"`
 	PlanAccess     string    `json:"plan_access,omitempty" db:"plan_access"`
@@ -113,12 +107,12 @@ type VerifyEmail struct {
 }
 
 type VerifyUser struct {
-	Id   int    `json:"id,string" binding:"required"`
-	Code string `json:"code" binding:"required"`
+	Id   uuid.UUID `json:"id,string" binding:"required"`
+	Code string    `json:"code" binding:"required"`
 }
 
 type PlanRequest struct {
-	Id          int           `json:"-" db:"id"`
+	Id          uuid.UUID     `json:"-" db:"id"`
 	UserId      int           `json:"-" db:"user_id"`
 	Duration    time.Duration `json:"duration" db:"duration"`
 	RequestDate time.Time     `json:"-" db:"request_date"`
@@ -134,19 +128,19 @@ const (
 )
 
 type Topic struct {
-	Id    int    `json:"id" db:"id"`
-	Title string `json:"title" db:"title" binding:"required"`
+	Id    uuid.UUID `json:"id" db:"id"`
+	Title string    `json:"title" db:"title" binding:"required"`
 }
 
 type Question struct {
-	Id      int    `json:"id" db:"id"`
-	TopicId int    `json:"topic_id" db:"topic_id"`
-	Content string `json:"content" db:"content"`
+	Id      uuid.UUID `json:"id" db:"id"`
+	TopicId uuid.UUID `json:"topic_id" db:"topic_id"`
+	Content string    `json:"content" db:"content"`
 }
 
 type Game struct {
-	Id             int       `json:"id" db:"id"`
-	CreatorId      int       `json:"creator_id" db:"creator_id"`
+	Id             uuid.UUID `json:"id" db:"id"`
+	CreatorId      uuid.UUID `json:"creator_id" db:"creator_id"`
 	InvitationCode string    `json:"invitation_code" db:"invitation_code"`
 	Name           string    `json:"name" db:"name"`
 	StartDate      time.Time `json:"start_date" db:"start_date"`

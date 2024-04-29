@@ -2,10 +2,9 @@ package handler
 
 import (
 	connectteam "ConnectTeam"
-	"net/http"
-	"strconv"
-
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"net/http"
 )
 
 func (h *Handler) createTopic(c *gin.Context) {
@@ -54,17 +53,6 @@ func (h *Handler) getAllTopics(c *gin.Context) {
 		return
 	}
 
-	// access, err := getUserAccess(c)
-	// if err != nil {
-	// 	newErrorResponse(c, http.StatusInternalServerError, err.Error())
-	// 	return
-	// }
-
-	// if access != string(connectteam.Admin) && access != string(connectteam.Superadmin)  {
-	// 	newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
-	// 	return
-	// }
-
 	topics, err := h.services.Topic.GetAll()
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -94,7 +82,7 @@ func (h *Handler) deleteTopic(c *gin.Context) {
 		return
 	}
 
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := uuid.Parse(c.Param("id"))
 
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "Invalid id param")
@@ -131,7 +119,7 @@ func (h *Handler) updateTopic(c *gin.Context) {
 		return
 	}
 
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := uuid.Parse(c.Param("id"))
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())

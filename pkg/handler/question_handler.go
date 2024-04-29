@@ -4,8 +4,8 @@ import (
 	connectteam "ConnectTeam"
 	"ConnectTeam/pkg/service/models"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"net/http"
-	"strconv"
 )
 
 func (h *Handler) createQuestion(c *gin.Context) {
@@ -32,7 +32,7 @@ func (h *Handler) createQuestion(c *gin.Context) {
 		return
 	}
 
-	topicId, err := strconv.Atoi(c.Param("id"))
+	topicId, err := uuid.Parse(c.Param("id"))
 
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "Invalid id param")
@@ -68,7 +68,7 @@ func (h *Handler) deleteQuestion(c *gin.Context) {
 		return
 	}
 
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := uuid.Parse(c.Param("id"))
 
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "Invalid id param")
@@ -95,7 +95,7 @@ func (h *Handler) getAllQuestions(c *gin.Context) {
 		return
 	}
 
-	topicId, err := strconv.Atoi(c.Param("id"))
+	topicId, err := uuid.Parse(c.Param("id"))
 	questions, err := h.services.Question.GetAll(topicId)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -128,7 +128,7 @@ func (h *Handler) updateQuestion(c *gin.Context) {
 		return
 	}
 
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := uuid.Parse(c.Param("id"))
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -197,7 +197,7 @@ func (h *Handler) updateQuestionTags(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	questionId, err := strconv.Atoi(c.Param("id"))
+	questionId, err := uuid.Parse(c.Param("id"))
 
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "Invalid id param")

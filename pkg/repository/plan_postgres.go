@@ -3,6 +3,7 @@ package repository
 import (
 	connectteam "ConnectTeam"
 	"fmt"
+	"github.com/google/uuid"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -15,14 +16,14 @@ func NewPlanPostgres(db *sqlx.DB) *PlanPostgres {
 	return &PlanPostgres{db: db}
 }
 
-func (r *PlanPostgres) GetUserActivePlan(userId int) (connectteam.UserPlan, error) {
+func (r *PlanPostgres) GetUserActivePlan(userId uuid.UUID) (connectteam.UserPlan, error) {
 	var userPlan connectteam.UserPlan
 	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id=$1 AND (status='active' or status='on_confirm')", plansUsersTable)
 	err := r.db.Get(&userPlan, query, userId)
 
 	return userPlan, err
 }
-func (r *PlanPostgres) SetExpiredStatus(id int) error {
+func (r *PlanPostgres) SetExpiredStatus(id uuid.UUID) error {
 	query := fmt.Sprintf(`UPDATE %s SET status = 'expired', 
 		expiry_date = NOW() WHERE id = %d`, plansUsersTable, id)
 
@@ -30,7 +31,7 @@ func (r *PlanPostgres) SetExpiredStatus(id int) error {
 	return err
 }
 
-func (r *PlanPostgres) SetExpiredStatusWithUserId(userId int) error {
+func (r *PlanPostgres) SetExpiredStatusWithUserId(userId uuid.UUID) error {
 	query := fmt.Sprintf(`UPDATE %s SET status = 'expired', 
 		expiry_date = NOW() WHERE user_id = %d`, plansUsersTable, userId)
 
@@ -39,13 +40,13 @@ func (r *PlanPostgres) SetExpiredStatusWithUserId(userId int) error {
 	return err
 }
 
-func (r *PlanPostgres) DeleteOnConfirmPlan(userId int) error {
+func (r *PlanPostgres) DeleteOnConfirmPlan(userId uuid.UUID) error {
 	query := fmt.Sprintf("DELETE FROM %s WHERE user_id = $1 AND status='on_confirm'", plansUsersTable)
 	_, err := r.db.Exec(query, userId)
 	return err
 }
 
-func (r *PlanPostgres) GetUserSubscriptions(userId int) ([]connectteam.UserPlan, error) {
+func (r *PlanPostgres) GetUserSubscriptions(userId uuid.UUID) ([]connectteam.UserPlan, error) {
 	var usersPlan []connectteam.UserPlan
 
 	query := fmt.Sprintf(`SELECT id, user_id, holder_id, plan_type, 
@@ -54,11 +55,11 @@ func (r *PlanPostgres) GetUserSubscriptions(userId int) ([]connectteam.UserPlan,
 	return usersPlan, err
 }
 
-func (r *PlanPostgres) GetPlanInvitationCode(code string) (id int, err error) {
+func (r *PlanPostgres) GetPlanInvitationCode(code string) (id uuid.UUID, err error) {
 	query := fmt.Sprintf(`SELECT holder_id FROM %s WHERE status='active' and invitation_code=$1 and holder_id=user_id LIMIT 1`, plansUsersTable)
 	err = r.db.Select(&id, query, code)
 	if err != nil {
-		return 0, err
+		return uuid.Nil, err
 	}
 	return id, err
 }
@@ -74,7 +75,7 @@ func (r *PlanPostgres) GetMembers(code string) (users []connectteam.UserPublic, 
 	return users, err
 }
 
-func (r *PlanPostgres) GetHolderWithInvitationCode(code string) (id int, err error) {
+func (r *PlanPostgres) GetHolderWithInvitationCode(code string) (id uuid.UUID, err error) {
 	query := fmt.Sprintf(`SELECT holder_id FROM %s WHERE status='active' and invitation_code=$1 and holder_id=user_id LIMIT 1`, plansUsersTable)
 	err = r.db.Get(&id, query, code)
 
@@ -94,7 +95,7 @@ func (r *PlanPostgres) CreatePlan(request connectteam.UserPlan) (connectteam.Use
 	return userPlan, nil
 }
 
-func (r *PlanPostgres) DeletePlan(id int) error {
+func (r *PlanPostgres) DeletePlan(id uuid.UUID) error {
 	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1", plansUsersTable)
 	_, err := r.db.Exec(query, id)
 
@@ -110,7 +111,7 @@ func (r *PlanPostgres) GetUsersPlans() ([]connectteam.UserPlan, error) {
 	return plansUsers, err
 }
 
-func (r *PlanPostgres) SetConfirmed(id int) error {
+func (r *PlanPostgres) SetConfirmed(id uuid.UUID) error {
 	query := fmt.Sprintf(`UPDATE %s SET status = 'active', 
 		expiry_date = NOW() + interval '1 day' * duration WHERE id = %d`, plansUsersTable, id)
 
@@ -119,7 +120,7 @@ func (r *PlanPostgres) SetConfirmed(id int) error {
 	return err
 }
 
-func (r *PlanPostgres) DeleteUserFromSub(id int) error {
+func (r *PlanPostgres) DeleteUserFromSub(id uuid.UUID) error {
 	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1", plansUsersTable)
 	_, err := r.db.Exec(query, id)
 

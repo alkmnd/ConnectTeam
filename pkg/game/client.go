@@ -23,8 +23,8 @@ var upgrader = websocket.Upgrader{
 }
 
 type User struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
+	Id   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
 }
 
 type Client struct {
@@ -245,8 +245,8 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 }
 
 type ratePayload struct {
-	Value  int `json:"value"`
-	UserId int `json:"user_id"`
+	Value  int       `json:"value"`
+	UserId uuid.UUID `json:"user_id"`
 }
 
 func (client *Client) handleEndGameMessage(message Message) {
@@ -331,7 +331,7 @@ func (client *Client) handleRateMessage(message Message) {
 	game := client.wsServer.findGame(gameId)
 
 	if game.Results == nil {
-		game.Results = make(map[int]int)
+		game.Results = make(map[uuid.UUID]int)
 	}
 
 	var ratePayload ratePayload
@@ -457,7 +457,7 @@ func (client *Client) handleStartRoundMessage(message Message) {
 			// TODO: choose random elem
 			Question: topicFound.Questions[i],
 			Number:   cnt,
-			Rates:    make(map[int]int),
+			Rates:    make(map[uuid.UUID]int),
 		})
 		cnt++
 
@@ -500,7 +500,7 @@ func (client *Client) handleStartGameMessage(message Message) {
 		log.Printf("handleStartGameMessage %s", messageError.Payload)
 		return
 	}
-	questions := make(map[int][]connectteam.Question)
+	questions := make(map[uuid.UUID][]connectteam.Question)
 
 	for i, _ := range game.Topics {
 		questions[game.Topics[i].Id], err = client.wsServer.repos.Question.GetRandWithLimit(game.Topics[i].Id, len(game.Users))

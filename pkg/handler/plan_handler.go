@@ -2,8 +2,8 @@ package handler
 
 import (
 	connectteam "ConnectTeam"
+	"github.com/google/uuid"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -158,7 +158,7 @@ func (h *Handler) confirmPlan(c *gin.Context) {
 		return
 	}
 
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "Invalid id param")
 		return
@@ -180,22 +180,18 @@ type newPlanInput struct {
 }
 
 func (h *Handler) getTrial(c *gin.Context) {
-	println("hui")
 	id, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	println("pizda")
 
 	subscriptionExists, err := h.services.Plan.CheckIfSubscriptionExists(id)
 	if err != nil {
-		println("1")
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 	if subscriptionExists {
-		println("meow")
 		newErrorResponse(c, http.StatusForbidden, "user could not get trial")
 		return
 	}
@@ -240,12 +236,11 @@ func (h *Handler) setPlan(c *gin.Context) {
 
 	var input newPlanInput
 	if err := c.BindJSON(&input); err != nil {
-		println("1")
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	userId, err := strconv.Atoi(c.Param("user_id"))
+	userId, err := uuid.Parse(c.Param("user_id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "Invalid id param")
 		return
@@ -278,7 +273,7 @@ func (h *Handler) deleteUserPlan(c *gin.Context) {
 		return
 	}
 
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "Invalid id param")
 		return
@@ -303,7 +298,7 @@ func (h *Handler) addUserToPlan(c *gin.Context) {
 
 	code := c.Param("code")
 	holderId, err := h.services.GetHolderWithInvitationCode(code)
-	if holderId == 0 {
+	if holderId == uuid.Nil {
 		newErrorResponse(c, http.StatusNotFound, "incorrect invitation code")
 		return
 	}
@@ -355,7 +350,7 @@ func (h *Handler) validateInvitationCode(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	if id == 0 || len(code) == 0 {
+	if id == uuid.Nil || len(code) == 0 {
 		newErrorResponse(c, http.StatusNotFound, "incorrect invitation code")
 		return
 	}
@@ -406,7 +401,7 @@ func (h *Handler) deleteUserFromSub(c *gin.Context) {
 		return
 	}
 
-	userId, err := strconv.Atoi(c.Param("user_id"))
+	userId, err := uuid.Parse(c.Param("user_id"))
 	plan, err := h.services.GetUserPlan(userId)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())

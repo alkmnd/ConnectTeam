@@ -4,6 +4,7 @@ import (
 	connectteam "ConnectTeam"
 	"ConnectTeam/pkg/repository"
 	"errors"
+	"github.com/google/uuid"
 	"time"
 )
 
@@ -15,11 +16,11 @@ func NewGameService(repo repository.Game) *GameService {
 	return &GameService{repo: repo}
 }
 
-func (s *GameService) SaveResults(gameId int, userId int, rate int) error {
+func (s *GameService) SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int) error {
 	return s.repo.SaveResults(gameId, userId, rate)
 }
 
-func (s *GameService) CreateGame(creatorId int, startDateString string, name string) (game connectteam.Game, err error) {
+func (s *GameService) CreateGame(creatorId uuid.UUID, startDateString string, name string) (game connectteam.Game, err error) {
 
 	game.InvitationCode, err = generateInviteCode()
 	if err != nil {
@@ -46,31 +47,31 @@ func (s *GameService) CreateGame(creatorId int, startDateString string, name str
 	return s.repo.CreateGame(game)
 }
 
-func (s *GameService) CreateParticipant(userId int, gameId int) error {
+func (s *GameService) CreateParticipant(userId uuid.UUID, gameId uuid.UUID) error {
 	return s.repo.CreateParticipant(userId, gameId)
 }
 
-func (s *GameService) StartGame(gameId int) error {
+func (s *GameService) StartGame(gameId uuid.UUID) error {
 	return s.repo.StartGame(gameId)
 }
 
-func (s *GameService) EndGame(gameId int) error {
+func (s *GameService) EndGame(gameId uuid.UUID) error {
 	return s.repo.EndGame(gameId)
 }
 
-func (s *GameService) GetResults(gameId int) (results []connectteam.UserResult, err error) {
+func (s *GameService) GetResults(gameId uuid.UUID) (results []connectteam.UserResult, err error) {
 	return s.repo.GetResults(gameId)
 }
 
-func (s *GameService) GetCreatedGames(page int, userId int) ([]connectteam.Game, error) {
+func (s *GameService) GetCreatedGames(page int, userId uuid.UUID) ([]connectteam.Game, error) {
 	return s.repo.GetCreatedGames(page, userId)
 }
 
-func (s *GameService) GetGame(gameId int) (connectteam.Game, error) {
+func (s *GameService) GetGame(gameId uuid.UUID) (connectteam.Game, error) {
 	return s.repo.GetGame(gameId)
 }
 
-func (s *GameService) DeleteGame(gameId int) error {
+func (s *GameService) DeleteGame(gameId uuid.UUID) error {
 	return s.repo.DeleteGame(gameId)
 }
 
@@ -78,6 +79,6 @@ func (s *GameService) GetGameWithInvitationCode(code string) (connectteam.Game, 
 	return s.repo.GetGameWithInvitationCode(code)
 }
 
-func (s *GameService) GetGames(page int, userId int) ([]connectteam.Game, error) {
+func (s *GameService) GetGames(page int, userId uuid.UUID) ([]connectteam.Game, error) {
 	return s.repo.GetGames(page, userId)
 }

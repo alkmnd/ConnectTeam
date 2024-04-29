@@ -3,6 +3,7 @@ package repository
 import (
 	connectteam "ConnectTeam"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"log"
 )
@@ -28,19 +29,19 @@ func (r *GamePostgres) CreateGame(game connectteam.Game) (connectteam.Game, erro
 	return game, nil
 }
 
-func (r *GamePostgres) SaveResults(gameId int, userId int, rate int) error {
+func (r *GamePostgres) SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int) error {
 	query := fmt.Sprintf("INSERT INTO %s (game_id, user_id, value) values ($1, $2, $3) ON CONFLICT (user_id, game_id) DO NOTHING", resultsTable)
 	_, err := r.db.Exec(query, gameId, userId, rate)
 	return err
 }
 
-func (r *GamePostgres) GetCreatedGames(page int, userId int) (games []connectteam.Game, err error) {
+func (r *GamePostgres) GetCreatedGames(page int, userId uuid.UUID) (games []connectteam.Game, err error) {
 	query := fmt.Sprintf(`SELECT * FROM %s WHERE creator_id=$1 ORDER BY start_date DESC LIMIT $2 OFFSET $3`, gamesTable)
 	err = r.db.Select(&games, query, userId, limit, page*limit)
 	return games, err
 }
 
-func (r *GamePostgres) CreateParticipant(userId int, gameId int) error {
+func (r *GamePostgres) CreateParticipant(userId uuid.UUID, gameId uuid.UUID) error {
 	query := fmt.Sprintf(`INSERT INTO %s (user_id, game_id) VALUES ($1, $2) ON CONFLICT (user_id, game_id) DO NOTHING
 		RETURNING *`, gamesUsersTable)
 
@@ -48,20 +49,20 @@ func (r *GamePostgres) CreateParticipant(userId int, gameId int) error {
 	return err
 }
 
-func (r *GamePostgres) GetGame(gameId int) (game connectteam.Game, err error) {
+func (r *GamePostgres) GetGame(gameId uuid.UUID) (game connectteam.Game, err error) {
 	query := fmt.Sprintf("SELECT * FROM %s WHERE id=$1", gamesTable)
 	err = r.db.Get(&game, query, gameId)
 	return game, err
 }
 
-func (r *GamePostgres) GetResults(gameId int) (results []connectteam.UserResult, err error) {
+func (r *GamePostgres) GetResults(gameId uuid.UUID) (results []connectteam.UserResult, err error) {
 
 	query := fmt.Sprintf(`SELECT user_id, value FROM %s WHERE game_id=$1`, resultsTable)
 	err = r.db.Select(&results, query, gameId)
 	return results, err
 }
 
-func (r *GamePostgres) StartGame(gameId int) error {
+func (r *GamePostgres) StartGame(gameId uuid.UUID) error {
 	query := fmt.Sprintf(`UPDATE %s SET status = 'in_progress' WHERE id = %d`, gamesTable, gameId)
 
 	_, err := r.db.Exec(query)
@@ -69,7 +70,7 @@ func (r *GamePostgres) StartGame(gameId int) error {
 	return err
 }
 
-func (r *GamePostgres) EndGame(gameId int) error {
+func (r *GamePostgres) EndGame(gameId uuid.UUID) error {
 	query := fmt.Sprintf(`UPDATE %s SET status = 'ended' WHERE id = %d`, gamesTable, gameId)
 
 	_, err := r.db.Exec(query)
@@ -77,7 +78,7 @@ func (r *GamePostgres) EndGame(gameId int) error {
 	return err
 }
 
-func (r *GamePostgres) DeleteGame(gameId int) error {
+func (r *GamePostgres) DeleteGame(gameId uuid.UUID) error {
 	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1", gamesTable)
 	_, err := r.db.Exec(query, gameId)
 	return err
@@ -89,7 +90,7 @@ func (r *GamePostgres) GetGameWithInvitationCode(code string) (game connectteam.
 	return game, err
 }
 
-func (r *GamePostgres) GetGames(page int, userId int) (games []connectteam.Game, err error) {
+func (r *GamePostgres) GetGames(page int, userId uuid.UUID) (games []connectteam.Game, err error) {
 	query := fmt.Sprintf(`SELECT id, creator_id, invitation_code, name, start_date, status FROM %s g
 	JOIN %s p ON p.game_id = g.id WHERE p.user_id=$1 ORDER BY start_date DESC LIMIT $2 OFFSET $3`, gamesTable, gamesUsersTable)
 	log.Println(limit * page)

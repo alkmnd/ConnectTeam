@@ -7,67 +7,68 @@ import (
 	"ConnectTeam/pkg/service/models"
 	"ConnectTeam/pkg/service/uploader"
 	"context"
+	"github.com/google/uuid"
 	"io"
 	//	"io"
 )
 
 type Authorization interface {
-	CreateUser(user connectteam.UserSignUpRequest) (int, error)
+	CreateUser(user connectteam.UserSignUpRequest) (uuid.UUID, error)
 	GenerateToken(login, password string, isEmail bool) (string, string, error)
-	ParseToken(token string) (int, string, error)
-	VerifyPhone(verifyPhone connectteam.VerifyPhone) (string, error)
+	ParseToken(token string) (uuid.UUID, string, error)
+	//VerifyPhone(verifyPhone connectteam.VerifyPhone) (string, error)
 	//VerifyUser(verifyUser connectteam.VerifyUser) error
 	VerifyEmail(verifyEmail connectteam.VerifyEmail) error
 	DeleteVerificationCode(email string, code string) error
 }
 
 type User interface {
-	GetUserById(id int) (connectteam.UserPublic, error)
-	UpdateAccessWithId(id int, access connectteam.AccessLevel) error
+	GetUserById(id uuid.UUID) (connectteam.UserPublic, error)
+	UpdateAccessWithId(id uuid.UUID, access connectteam.AccessLevel) error
 	GetUsersList() ([]connectteam.UserPublic, error)
-	UpdatePassword(oldPassword string, newPassword string, id int) error
-	UpdateEmail(id int, newEmail string, code string) error
+	UpdatePassword(oldPassword string, newPassword string, id uuid.UUID) error
+	UpdateEmail(id uuid.UUID, newEmail string, code string) error
 	DeleteVerificationCode(email string, code string) error
-	CheckEmailOnChange(id int, email string, password string) error
-	UpdatePersonalData(id int, user connectteam.UserPersonalInfo) error
-	UpdateCompanyData(id int, company connectteam.UserCompanyData) error
-	GetUserPlan(userId int) (connectteam.UserPlan, error)
-	RestorePasswordAuthorized(id int) error
+	CheckEmailOnChange(id uuid.UUID, email string, password string) error
+	UpdatePersonalData(id uuid.UUID, user connectteam.UserPersonalInfo) error
+	UpdateCompanyData(id uuid.UUID, company connectteam.UserCompanyData) error
+	GetUserPlan(userId uuid.UUID) (connectteam.UserPlan, error)
+	RestorePasswordAuthorized(id uuid.UUID) error
 	RestorePassword(email string) error
 }
 
 type Plan interface {
-	GetUserActivePlan(userId int) (connectteam.UserPlan, error)
+	GetUserActivePlan(userId uuid.UUID) (connectteam.UserPlan, error)
 	CreatePlan(request connectteam.UserPlan) (connectteam.UserPlan, error)
 	GetUsersPlans() ([]connectteam.UserPlan, error)
-	ConfirmPlan(id int) error
-	SetPlanByAdmin(userId int, planType string, expiryDateString string) error
-	DeletePlan(id int) error
-	CheckIfSubscriptionExists(userId int) (bool, error)
-	CreateTrialPlan(userId int) (userPlan connectteam.UserPlan, err error)
-	GetUserSubscriptions(userId int) ([]connectteam.UserPlan, error)
-	GetHolderWithInvitationCode(code string) (id int, err error)
-	AddUserToAdvanced(holderPlan connectteam.UserPlan, userId int) (userPlan connectteam.UserPlan, err error)
+	ConfirmPlan(id uuid.UUID) error
+	SetPlanByAdmin(userId uuid.UUID, planType string, expiryDateString string) error
+	DeletePlan(id uuid.UUID) error
+	CheckIfSubscriptionExists(userId uuid.UUID) (bool, error)
+	CreateTrialPlan(userId uuid.UUID) (userPlan connectteam.UserPlan, err error)
+	GetUserSubscriptions(userId uuid.UUID) ([]connectteam.UserPlan, error)
+	GetHolderWithInvitationCode(code string) (id uuid.UUID, err error)
+	AddUserToAdvanced(holderPlan connectteam.UserPlan, userId uuid.UUID) (userPlan connectteam.UserPlan, err error)
 	GetMembers(code string) ([]connectteam.UserPublic, error)
-	DeleteUserFromSub(id int) error
+	DeleteUserFromSub(id uuid.UUID) error
 }
 
 type Topic interface {
-	CreateTopic(topic connectteam.Topic) (int, error)
+	CreateTopic(topic connectteam.Topic) (uuid.UUID, error)
 	GetAll() ([]connectteam.Topic, error)
-	DeleteTopic(id int) error
-	UpdateTopic(id int, title string) error
-	GetTopic(id int) (connectteam.Topic, error)
+	DeleteTopic(id uuid.UUID) error
+	UpdateTopic(id uuid.UUID, title string) error
+	GetTopic(id uuid.UUID) (connectteam.Topic, error)
 }
 
 type Question interface {
-	CreateQuestion(content string, topicId int) (int, error)
-	DeleteQuestion(id int) error
-	GetAll(topicId int) ([]models.Question, error)
-	UpdateQuestion(content string, id int) (connectteam.Question, error)
-	GetRandWithLimit(topicId int, limit int) ([]models.Question, error)
+	CreateQuestion(content string, topicId uuid.UUID) (uuid.UUID, error)
+	DeleteQuestion(id uuid.UUID) error
+	GetAll(topicId uuid.UUID) ([]models.Question, error)
+	UpdateQuestion(content string, id uuid.UUID) (connectteam.Question, error)
+	GetRandWithLimit(topicId uuid.UUID, limit int) ([]models.Question, error)
 	GetAllTags() ([]models.Tag, error)
-	UpdateQuestionTags(questionId int, tags []models.Tag) ([]models.Tag, error)
+	UpdateQuestionTags(questionId uuid.UUID, tags []models.Tag) ([]models.Tag, error)
 }
 
 type Uploader interface {
@@ -75,17 +76,17 @@ type Uploader interface {
 }
 
 type Game interface {
-	CreateGame(creatorId int, startDateString string, name string) (connectteam.Game, error)
-	GetCreatedGames(page int, userId int) ([]connectteam.Game, error)
-	CreateParticipant(userId int, gameId int) error
-	GetGame(gameId int) (connectteam.Game, error)
-	DeleteGame(gameId int) error
+	CreateGame(creatorId uuid.UUID, startDateString string, name string) (connectteam.Game, error)
+	GetCreatedGames(page int, userId uuid.UUID) ([]connectteam.Game, error)
+	CreateParticipant(userId uuid.UUID, gameId uuid.UUID) error
+	GetGame(gameId uuid.UUID) (connectteam.Game, error)
+	DeleteGame(gameId uuid.UUID) error
 	GetGameWithInvitationCode(code string) (connectteam.Game, error)
-	GetGames(page int, userId int) ([]connectteam.Game, error)
-	GetResults(gameId int) (results []connectteam.UserResult, err error)
-	StartGame(gameId int) error
-	EndGame(gameId int) error
-	SaveResults(gameId int, userId int, rate int) error
+	GetGames(page int, userId uuid.UUID) ([]connectteam.Game, error)
+	GetResults(gameId uuid.UUID) (results []connectteam.UserResult, err error)
+	StartGame(gameId uuid.UUID) error
+	EndGame(gameId uuid.UUID) error
+	SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int) error
 }
 
 type Service struct {
