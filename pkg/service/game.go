@@ -82,3 +82,15 @@ func (s *GameService) GetGameWithInvitationCode(code string) (connectteam.Game, 
 func (s *GameService) GetGames(page int, userId uuid.UUID) ([]connectteam.Game, error) {
 	return s.repo.GetGames(page, userId)
 }
+
+func (s *GameService) CancelGame(gameId uuid.UUID, userId uuid.UUID) error {
+	game, err := s.repo.GetGame(gameId)
+	if err != nil {
+		return err
+	}
+
+	if game.CreatorId != userId {
+		return errors.New("permission denied")
+	}
+	return s.repo.CancelGame(gameId)
+}

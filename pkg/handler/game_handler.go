@@ -285,6 +285,23 @@ func (h *Handler) validateGameInvitationCode(c *gin.Context) {
 	})
 }
 
+func (h *Handler) cancelGame(c *gin.Context) {
+	id, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	gameId, err := uuid.Parse(c.Param("id"))
+
+	err = h.services.CancelGame(gameId, id)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+	}
+
+	c.Status(http.StatusOK)
+}
+
 //func (h *Handler) addTopicToGame(c *gin.Context) {
 //	id, err := getUserId(c)
 //	if err != nil {

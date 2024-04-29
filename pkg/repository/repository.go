@@ -89,6 +89,7 @@ type Game interface {
 	SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int) error
 	GetResults(gameId uuid.UUID) (results []connectteam.UserResult, err error)
 	EndGame(gameId uuid.UUID) error
+	CancelGame(gameId uuid.UUID) error
 }
 
 type Repository struct {

@@ -97,3 +97,11 @@ func (r *GamePostgres) GetGames(page int, userId uuid.UUID) (games []connectteam
 	err = r.db.Select(&games, query, userId, limit, limit*page)
 	return games, err
 }
+
+func (r *GamePostgres) CancelGame(gameId uuid.UUID) error {
+	query := fmt.Sprintf(`UPDATE %s SET status = 'cancelled' WHERE id = %d`, gamesTable, gameId)
+
+	_, err := r.db.Exec(query)
+
+	return err
+}

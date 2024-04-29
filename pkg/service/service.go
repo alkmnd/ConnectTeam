@@ -87,6 +87,7 @@ type Game interface {
 	StartGame(gameId uuid.UUID) error
 	EndGame(gameId uuid.UUID) error
 	SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int) error
+	CancelGame(gameId uuid.UUID, userId uuid.UUID) error
 }
 
 type Service struct {

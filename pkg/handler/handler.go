@@ -118,6 +118,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		game.DELETE("/:id", h.deleteGame)
 		game.POST("/:code", h.addUserAsParticipant)
 		game.GET("/results/:id", h.getResults)
+		game.PATCH("/:id/cancel", h.cancelGame)
 		//game.POST(":id/topics", h.addTopicToGame)
 	}
 
