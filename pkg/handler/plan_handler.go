@@ -2,12 +2,41 @@ package handler
 
 import (
 	connectteam "ConnectTeam"
+	"ConnectTeam/pkg/handler/models"
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
-	"time"
-
-	"github.com/gin-gonic/gin"
 )
+
+func (h *Handler) upgradePlan(c *gin.Context) {
+
+	var input models.CreateSubRequest
+	id, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	planId, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	err = h.services.UpgradePlan(input.OrderId, planId, id)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusOK)
+
+}
 
 func (h *Handler) getUserActivePlan(c *gin.Context) {
 	id, err := getUserId(c)
@@ -33,7 +62,6 @@ func (h *Handler) getUserActivePlan(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"id":              userPlan.Id,
 		"plan_type":       userPlan.PlanType,
-		"user_id":         userPlan.UserId,
 		"holder_id":       userPlan.HolderId,
 		"expiry_date":     userPlan.ExpiryDate,
 		"plan_access":     userPlan.PlanAccess,
@@ -43,8 +71,8 @@ func (h *Handler) getUserActivePlan(c *gin.Context) {
 	})
 }
 
-func (h *Handler) selectPlan(c *gin.Context) {
-	var input connectteam.UserPlan
+func (h *Handler) createPlan(c *gin.Context) {
+	var input models.CreateSubRequest
 	id, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -56,13 +84,7 @@ func (h *Handler) selectPlan(c *gin.Context) {
 		return
 	}
 
-	input.UserId = id
-	input.HolderId = id
-	input.PlanAccess = "holder"
-	input.Status = connectteam.OnConfirm
-	input.ExpiryDate = time.Time{}
-
-	plan, err := h.services.CreatePlan(input)
+	plan, err := h.services.CreatePlan(input.OrderId, id)
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -71,7 +93,6 @@ func (h *Handler) selectPlan(c *gin.Context) {
 
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"id":          plan.Id,
-		"user_id":     plan.UserId,
 		"holder_id":   plan.HolderId,
 		"plan_type":   plan.PlanType,
 		"plan_access": plan.PlanAccess,
@@ -203,7 +224,6 @@ func (h *Handler) getTrial(c *gin.Context) {
 
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"id":          plan.Id,
-		"user_id":     plan.UserId,
 		"holder_id":   plan.HolderId,
 		"plan_type":   plan.PlanType,
 		"plan_access": plan.PlanAccess,
@@ -317,8 +337,8 @@ func (h *Handler) addUserToPlan(c *gin.Context) {
 		return
 	}
 
-	members, err := h.services.GetMembers(code)
-	if len(members) == 4 {
+	members, err := h.services.GetMembers(holderPlan.Id)
+	if len(members) == 5 {
 		newErrorResponse(c, http.StatusForbidden, "max number of members")
 		return
 	}
@@ -332,7 +352,6 @@ func (h *Handler) addUserToPlan(c *gin.Context) {
 
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"id":          plan.Id,
-		"user_id":     plan.UserId,
 		"holder_id":   plan.HolderId,
 		"plan_type":   plan.PlanType,
 		"plan_access": plan.PlanAccess,
@@ -381,9 +400,13 @@ func (h *Handler) getMembers(c *gin.Context) {
 		return
 	}
 
-	code := c.Param("code")
+	planId, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-	users, err := h.services.Plan.GetMembers(code)
+	users, err := h.services.Plan.GetMembers(planId)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -401,22 +424,29 @@ func (h *Handler) deleteUserFromSub(c *gin.Context) {
 	}
 
 	userId, err := uuid.Parse(c.Param("user_id"))
-	plan, err := h.services.GetUserPlan(userId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	planId, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	if holderId != plan.HolderId {
+	plan, err := h.services.GetUserActivePlan(userId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if holderId != plan.HolderId || planId != plan.Id ||
+		holderId == userId {
 		newErrorResponse(c, http.StatusForbidden, "access denied")
 		return
 	}
 
-	err = h.services.DeleteUserFromSub(plan.Id)
-	if holderId != plan.HolderId {
-		newErrorResponse(c, http.StatusForbidden, "access denied")
-		return
-	}
+	err = h.services.DeleteUserFromSub(userId, plan.Id)
 
 	c.JSON(http.StatusOK, statusResponse{"ok"})
 }

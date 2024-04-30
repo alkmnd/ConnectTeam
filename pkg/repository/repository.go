@@ -5,6 +5,7 @@ import (
 	"ConnectTeam/pkg/repository/models"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
+	"github.com/rvinnie/yookassa-sdk-go/yookassa"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -55,8 +56,10 @@ type Plan interface {
 	GetUserSubscriptions(userId uuid.UUID) ([]connectteam.UserPlan, error)
 	GetHolderWithInvitationCode(code string) (id uuid.UUID, err error)
 	SetExpiredStatusWithUserId(userId uuid.UUID) error
-	GetMembers(code string) (users []connectteam.UserPublic, err error)
-	DeleteUserFromSub(id uuid.UUID) error
+	GetMembers(id uuid.UUID) (users []connectteam.UserPublic, err error)
+	DeleteUserFromSub(userId uuid.UUID, planId uuid.UUID) error
+	UpgradePlan(planId uuid.UUID, planType string, invitationCode string) error
+	AddUserToSubscription(userId uuid.UUID, planId uuid.UUID, access string) error
 }
 
 type Topic interface {
@@ -91,6 +94,7 @@ type Game interface {
 	GetResults(gameId uuid.UUID) (results []connectteam.UserResult, err error)
 	EndGame(gameId uuid.UUID) error
 	CancelGame(gameId uuid.UUID) error
+	GetGameParticipant(gameId uuid.UUID) (users []connectteam.UserPublic, err error)
 }
 
 type Notification interface {
@@ -102,6 +106,11 @@ type Notification interface {
 	CreateDeleteFromSubNotification(holderId uuid.UUID, userId uuid.UUID) error
 }
 
+type Payment interface {
+	CreatePayment(paymentRequest models.PaymentRequest) (models.PaymentResponse, error)
+	GetPayment(orderId string) (models.PaymentResponse, error)
+}
+
 type Repository struct {
 	Authorization
 	User
@@ -110,9 +119,10 @@ type Repository struct {
 	Question
 	Game
 	Notification
+	Payment
 }
 
-func NewRepository(db *sqlx.DB, rdb *redis.Client) *Repository {
+func NewRepository(db *sqlx.DB, rdb *redis.Client, yooClient *yookassa.Client) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
 		User:          NewUserPostgres(db),
@@ -121,5 +131,6 @@ func NewRepository(db *sqlx.DB, rdb *redis.Client) *Repository {
 		Question:      NewQuestionPostgres(db),
 		Game:          NewGamePostgres(db),
 		Notification:  NewNotification(rdb),
+		Payment:       NewYookassaClient(yooClient),
 	}
 }

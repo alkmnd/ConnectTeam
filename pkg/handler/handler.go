@@ -32,14 +32,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	}))
 	auth := router.Group("/auth")
 	{
-		//auth.POST("/verify-user", h.verifyUser)
 		auth.POST("/verify-email", h.verifyEmailOnRegistration)
-		// verify := auth.Group("/verify")
-		// {
-		// 	verify.POST("/user", h.verifyUser)
-		// 	verify.POST("/phone", h.verifyPhone)
-		// 	verify.POST("/email", h.verifyEmail)
-		// }
 		auth.POST("/sign-up", h.signUp)
 		signIn := auth.Group("sign-in")
 		{
@@ -50,8 +43,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		auth.PATCH("/password", h.restorePassword)
 
 	}
-
-	// do verification
 
 	userApi := router.Group("/users", h.userIdentity)
 	{
@@ -66,24 +57,26 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		userApi.PATCH("/info", h.changePersonalData)
 		userApi.PATCH("/company", h.changeCompanyData)
 		userApi.PATCH("/upload-image", h.uploadProfileImage)
-		// userApi.GET("/plan", h.getUserPlan)
-		// userApi.POST("/plan", h.sendPlanRequest)
 	}
 
 	plan := router.Group("/plans", h.userIdentity)
 	{
 		plan.GET("/current", h.getUserActivePlan)
-		plan.POST("/purchase", h.selectPlan)
+		plan.POST("/", h.createPlan)
 		plan.GET("/active", h.getUsersPlans)
 		plan.PATCH("/:id", h.confirmPlan)
 		plan.POST("/:user_id", h.setPlan)
 		plan.DELETE("/cancel/:id", h.deleteUserPlan)
 		plan.POST("/trial", h.getTrial)
 		plan.GET("/", h.getUserSubscriptions)
-		plan.GET("members/:code", h.getMembers)
+		plan.GET(":id/members", h.getMembers)
 		plan.POST("/join/:code", h.addUserToPlan)
-		plan.DELETE("/:user_id", h.deleteUserFromSub)
-		// delete plan
+		plan.DELETE(":id/members/:user_id", h.deleteUserFromSub)
+		plan.PATCH("upgrade/:id", h.upgradePlan)
+	}
+	payment := router.Group("/payment", h.userIdentity)
+	{
+		payment.POST("/", h.createPayment)
 	}
 	validator := router.Group("/validate")
 	{
@@ -119,7 +112,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		game.POST("/:code", h.addUserAsParticipant)
 		game.GET("/results/:id", h.getResults)
 		game.PATCH("/:id/cancel", h.cancelGame)
-		//game.POST(":id/topics", h.addTopicToGame)
 	}
 
 	tags := router.Group("/tags", h.userIdentity)

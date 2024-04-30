@@ -11,21 +11,22 @@ import (
 )
 
 type PlanService struct {
-	repo repository.Plan
+	planRepo  repository.Plan
+	yooClient repository.Payment
 }
 
-func NewPlanService(repo repository.Plan) *PlanService {
-	return &PlanService{repo: repo}
+func NewPlanService(repo repository.Plan, client repository.Payment) *PlanService {
+	return &PlanService{planRepo: repo, yooClient: client}
 }
 
 func (s *PlanService) GetUserActivePlan(userId uuid.UUID) (connectteam.UserPlan, error) {
-	return s.repo.GetUserActivePlan(userId)
+	return s.planRepo.GetUserActivePlan(userId)
 }
 
 func (s *PlanService) CheckIfSubscriptionExists(userId uuid.UUID) (bool, error) {
 	var userPlans []connectteam.UserPlan
 
-	userPlans, err := s.repo.GetUserSubscriptions(userId)
+	userPlans, err := s.planRepo.GetUserSubscriptions(userId)
 	if err != nil {
 		return false, err
 	}
@@ -36,7 +37,7 @@ func (s *PlanService) CheckIfSubscriptionExists(userId uuid.UUID) (bool, error) 
 func (s *PlanService) GetUserSubscriptions(userId uuid.UUID) ([]connectteam.UserPlan, error) {
 	var userPlans []connectteam.UserPlan
 
-	userPlans, err := s.repo.GetUserSubscriptions(userId)
+	userPlans, err := s.planRepo.GetUserSubscriptions(userId)
 	if err != nil {
 		return userPlans, err
 	}
@@ -45,13 +46,12 @@ func (s *PlanService) GetUserSubscriptions(userId uuid.UUID) ([]connectteam.User
 }
 
 func (s *PlanService) CreateTrialPlan(userId uuid.UUID) (userPlan connectteam.UserPlan, err error) {
-	err = s.repo.DeleteOnConfirmPlan(userId)
+	err = s.planRepo.DeleteOnConfirmPlan(userId)
 	if err != nil {
 		return userPlan, err
 	}
 
-	return s.repo.CreatePlan(connectteam.UserPlan{
-		UserId:         userId,
+	return s.planRepo.CreatePlan(connectteam.UserPlan{
 		PlanType:       "basic",
 		HolderId:       userId,
 		Status:         connectteam.Active,
@@ -64,65 +64,115 @@ func (s *PlanService) CreateTrialPlan(userId uuid.UUID) (userPlan connectteam.Us
 }
 
 func (s *PlanService) AddUserToAdvanced(holderPlan connectteam.UserPlan, userId uuid.UUID) (userPlan connectteam.UserPlan, err error) {
-	// добавить проверку на кол-во участников
-	err = s.repo.DeleteOnConfirmPlan(userId)
+
+	err = s.planRepo.SetExpiredStatusWithUserId(userId)
 	if err != nil {
 		return userPlan, err
 	}
-	err = s.repo.SetExpiredStatusWithUserId(userId)
+	err = s.planRepo.AddUserToSubscription(userId, holderPlan.Id, "additional")
+
 	if err != nil {
 		return userPlan, err
 	}
-	return s.repo.CreatePlan(connectteam.UserPlan{
-		UserId:         userId,
-		PlanType:       "premium",
-		HolderId:       holderPlan.UserId,
-		Status:         connectteam.Active,
-		Duration:       holderPlan.Duration,
-		ExpiryDate:     holderPlan.ExpiryDate,
-		PlanAccess:     "additional",
-		InvitationCode: holderPlan.InvitationCode,
-	})
+
+	return s.planRepo.GetUserActivePlan(userId)
 }
 
-func (s *PlanService) GetMembers(code string) ([]connectteam.UserPublic, error) {
-	return s.repo.GetMembers(code)
+func (s *PlanService) GetMembers(id uuid.UUID) ([]connectteam.UserPublic, error) {
+	return s.planRepo.GetMembers(id)
 }
 
-func (s *PlanService) CreatePlan(request connectteam.UserPlan) (userPlan connectteam.UserPlan, err error) {
-	err = s.repo.DeleteOnConfirmPlan(request.UserId)
-	if err != nil {
-		return userPlan, err
+func (s *PlanService) UpgradePlan(orderId string, planId uuid.UUID, userId uuid.UUID) error {
+	activePlan, _ := s.planRepo.GetUserActivePlan(userId)
+	if activePlan.HolderId != userId {
+		return errors.New("permission denied")
 	}
-	activePlan, _ := s.repo.GetUserActivePlan(request.UserId)
-	if activePlan.Id != uuid.Nil {
-		if err := s.repo.SetExpiredStatus(activePlan.Id); err != nil {
-			return userPlan, err
+	if activePlan.Id != planId {
+		return errors.New("incorrect plan id")
+	}
+	payment, err := s.yooClient.GetPayment(orderId)
+	if err != nil {
+		return err
+	}
+	if !payment.Paid {
+		return errors.New("order id not paid")
+	}
+	if payment.Metadata.UserId != userId.String() {
+		return errors.New("permission denied")
+	}
+	if payment.Metadata.PlanType != "basic" &&
+		payment.Metadata.PlanType != "advanced" &&
+		payment.Metadata.PlanType != "premium" {
+		return errors.New("incorrect plan type")
+	}
+
+	if payment.Metadata.PlanType == "premium" {
+		activePlan.InvitationCode, err = generateInviteCode()
+		if err != nil {
+			return err
 		}
-		return s.repo.CreatePlan(request)
 	}
 
-	if request.Duration <= 0 {
-		return userPlan, errors.New("incorrect value of duration")
+	return s.planRepo.UpgradePlan(activePlan.Id, payment.Metadata.PlanType, activePlan.InvitationCode)
+
+}
+
+func (s *PlanService) CreatePlan(orderId string, userId uuid.UUID) (userPlan connectteam.UserPlan, err error) {
+	activePlan, _ := s.planRepo.GetUserActivePlan(userId)
+	if activePlan.Id != uuid.Nil {
+		return userPlan, errors.New("user already has subscription")
 	}
 
-	if request.PlanType == "premium" {
-		request.InvitationCode, err = generateInviteCode()
+	payment, err := s.yooClient.GetPayment(orderId)
+	if !payment.Paid {
+		return userPlan, errors.New("order id not paid")
+	}
+	if payment.Metadata.UserId != userId.String() {
+		return userPlan, errors.New("permission denied")
+	}
+	if err != nil {
+		return userPlan, err
+	}
+	if payment.Metadata.PlanType != "basic" &&
+		payment.Metadata.PlanType != "advanced" &&
+		payment.Metadata.PlanType != "premium" {
+		return userPlan, errors.New("incorrect plan type")
+	}
+
+	if payment.Metadata.PlanType == "premium" {
+		userPlan.InvitationCode, err = generateInviteCode()
 		if err != nil {
 			return userPlan, err
 		}
 	}
-	return s.repo.CreatePlan(request)
+
+	userPlan, err = s.planRepo.CreatePlan(connectteam.UserPlan{
+		PlanType:       payment.Metadata.PlanType,
+		HolderId:       userId,
+		ExpiryDate:     time.Now().Add(time.Hour * 24 * 30),
+		Duration:       30,
+		Status:         connectteam.Active,
+		InvitationCode: userPlan.InvitationCode,
+		IsTrial:        false,
+	})
+
+	if err != nil {
+		return userPlan, err
+	}
+
+	err = s.planRepo.AddUserToSubscription(userId, userPlan.Id, "holder")
+
+	return userPlan, err
 }
 
 func (s *PlanService) DeletePlan(id uuid.UUID) error {
-	return s.repo.DeletePlan(id)
+	return s.planRepo.DeletePlan(id)
 }
 
 func (s *PlanService) SetPlanByAdmin(userId uuid.UUID, planType string, expiryDateString string) error {
-	activePlan, _ := s.repo.GetUserActivePlan(userId)
+	activePlan, _ := s.planRepo.GetUserActivePlan(userId)
 	if activePlan.Id != uuid.Nil {
-		if err := s.repo.SetExpiredStatus(activePlan.Id); err != nil {
+		if err := s.planRepo.SetExpiredStatus(activePlan.Id); err != nil {
 			return err
 		}
 	}
@@ -148,23 +198,22 @@ func (s *PlanService) SetPlanByAdmin(userId uuid.UUID, planType string, expiryDa
 		Status:         "active",
 		PlanAccess:     "holder",
 		ExpiryDate:     expiryDate,
-		UserId:         userId,
 		HolderId:       userId,
 		Duration:       int(time.Until(expiryDate).Hours() / 24),
 		InvitationCode: invitationCode,
 	}
-	_, err = s.repo.CreatePlan(userPlan)
+	_, err = s.planRepo.CreatePlan(userPlan)
 
 	return err
 
 }
 
 func (s *PlanService) GetUsersPlans() ([]connectteam.UserPlan, error) {
-	return s.repo.GetUsersPlans()
+	return s.planRepo.GetUsersPlans()
 }
 
 func (s *PlanService) ConfirmPlan(id uuid.UUID) error {
-	return s.repo.SetConfirmed(id)
+	return s.planRepo.SetConfirmed(id)
 }
 
 func generateInviteCode() (string, error) {
@@ -184,9 +233,9 @@ func generateInviteCode() (string, error) {
 }
 
 func (s *PlanService) GetHolderWithInvitationCode(code string) (id uuid.UUID, err error) {
-	return s.repo.GetHolderWithInvitationCode(code)
+	return s.planRepo.GetHolderWithInvitationCode(code)
 }
 
-func (s *PlanService) DeleteUserFromSub(id uuid.UUID) error {
-	return s.repo.DeleteUserFromSub(id)
+func (s *PlanService) DeleteUserFromSub(userId uuid.UUID, planId uuid.UUID) error {
+	return s.planRepo.DeleteUserFromSub(userId, planId)
 }

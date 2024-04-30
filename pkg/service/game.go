@@ -53,7 +53,28 @@ func (s *GameService) CreateParticipant(userId uuid.UUID, gameId uuid.UUID) erro
 }
 
 func (s *GameService) StartGame(gameId uuid.UUID) error {
-	return s.gameRepo.StartGame(gameId)
+	game, err := s.gameRepo.GetGame(gameId)
+	if err != nil {
+		return err
+	}
+
+	err = s.gameRepo.StartGame(gameId)
+	if err != nil {
+		return err
+	}
+
+	users, err := s.gameRepo.GetGameParticipant(gameId)
+	if err != nil {
+		return nil
+	}
+
+	for i := range users {
+		if users[i].Id != game.CreatorId {
+			_ = s.notificationRepo.CreateGameCancelNotification(gameId, users[i].Id)
+		}
+	}
+	return nil
+
 }
 
 func (s *GameService) EndGame(gameId uuid.UUID) error {
@@ -98,5 +119,15 @@ func (s *GameService) CancelGame(gameId uuid.UUID, userId uuid.UUID) error {
 		return err
 	}
 
-	return s.notificationRepo.CreateGameCancelNotification(gameId, userId)
+	users, err := s.gameRepo.GetGameParticipant(gameId)
+	if err != nil {
+		return nil
+	}
+
+	for i := range users {
+		if users[i].Id != game.CreatorId {
+			_ = s.notificationRepo.CreateGameCancelNotification(gameId, users[i].Id)
+		}
+	}
+	return nil
 }

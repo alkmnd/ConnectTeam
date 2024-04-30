@@ -6,6 +6,7 @@ import (
 	"ConnectTeam/pkg/handler"
 	"ConnectTeam/pkg/repository"
 	"ConnectTeam/pkg/repository/filestorage"
+	"ConnectTeam/pkg/repository/payment_gateway"
 	"ConnectTeam/pkg/repository/redis"
 	"ConnectTeam/pkg/service"
 	"github.com/minio/minio-go"
@@ -70,6 +71,10 @@ func main() {
 	accessKey := os.Getenv("ACCESS_KEY")
 	secretKey := os.Getenv("SECRET_KEY")
 
+	yooClient := payment_gateway.NewYookassaClient(payment_gateway.Config{
+		ShopId: viper.GetString("yookassa.shop_id"),
+		ApiKey: os.Getenv("INTEGRATION_API_KEY"),
+	})
 	client, err := minio.New(viper.GetString("storage.endpoint"), accessKey, secretKey, false)
 	if err != nil {
 		log.Fatal(err)
@@ -81,7 +86,7 @@ func main() {
 		viper.GetString("storage.endpoint"),
 	)
 
-	repos := repository.NewRepository(db, rdb)
+	repos := repository.NewRepository(db, rdb, yooClient)
 	services := service.NewService(repos, fileStorage)
 	handlers := handler.NewHandler(services)
 

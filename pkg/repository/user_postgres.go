@@ -182,7 +182,7 @@ func (r *UserPostgres) UpdateCompanyURL(id uuid.UUID, url string) error {
 
 func (r *UserPostgres) GetUserPlan(userId uuid.UUID) (connectteam.UserPlan, error) {
 	var userPlan connectteam.UserPlan
-	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id=$1", plansUsersTable)
+	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id=$1", subscriptionsTable)
 	err := r.db.Get(&userPlan, query, userId)
 
 	return userPlan, err

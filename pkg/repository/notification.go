@@ -26,23 +26,39 @@ func (n NotificationManager) CreateGameCancelNotification(gameId uuid.UUID, user
 }
 
 func (n NotificationManager) CreateGameStartNotification(gameId uuid.UUID, userId uuid.UUID) error {
-	//TODO implement me
-	panic("implement me")
+	notification := models.Notification{
+		Type:    models.StartGameNotification,
+		Payload: gameId.String(),
+	}
+
+	return n.notificationCache.HSet(userId.String(), notification)
 }
 
 func (n NotificationManager) CreateGameInviteNotification(gameId uuid.UUID, userId uuid.UUID) error {
-	//TODO implement me
-	panic("implement me")
+	notification := models.Notification{
+		Type:    models.InviteGameNotification,
+		Payload: gameId.String(),
+	}
+
+	return n.notificationCache.HSet(userId.String(), notification)
 }
 
 func (n NotificationManager) CreateSubInviteNotification(holderId uuid.UUID, userId uuid.UUID) error {
-	//TODO implement me
-	panic("implement me")
+	notification := models.Notification{
+		Type:    models.InviteSubNotification,
+		Payload: holderId.String(),
+	}
+
+	return n.notificationCache.HSet(userId.String(), notification)
 }
 
 func (n NotificationManager) CreateDeleteFromSubNotification(holderId uuid.UUID, userId uuid.UUID) error {
-	//TODO implement me
-	panic("implement me")
+	notification := models.Notification{
+		Type:    models.DeleteFromSubNotification,
+		Payload: holderId.String(),
+	}
+
+	return n.notificationCache.HSet(userId.String(), notification)
 }
 
 func NewNotification(client *redis.Client) *NotificationManager {

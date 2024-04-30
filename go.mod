@@ -55,6 +55,7 @@ require (
 	github.com/redis/go-redis/v9 v9.5.1 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	github.com/rvinnie/yookassa-sdk-go v0.0.0-20230904104101-ff7e5be5530c // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect

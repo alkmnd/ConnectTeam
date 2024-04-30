@@ -39,7 +39,7 @@ type User interface {
 
 type Plan interface {
 	GetUserActivePlan(userId uuid.UUID) (connectteam.UserPlan, error)
-	CreatePlan(request connectteam.UserPlan) (connectteam.UserPlan, error)
+	CreatePlan(orderId string, userId uuid.UUID) (connectteam.UserPlan, error)
 	GetUsersPlans() ([]connectteam.UserPlan, error)
 	ConfirmPlan(id uuid.UUID) error
 	SetPlanByAdmin(userId uuid.UUID, planType string, expiryDateString string) error
@@ -49,8 +49,9 @@ type Plan interface {
 	GetUserSubscriptions(userId uuid.UUID) ([]connectteam.UserPlan, error)
 	GetHolderWithInvitationCode(code string) (id uuid.UUID, err error)
 	AddUserToAdvanced(holderPlan connectteam.UserPlan, userId uuid.UUID) (userPlan connectteam.UserPlan, err error)
-	GetMembers(code string) ([]connectteam.UserPublic, error)
-	DeleteUserFromSub(id uuid.UUID) error
+	GetMembers(id uuid.UUID) ([]connectteam.UserPublic, error)
+	DeleteUserFromSub(userId uuid.UUID, planId uuid.UUID) error
+	UpgradePlan(orderId string, planId uuid.UUID, userId uuid.UUID) error
 }
 
 type Topic interface {
@@ -69,6 +70,10 @@ type Question interface {
 	GetRandWithLimit(topicId uuid.UUID, limit int) ([]models.Question, error)
 	GetAllTags() ([]models.Tag, error)
 	UpdateQuestionTags(questionId uuid.UUID, tags []models.Tag) ([]models.Tag, error)
+}
+
+type Payment interface {
+	CreatePayment(userId uuid.UUID, plan string, returnURL string) (models.PaymentResponse, error)
 }
 
 type Uploader interface {
@@ -98,16 +103,18 @@ type Service struct {
 	Question
 	Uploader
 	Game
+	Payment
 }
 
 func NewService(repos *repository.Repository, fileStorage *filestorage.FileStorage) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos.Authorization),
 		User:          NewUserService(repos.User),
-		Plan:          NewPlanService(repos.Plan),
+		Plan:          NewPlanService(repos.Plan, repos.Payment),
 		Topic:         NewTopicService(repos.Topic),
 		Question:      NewQuestionService(repos.Question),
 		Uploader:      uploader.NewUploader(fileStorage),
 		Game:          NewGameService(repos.Game, repos.Notification),
+		Payment:       NewPaymentService(repos.Payment),
 	}
 }

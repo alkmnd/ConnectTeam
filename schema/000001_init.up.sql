@@ -1,8 +1,9 @@
 CREATE TYPE user_role AS ENUM ('user', 'admin', 'plan_user');
 CREATE TYPE plans AS ENUM ('basic', 'advanced', 'premium');
 CREATE TYPE access AS ENUM ('super_admin', 'admin', 'user');
-CREATE TYPE plan_status AS ENUM ('active', 'expired', 'on_confirm');
+CREATE TYPE plan_status AS ENUM ('active', 'expired', 'on_confirm', 'not_payed');
 CREATE TYPE game_status AS ENUM ('not_started', 'in_progress', 'ended', 'cancelled');
+CREATE TYPE plan_access AS ENUM ('additional', 'holder');
 
 CREATE TABLE users
 (
@@ -38,14 +39,19 @@ CREATE TABLE subscriptions
 (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY ,
     plan_type plans,
-    user_id uuid references users (id) on delete cascade,
     holder_id uuid references users (id) on delete cascade,
     expiry_date timestamp,
     duration int,
-    plan_access varchar(256),
     status plan_status not null DEFAULT 'on_confirm',
     invitation_code varchar(256),
     is_trial boolean DEFAULT false
+);
+
+CREATE TABLE subs_holders
+(
+    user_id uuid references users (id) on delete cascade,
+    sub_id uuid references subscriptions (id) on delete cascade,
+    access plan_access
 );
 
 CREATE TABLE topics

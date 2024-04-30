@@ -10,7 +10,8 @@ import (
 const (
 	usersTable         = "users"
 	codesTable         = "verification_codes"
-	plansUsersTable    = "subscriptions"
+	subscriptionsTable = "subscriptions"
+	usersSubsTable     = "subs_holders"
 	planRequestsTable  = "plan_requests"
 	topicsTable        = "topics"
 	questionsTable     = "questions"
