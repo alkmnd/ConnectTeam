@@ -11,12 +11,34 @@ import (
 )
 
 type PlanService struct {
-	planRepo  repository.Plan
-	yooClient repository.Payment
+	planRepo         repository.Plan
+	yooClient        repository.Payment
+	notificationRepo repository.Notification
 }
 
-func NewPlanService(repo repository.Plan, client repository.Payment) *PlanService {
-	return &PlanService{planRepo: repo, yooClient: client}
+func (s *PlanService) GetPlan(planId uuid.UUID) (sub connectteam.Subscription, err error) {
+	return s.planRepo.GetPlan(planId)
+}
+
+func (s *PlanService) InviteUserToSub(planId uuid.UUID, userId uuid.UUID, holderId uuid.UUID) error {
+	plan, err := s.planRepo.GetPlan(planId)
+	if err != nil {
+		return err
+	}
+	if plan.HolderId == userId {
+		return errors.New("permission denied")
+	}
+	if plan.HolderId != holderId {
+		return errors.New("permission denied")
+	}
+	if plan.PlanType != "premium" {
+		return errors.New("permission denied")
+	}
+	return s.notificationRepo.CreateSubInviteNotification(planId, userId)
+}
+
+func NewPlanService(repo repository.Plan, client repository.Payment, notification repository.Notification) *PlanService {
+	return &PlanService{planRepo: repo, yooClient: client, notificationRepo: notification}
 }
 
 func (s *PlanService) GetUserActivePlan(userId uuid.UUID) (connectteam.UserPlan, error) {

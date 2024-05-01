@@ -3,6 +3,8 @@ package redis
 import (
 	"ConnectTeam/pkg/repository/models"
 	"context"
+	"fmt"
+	"github.com/goccy/go-json"
 	"github.com/redis/go-redis/v9"
 	"time"
 )
@@ -10,6 +12,27 @@ import (
 type NotificationCache struct {
 	Cache      *redis.Client
 	expiration time.Duration
+}
+
+func (n NotificationCache) HGet(key string) ([]models.Notification, error) {
+	var notifications []models.Notification
+	ctx := context.Background()
+	fields, err := n.Cache.HGetAll(ctx, key).Result()
+	if err != nil {
+		return notifications, err
+	}
+	for key, _ := range fields {
+		var notification models.Notification
+		err := json.Unmarshal([]byte(key), &notification)
+		if err != nil {
+			fmt.Printf("unmarshal error: %s\n", err)
+			continue
+		}
+		notifications = append(notifications, notification)
+	}
+
+	return notifications, nil
+
 }
 
 func (n NotificationCache) HSet(key string, notification models.Notification) error {

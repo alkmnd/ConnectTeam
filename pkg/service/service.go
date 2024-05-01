@@ -52,6 +52,8 @@ type Plan interface {
 	GetMembers(id uuid.UUID) ([]connectteam.UserPublic, error)
 	DeleteUserFromSub(userId uuid.UUID, planId uuid.UUID) error
 	UpgradePlan(orderId string, planId uuid.UUID, userId uuid.UUID) error
+	InviteUserToSub(planId uuid.UUID, userId uuid.UUID, holderId uuid.UUID) error
+	GetPlan(planId uuid.UUID) (sub connectteam.Subscription, err error)
 }
 
 type Topic interface {
@@ -93,6 +95,11 @@ type Game interface {
 	EndGame(gameId uuid.UUID) error
 	SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int) error
 	CancelGame(gameId uuid.UUID, userId uuid.UUID) error
+	InviteUserToGame(gameId uuid.UUID, userId uuid.UUID, creatorId uuid.UUID) error
+}
+
+type Notification interface {
+	GetUserNotifications(userId uuid.UUID) (notifications []models.Notification, err error)
 }
 
 type Service struct {
@@ -104,17 +111,19 @@ type Service struct {
 	Uploader
 	Game
 	Payment
+	Notification
 }
 
 func NewService(repos *repository.Repository, fileStorage *filestorage.FileStorage) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos.Authorization),
 		User:          NewUserService(repos.User),
-		Plan:          NewPlanService(repos.Plan, repos.Payment),
+		Plan:          NewPlanService(repos.Plan, repos.Payment, repos.Notification),
 		Topic:         NewTopicService(repos.Topic),
 		Question:      NewQuestionService(repos.Question),
 		Uploader:      uploader.NewUploader(fileStorage),
 		Game:          NewGameService(repos.Game, repos.Notification),
 		Payment:       NewPaymentService(repos.Payment),
+		Notification:  NewNotificationService(repos.Notification),
 	}
 }

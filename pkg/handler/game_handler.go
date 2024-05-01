@@ -156,6 +156,35 @@ func (h *Handler) getResults(c *gin.Context) {
 	})
 }
 
+func (h *Handler) inviteMemberToGame(c *gin.Context) {
+	creatorId, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	var input inviteUserRequest
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	gameId, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	err = h.services.InviteUserToGame(gameId, input.UserId, creatorId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusOK)
+
+}
+
 func (h *Handler) deleteGame(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {

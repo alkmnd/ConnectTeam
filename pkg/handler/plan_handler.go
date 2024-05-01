@@ -450,3 +450,36 @@ func (h *Handler) deleteUserFromSub(c *gin.Context) {
 
 	c.JSON(http.StatusOK, statusResponse{"ok"})
 }
+
+type inviteUserRequest struct {
+	UserId uuid.UUID `json:"user_id"`
+}
+
+func (h *Handler) inviteMemberToSub(c *gin.Context) {
+	holderId, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	var input inviteUserRequest
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	planId, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	err = h.services.InviteUserToSub(planId, input.UserId, holderId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusOK)
+
+}

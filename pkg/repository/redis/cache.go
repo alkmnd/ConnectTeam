@@ -7,4 +7,5 @@ import (
 type Cache interface {
 	HSet(key string, notification models.Notification) error
 	Get(key string) (models.Notification, error)
+	HGet(key string) ([]models.Notification, error)
 }

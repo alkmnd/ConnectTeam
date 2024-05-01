@@ -60,6 +60,7 @@ type Plan interface {
 	DeleteUserFromSub(userId uuid.UUID, planId uuid.UUID) error
 	UpgradePlan(planId uuid.UUID, planType string, invitationCode string) error
 	AddUserToSubscription(userId uuid.UUID, planId uuid.UUID, access string) error
+	GetPlan(planId uuid.UUID) (sub connectteam.Subscription, err error)
 }
 
 type Topic interface {
@@ -98,7 +99,7 @@ type Game interface {
 }
 
 type Notification interface {
-	GetNotifications(userId uuid.UUID) error
+	GetNotifications(userId uuid.UUID) ([]models.Notification, error)
 	CreateGameCancelNotification(gameId uuid.UUID, userId uuid.UUID) error
 	CreateGameStartNotification(gameId uuid.UUID, userId uuid.UUID) error
 	CreateGameInviteNotification(gameId uuid.UUID, userId uuid.UUID) error

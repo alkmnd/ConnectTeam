@@ -72,7 +72,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		plan.GET(":id/members", h.getMembers)
 		plan.POST("/join/:code", h.addUserToPlan)
 		plan.DELETE(":id/members/:user_id", h.deleteUserFromSub)
-		plan.PATCH("upgrade/:id", h.upgradePlan)
+		plan.PATCH("/upgrade/:id", h.upgradePlan)
+		plan.POST("/invite/:id", h.inviteMemberToSub)
 	}
 	payment := router.Group("/payment", h.userIdentity)
 	{
@@ -112,11 +113,17 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		game.POST("/:code", h.addUserAsParticipant)
 		game.GET("/results/:id", h.getResults)
 		game.PATCH("/:id/cancel", h.cancelGame)
+		game.POST("/invite/:id", h.inviteMemberToGame)
 	}
 
 	tags := router.Group("/tags", h.userIdentity)
 	{
 		tags.GET("/", h.getAllTags)
+	}
+
+	notifications := router.Group("/notifications", h.userIdentity)
+	{
+		notifications.GET("/", h.getAllNotifications)
 	}
 	httpService := router.Group("/api")
 	{

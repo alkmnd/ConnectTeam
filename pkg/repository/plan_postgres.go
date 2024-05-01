@@ -18,7 +18,6 @@ func NewPlanPostgres(db *sqlx.DB) *PlanPostgres {
 
 func (r *PlanPostgres) GetUserActivePlan(userId uuid.UUID) (connectteam.UserPlan, error) {
 	var userPlan connectteam.UserPlan
-
 	query := fmt.Sprintf("SELECT COALESCE(ah.sub_id, s.id) AS id,"+
 		"s.plan_type,"+
 		"s.holder_id,"+
@@ -74,8 +73,8 @@ func (r *PlanPostgres) DeleteOnConfirmPlan(userId uuid.UUID) error {
 func (r *PlanPostgres) GetUserSubscriptions(userId uuid.UUID) ([]connectteam.UserPlan, error) {
 	var usersPlan []connectteam.UserPlan
 
-	query := fmt.Sprintf(`SELECT id, user_id, holder_id, plan_type, 
-		plan_access, expiry_date, duration, status FROM %s WHERE holder_id=$1`, subscriptionsTable)
+	query := fmt.Sprintf(`SELECT id, holder_id, plan_type, 
+		expiry_date, duration, status FROM %s WHERE holder_id=$1`, subscriptionsTable)
 	err := r.db.Select(&usersPlan, query, userId)
 	return usersPlan, err
 }
@@ -128,8 +127,7 @@ func (r *PlanPostgres) DeletePlan(id uuid.UUID) error {
 func (r *PlanPostgres) GetUsersPlans() ([]connectteam.UserPlan, error) {
 	var plansUsers []connectteam.UserPlan
 
-	query := fmt.Sprintf(`SELECT id, user_id, holder_id, plan_type, 
-		plan_access, expiry_date, duration, status FROM %s WHERE status='active' or status='on_confirm'`, subscriptionsTable)
+	query := fmt.Sprintf(`SELECT id, holder_id, plan_type, expiry_date, duration, status FROM %s WHERE status='active' or status='on_confirm'`, subscriptionsTable)
 	err := r.db.Select(&plansUsers, query)
 	return plansUsers, err
 }
@@ -148,4 +146,11 @@ func (r *PlanPostgres) DeleteUserFromSub(userId uuid.UUID, planId uuid.UUID) err
 	_, err := r.db.Exec(query, userId, planId)
 
 	return err
+}
+
+func (r *PlanPostgres) GetPlan(planId uuid.UUID) (sub connectteam.Subscription, err error) {
+	query := fmt.Sprintf(`SELECT * FROM %s WHERE id=$1`, subscriptionsTable)
+	err = r.db.Get(&sub, query, planId)
+
+	return sub, err
 }

@@ -91,6 +91,18 @@ type UserPlan struct {
 	IsTrial        bool      `json:"is_trial,omitempty" db:"is_trial"`
 }
 
+type Subscription struct {
+	Id             uuid.UUID `json:"id,omitempty" db:"id"`
+	PlanType       string    `json:"plan_type,omitempty" db:"plan_type"`
+	HolderId       uuid.UUID `json:"holder_id,omitempty" db:"holder_id"`
+	UserId         uuid.UUID `json:"user_id,omitempty" db:"user_id"`
+	ExpiryDate     time.Time `json:"expiry_date,omitempty" db:"expiry_date"`
+	Duration       int       `json:"duration,omitempty" db:"duration"`
+	Status         string    `json:"status,omitempty" db:"status"`
+	InvitationCode string    `json:"invitation_code,omitempty" db:"invitation_code"`
+	IsTrial        bool      `json:"is_trial,omitempty" db:"is_trial"`
+}
+
 const (
 	OnConfirm = "on_confirm"
 	Active    = "active"
