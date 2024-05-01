@@ -483,3 +483,14 @@ func (h *Handler) inviteMemberToSub(c *gin.Context) {
 	c.Status(http.StatusOK)
 
 }
+
+func (h *Handler) getSubscription(c *gin.Context) {
+	planId, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	sub, err := h.services.Plan.GetPlan(planId)
+	c.JSON(http.StatusOK, sub)
+}

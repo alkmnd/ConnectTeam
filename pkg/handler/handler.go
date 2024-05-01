@@ -74,6 +74,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		plan.DELETE(":id/members/:user_id", h.deleteUserFromSub)
 		plan.PATCH("/upgrade/:id", h.upgradePlan)
 		plan.POST("/invite/:id", h.inviteMemberToSub)
+		plan.GET("/:id")
 	}
 	payment := router.Group("/payment", h.userIdentity)
 	{
