@@ -73,7 +73,7 @@ func (s *PlanService) CreateTrialPlan(userId uuid.UUID) (userPlan connectteam.Us
 		return userPlan, err
 	}
 
-	return s.planRepo.CreatePlan(connectteam.UserPlan{
+	plan, err := s.planRepo.CreatePlan(connectteam.UserPlan{
 		PlanType:       "basic",
 		HolderId:       userId,
 		Status:         connectteam.Active,
@@ -83,6 +83,18 @@ func (s *PlanService) CreateTrialPlan(userId uuid.UUID) (userPlan connectteam.Us
 		InvitationCode: "",
 		IsTrial:        true,
 	})
+
+	if err != nil {
+		return userPlan, err
+	}
+
+	err = s.planRepo.AddUserToSubscription(userId, plan.Id, "holder")
+
+	if err != nil {
+		return userPlan, err
+	}
+
+	return plan, nil
 }
 
 func (s *PlanService) AddUserToAdvanced(holderPlan connectteam.UserPlan, userId uuid.UUID) (userPlan connectteam.UserPlan, err error) {
