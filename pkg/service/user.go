@@ -241,3 +241,7 @@ func (s *UserService) UpdateCompanyData(id uuid.UUID, company connectteam.UserCo
 func (s *UserService) GetUserPlan(userId uuid.UUID) (connectteam.UserPlan, error) {
 	return s.repo.GetUserPlan(userId)
 }
+
+func (s *UserService) CheckIfExist(email string) (bool, error) {
+	return s.repo.CheckIfExist(email)
+}

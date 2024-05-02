@@ -91,7 +91,17 @@ func (h *Handler) verifyEmailOnRegistration(c *gin.Context) {
 		return
 	}
 
-	err := h.services.Authorization.VerifyEmail(input)
+	ifExists, err := h.services.CheckIfExist(input.Email)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if ifExists {
+		newErrorResponse(c, http.StatusForbidden, "email is already used")
+		return
+	}
+	err = h.services.Authorization.VerifyEmail(input)
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())

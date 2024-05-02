@@ -35,6 +35,7 @@ type User interface {
 	GetUserPlan(userId uuid.UUID) (connectteam.UserPlan, error)
 	RestorePasswordAuthorized(id uuid.UUID) error
 	RestorePassword(email string) error
+	CheckIfExist(email string) (bool, error)
 }
 
 type Plan interface {
