@@ -160,7 +160,8 @@ func (s *PlanService) UpgradePlan(orderId string, planId uuid.UUID, userId uuid.
 
 func (s *PlanService) CreatePlan(orderId string, userId uuid.UUID) (userPlan connectteam.UserPlan, err error) {
 	activePlan, _ := s.planRepo.GetUserActivePlan(userId)
-	if activePlan.Id != uuid.Nil {
+
+	if activePlan.Id != uuid.Nil && !activePlan.IsTrial {
 		return userPlan, errors.New("user already has subscription")
 	}
 
@@ -202,6 +203,13 @@ func (s *PlanService) CreatePlan(orderId string, userId uuid.UUID) (userPlan con
 	}
 
 	err = s.planRepo.AddUserToSubscription(userId, userPlan.Id, "holder")
+
+	if activePlan.IsTrial {
+		err := s.planRepo.SetExpiredStatus(activePlan.Id)
+		if err != nil {
+			return userPlan, err
+		}
+	}
 
 	return userPlan, err
 }
