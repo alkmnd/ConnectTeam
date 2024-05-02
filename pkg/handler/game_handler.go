@@ -37,7 +37,7 @@ func (h *Handler) createGame(c *gin.Context) {
 		return
 	}
 
-	_, err = h.services.GetUserPlan(id)
+	_, err = h.services.GetUserActivePlan(id)
 	if err != nil {
 		newErrorResponse(c, http.StatusForbidden, "user has no plan")
 		return
