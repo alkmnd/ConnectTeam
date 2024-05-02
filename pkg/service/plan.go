@@ -118,8 +118,12 @@ func (s *PlanService) GetMembers(id uuid.UUID) ([]connectteam.UserPublic, error)
 
 func (s *PlanService) UpgradePlan(orderId string, planId uuid.UUID, userId uuid.UUID) error {
 	activePlan, _ := s.planRepo.GetUserActivePlan(userId)
+
 	if activePlan.HolderId != userId {
 		return errors.New("permission denied")
+	}
+	if activePlan.IsTrial {
+		return errors.New("cannot upgrade trial subscription")
 	}
 	if activePlan.Id != planId {
 		return errors.New("incorrect plan id")
@@ -129,7 +133,10 @@ func (s *PlanService) UpgradePlan(orderId string, planId uuid.UUID, userId uuid.
 		return err
 	}
 	if !payment.Paid {
-		return errors.New("order id not paid")
+		return errors.New("order is not paid")
+	}
+	if payment.Status == "succeeded" {
+		return errors.New("order is already succeeded")
 	}
 	if payment.Metadata.UserId != userId.String() {
 		return errors.New("permission denied")
