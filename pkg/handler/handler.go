@@ -110,7 +110,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		game.GET("/all/:page", h.getGames)
 		game.GET("/created/:page", h.getCreatedGames)
 		game.GET("/:id", h.getGame)
-		game.DELETE("/:id", h.deleteGame)
+		game.DELETE("/:id", h.deleteGameFromGameList)
 		game.POST("/:code", h.addUserAsParticipant)
 		game.GET("/results/:id", h.getResults)
 		game.PATCH("/:id/cancel", h.cancelGame)
