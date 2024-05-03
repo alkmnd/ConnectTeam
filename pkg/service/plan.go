@@ -219,7 +219,8 @@ func (s *PlanService) DeletePlan(id uuid.UUID) error {
 }
 
 func (s *PlanService) SetPlanByAdmin(userId uuid.UUID, planType string, expiryDateString string) error {
-	activePlan, _ := s.planRepo.GetUserActivePlan(userId)
+	activePlan, err := s.planRepo.GetUserActivePlan(userId)
+	println(err.Error())
 	if activePlan.Id != uuid.Nil {
 		if err := s.planRepo.SetExpiredStatus(activePlan.Id); err != nil {
 			return err
@@ -252,6 +253,13 @@ func (s *PlanService) SetPlanByAdmin(userId uuid.UUID, planType string, expiryDa
 		InvitationCode: invitationCode,
 	}
 	_, err = s.planRepo.CreatePlan(userPlan)
+	if err != nil {
+		return err
+	}
+	err = s.planRepo.AddUserToSubscription(userId, userPlan.Id, "holder")
+	if err != nil {
+		return err
+	}
 
 	return err
 

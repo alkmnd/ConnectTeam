@@ -51,9 +51,9 @@ func (r *TopicPostgres) DeleteTopic(id uuid.UUID) error {
 
 func (r *TopicPostgres) UpdateTopic(id uuid.UUID, title string) error {
 
-	query := fmt.Sprintf(`UPDATE %s SET title = $1 WHERE id = %d`, topicsTable, id)
+	query := fmt.Sprintf(`UPDATE %s SET title = $1 WHERE id = $1`, topicsTable)
 
-	_, err := r.db.Exec(query, title)
+	_, err := r.db.Exec(query, title, id)
 
 	return err
 }
