@@ -162,15 +162,16 @@ func (h *Handler) signInWithEmail(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	access, token, err := h.services.Authorization.GenerateToken(input.Email, input.Password, true)
+	access, token, err, id := h.services.Authorization.GenerateToken(input.Email, input.Password, true)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"token":  token,
-		"access": access,
+		"token":   token,
+		"access":  access,
+		"user_id": id,
 	})
 }
 
@@ -181,7 +182,7 @@ func (h *Handler) signInWithPhoneNumber(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	access, token, err := h.services.Authorization.GenerateToken(input.PhoneNumber, input.Password, false)
+	access, token, err, _ := h.services.Authorization.GenerateToken(input.PhoneNumber, input.Password, false)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

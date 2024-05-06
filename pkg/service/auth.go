@@ -54,20 +54,20 @@ func (s *AuthService) CreateUser(user connectteam.UserSignUpRequest) (uuid.UUID,
 	return s.repo.CreateUser(repoUser)
 }
 
-func (s *AuthService) GenerateToken(login, password string, isEmail bool) (string, string, error) {
+func (s *AuthService) GenerateToken(login, password string, isEmail bool) (string, string, error, uuid.UUID) {
 	var user connectteam.User
 	var err error
 	if isEmail {
 		user, err = s.repo.GetUserWithEmail(login, generatePasswordHash(password))
 	} else {
-		return "", "", nil
+		return "", "", nil, uuid.Nil
 	}
 	if err != nil {
-		return "", "", errors.New("invalid login data")
+		return "", "", errors.New("invalid login data"), uuid.Nil
 	}
 
 	if err != nil {
-		return "", "", err
+		return "", "", err, uuid.Nil
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
@@ -81,10 +81,10 @@ func (s *AuthService) GenerateToken(login, password string, isEmail bool) (strin
 	signedString, err := token.SignedString([]byte(signingKey))
 
 	if err != nil {
-		return "", "", err
+		return "", "", err, uuid.Nil
 	}
 
-	return user.Access, signedString, nil
+	return user.Access, signedString, nil, user.Id
 }
 
 func generatePasswordHash(password string) string {

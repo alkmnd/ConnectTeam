@@ -14,7 +14,7 @@ import (
 
 type Authorization interface {
 	CreateUser(user connectteam.UserSignUpRequest) (uuid.UUID, error)
-	GenerateToken(login, password string, isEmail bool) (string, string, error)
+	GenerateToken(login, password string, isEmail bool) (string, string, error, uuid.UUID)
 	ParseToken(token string) (uuid.UUID, string, error)
 	//VerifyPhone(verifyPhone connectteam.VerifyPhone) (string, error)
 	//VerifyUser(verifyUser connectteam.VerifyUser) error
