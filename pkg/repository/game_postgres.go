@@ -21,8 +21,8 @@ const (
 )
 
 func (r *GamePostgres) CreateGame(game connectteam.Game) (connectteam.Game, error) {
-	query := fmt.Sprintf("INSERT INTO %s (creator_id, name, start_date, invitation_code, status) values ($1, $2, $3, $4, $5) RETURNING id", gamesTable)
-	row := r.db.QueryRow(query, game.CreatorId, game.Name, game.StartDate, game.InvitationCode, game.Status)
+	query := fmt.Sprintf("INSERT INTO %s (creator_id, name, start_date, invitation_code, status, max_size) values ($1, $2, $3, $4, $5, $6) RETURNING id", gamesTable)
+	row := r.db.QueryRow(query, game.CreatorId, game.Name, game.StartDate, game.InvitationCode, game.Status, game.MaxSize)
 	if err := row.Scan(&game.Id); err != nil {
 		return game, err
 	}

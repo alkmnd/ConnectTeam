@@ -1,6 +1,7 @@
 package service_handler
 
 import (
+	connectteam "ConnectTeam"
 	"ConnectTeam/pkg/service"
 	"ConnectTeam/pkg/service/models"
 	"encoding/json"
@@ -52,9 +53,47 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		{
 			question.GET("/", h.getRandWithLimit)
 		}
+		user := httpService.Group("/users")
+		{
+			user.GET("/:id/plan", h.getUserActivePlan)
+		}
 	}
 
 	return router
+}
+
+func (h *Handler) getUserActivePlan(c *gin.Context) {
+
+	userId, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	userPlan, err := h.services.Plan.GetUserActivePlan(userId)
+
+	if err != nil {
+		c.Status(204)
+		return
+	}
+
+	var invitationCode string
+
+	if userPlan.PlanType == "premium" &&
+		userPlan.Status == connectteam.Active {
+		invitationCode = userPlan.InvitationCode
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"id":              userPlan.Id,
+		"plan_type":       userPlan.PlanType,
+		"holder_id":       userPlan.HolderId,
+		"expiry_date":     userPlan.ExpiryDate,
+		"plan_access":     userPlan.PlanAccess,
+		"status":          userPlan.Status,
+		"invitation_code": invitationCode,
+		"is_trial":        userPlan.IsTrial,
+	})
 }
 
 func (h *Handler) getGame(c *gin.Context) {

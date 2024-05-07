@@ -157,4 +157,5 @@ type Game struct {
 	Name           string    `json:"name" db:"name"`
 	StartDate      time.Time `json:"start_date" db:"start_date"`
 	Status         string    `json:"status" db:"status"`
+	MaxSize        int       `json:"max_size" db:"max_size"`
 }

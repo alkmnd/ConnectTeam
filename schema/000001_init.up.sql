@@ -74,6 +74,7 @@ CREATE TABLE games
     name varchar(256),
     start_date timestamp,
     invitation_code varchar(256),
+    max_size integer
     status game_status
 );
 
