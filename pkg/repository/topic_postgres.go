@@ -57,3 +57,10 @@ func (r *TopicPostgres) UpdateTopic(id uuid.UUID, title string) error {
 
 	return err
 }
+
+func (r *TopicPostgres) GetRandWithLimit(limit int) (topics []connectteam.Topic, err error) {
+
+	query := fmt.Sprintf("SELECT id, title FROM %s ORDER BY RANDOM() LIMIT $2", questionsTable)
+	err = r.db.Select(&topics, query, limit)
+	return topics, err
+}

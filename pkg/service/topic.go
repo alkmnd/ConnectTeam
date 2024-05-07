@@ -39,3 +39,7 @@ func (s *TopicService) GetTopic(id uuid.UUID) (connectteam.Topic, error) {
 func (s *TopicService) UpdateTopic(id uuid.UUID, title string) error {
 	return s.repo.UpdateTopic(id, title)
 }
+
+func (s *TopicService) GetRandWithLimit(limit int) (topics []connectteam.Topic, err error) {
+	return s.repo.GetRandWithLimit(limit)
+}

@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
+	"strconv"
 )
 
 func (h *Handler) createTopic(c *gin.Context) {
@@ -145,4 +146,22 @@ func (h *Handler) updateTopic(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, statusResponse{"ok"})
+}
+
+func (h *Handler) getTopicsWithLimit(c *gin.Context) {
+
+	limit, err := strconv.Atoi(c.Param("limit"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	topics, err := h.services.Topic.GetRandWithLimit(limit)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, getTopicsResponse{
+		Data: topics,
+	})
 }

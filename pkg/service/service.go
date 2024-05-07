@@ -63,6 +63,7 @@ type Topic interface {
 	DeleteTopic(id uuid.UUID) error
 	UpdateTopic(id uuid.UUID, title string) error
 	GetTopic(id uuid.UUID) (connectteam.Topic, error)
+	GetRandWithLimit(limit int) (topics []connectteam.Topic, err error)
 }
 
 type Question interface {
@@ -125,7 +126,7 @@ func NewService(repos *repository.Repository, fileStorage *filestorage.FileStora
 		Topic:         NewTopicService(repos.Topic),
 		Question:      NewQuestionService(repos.Question),
 		Uploader:      uploader.NewUploader(fileStorage),
-		Game:          NewGameService(repos.Game, repos.Notification),
+		Game:          NewGameService(repos.Game, repos.Notification, repos.Plan),
 		Payment:       NewPaymentService(repos.Payment),
 		Notification:  NewNotificationService(repos.Notification),
 	}

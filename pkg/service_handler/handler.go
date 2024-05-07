@@ -48,10 +48,11 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		topic := httpService.Group("/topics")
 		{
 			topic.GET("/:id", h.getTopic)
+			topic.GET("list/:limit", h.getTopicsWithLimit)
 		}
 		question := httpService.Group("/questions")
 		{
-			question.GET("/", h.getRandWithLimit)
+			question.GET("/{:id}/{:limit}", h.getRandWithLimit)
 		}
 		user := httpService.Group("/users")
 		{
@@ -219,4 +220,26 @@ func (h *Handler) getRandWithLimit(c *gin.Context) {
 
 type getQuestionsResponse struct {
 	Data []models.Question `json:"data"`
+}
+
+func (h *Handler) getTopicsWithLimit(c *gin.Context) {
+
+	limit, err := strconv.Atoi(c.Param("limit"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	topics, err := h.services.Topic.GetRandWithLimit(limit)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, getTopicsResponse{
+		Data: topics,
+	})
+}
+
+type getTopicsResponse struct {
+	Data []connectteam.Topic `json:"data"`
 }

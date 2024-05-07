@@ -70,6 +70,7 @@ type Topic interface {
 	DeleteTopic(id uuid.UUID) error
 	UpdateTopic(id uuid.UUID, title string) error
 	GetTopic(topicId uuid.UUID) (topic connectteam.Topic, err error)
+	GetRandWithLimit(limit int) (topics []connectteam.Topic, err error)
 }
 
 type Question interface {
