@@ -2,17 +2,15 @@ package main
 
 import (
 	connectteam "ConnectTeam"
-	"ConnectTeam/pkg/game"
 	"ConnectTeam/pkg/handler"
 	"ConnectTeam/pkg/repository"
 	"ConnectTeam/pkg/repository/filestorage"
 	"ConnectTeam/pkg/repository/payment_gateway"
 	"ConnectTeam/pkg/repository/redis"
 	"ConnectTeam/pkg/service"
+	"ConnectTeam/pkg/service_handler"
 	"github.com/minio/minio-go"
 	"log"
-	"net/http"
-
 	"os"
 
 	"github.com/joho/godotenv"
@@ -90,17 +88,13 @@ func main() {
 	services := service.NewService(repos, fileStorage)
 	handlers := handler.NewHandler(services)
 
-	wsServer := game.NewWebsocketServer(repos, services)
-
-	go wsServer.Run()
-
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		game.ServeWs(wsServer, w, r)
-	})
-	go http.ListenAndServe(":8080", nil)
-
 	srv := new(connectteam.Server)
 	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
+		logrus.Fatalf("error %s", err.Error())
+	}
+
+	serviceHandler := service_handler.NewHandler(services, os.Getenv("SERVICE_API_KEY"))
+	if err := srv.Run(viper.GetString("service_port"), serviceHandler.InitRoutes()); err != nil {
 		logrus.Fatalf("error %s", err.Error())
 	}
 }
