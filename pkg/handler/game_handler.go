@@ -227,10 +227,15 @@ func (h *Handler) deleteGameFromGameList(c *gin.Context) {
 
 }
 
-func (h *Handler) getGame(c *gin.Context) {
+type changeGameStartDateInput struct {
+	StartDate string `json:"start_date" binding:"required"`
+}
+
+func (h *Handler) changeGameStartDate(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {
-		id = uuid.Nil
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	gameId, err := uuid.Parse(c.Param("id"))
@@ -246,10 +251,83 @@ func (h *Handler) getGame(c *gin.Context) {
 		return
 	}
 
-	var invitationCode string
+	if game.CreatorId != id {
+		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
+	}
 
-	if game.CreatorId == id {
-		invitationCode = game.InvitationCode
+	var input changeGameStartDateInput
+
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = h.services.ChangeStartDate(gameId, input.StartDate)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
+
+type changeGameNameInput struct {
+	Name string `json:"name" binding:"required"`
+}
+
+func (h *Handler) changeGameName(c *gin.Context) {
+	id, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	gameId, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	game, err := h.services.Game.GetGame(gameId)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if game.CreatorId != id {
+		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
+	}
+
+	var input changeGameNameInput
+
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = h.services.ChangeStartDate(gameId, input.Name)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
+
+func (h *Handler) getGame(c *gin.Context) {
+
+	gameId, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	game, err := h.services.Game.GetGame(gameId)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
@@ -258,7 +336,7 @@ func (h *Handler) getGame(c *gin.Context) {
 		"creator_id":      game.CreatorId,
 		"start_date":      game.StartDate,
 		"status":          game.Status,
-		"invitation_code": invitationCode,
+		"invitation_code": game.InvitationCode,
 	})
 }
 

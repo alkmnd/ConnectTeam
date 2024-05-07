@@ -361,6 +361,23 @@ func (h *Handler) addUserToPlan(c *gin.Context) {
 	})
 }
 
+func (h *Handler) getPlan(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "Invalid id param")
+		return
+	}
+
+	plan, err := h.services.GetPlan(id)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, plan)
+
+}
+
 func (h *Handler) validateInvitationCode(c *gin.Context) {
 	code := c.Param("code")
 	id, err := h.services.GetHolderWithInvitationCode(code)

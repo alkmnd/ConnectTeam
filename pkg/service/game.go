@@ -20,6 +20,26 @@ func NewGameService(gameRepo repository.Game, notificationRepo repository.Notifi
 func (s *GameService) SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int) error {
 	return s.gameRepo.SaveResults(gameId, userId, rate)
 }
+func (s *GameService) ChangeStartDate(gameId uuid.UUID, dateString string) error {
+	date, err := time.Parse(time.RFC3339, dateString)
+	if err != nil {
+		return err
+	}
+	startDate := time.Date(date.Year(), date.Month(), date.Day(), date.Hour(), date.Minute(), 0, 0, date.Location())
+	if !startDate.After(time.Now()) {
+		return errors.New("incorrect start date")
+	}
+
+	return s.gameRepo.ChangeStartDate(gameId, startDate)
+}
+
+func (s *GameService) ChangeGameName(gameId uuid.UUID, name string) error {
+	if len(name) == 0 {
+		return errors.New("incorrect game name")
+	}
+
+	return s.gameRepo.ChangeGameName(gameId, name)
+}
 
 func (s *GameService) CreateGame(creatorId uuid.UUID, startDateString string, name string) (game connectteam.Game, err error) {
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
+	"time"
 )
 
 type GamePostgres struct {
@@ -26,6 +27,22 @@ func (r *GamePostgres) CreateGame(game connectteam.Game) (connectteam.Game, erro
 		return game, err
 	}
 	return game, nil
+}
+
+func (r *GamePostgres) ChangeStartDate(gameId uuid.UUID, date time.Time) error {
+	query := fmt.Sprintf(`UPDATE %s SET start_date = $1 WHERE id = $2`, gamesTable)
+
+	_, err := r.db.Exec(query, date, gameId)
+
+	return err
+}
+
+func (r *GamePostgres) ChangeGameName(gameId uuid.UUID, name string) error {
+	query := fmt.Sprintf(`UPDATE %s SET name = $1 WHERE id = $2`, gamesTable)
+
+	_, err := r.db.Exec(query, name, gameId)
+
+	return err
 }
 
 func (r *GamePostgres) SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int) error {

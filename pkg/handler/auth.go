@@ -39,26 +39,6 @@ func (h *Handler) signUp(c *gin.Context) {
 	})
 }
 
-// func (h *Handler) verifyPhone(c *gin.Context) {
-// 	var input connectteam.VerifyPhone
-
-// 	if err := c.BindJSON(&input); err != nil {
-// 		newErrorResponse(c, http.StatusBadRequest, err.Error())
-// 		return
-// 	}
-
-// 	confirmationCode, err := h.services.Authorization.VerifyPhone(input)
-
-// 	if err != nil {
-// 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, map[string]interface{}{
-// 		"confirmationCode": confirmationCode,
-// 	})
-// }
-
 type restorePasswordInput struct {
 	Email string `json:"email" binding:"required"`
 }

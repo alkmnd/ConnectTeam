@@ -97,6 +97,8 @@ type Game interface {
 	SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int) error
 	CancelGame(gameId uuid.UUID, userId uuid.UUID) error
 	InviteUserToGame(gameId uuid.UUID, userId uuid.UUID, creatorId uuid.UUID) error
+	ChangeStartDate(gameId uuid.UUID, dateString string) error
+	ChangeGameName(gameId uuid.UUID, name string) error
 }
 
 type Notification interface {
