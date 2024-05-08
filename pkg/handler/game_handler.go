@@ -306,7 +306,7 @@ func (h *Handler) changeGameName(c *gin.Context) {
 		return
 	}
 
-	err = h.services.ChangeStartDate(gameId, input.Name)
+	err = h.services.ChangeGameName(gameId, input.Name)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -416,6 +416,10 @@ func (h *Handler) getTagsResults(c *gin.Context) {
 
 }
 
+type getGameMembersResponse struct {
+	Members []connectteam.UserPublic `json:"members"`
+}
+
 func (h *Handler) cancelGame(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {
@@ -431,6 +435,24 @@ func (h *Handler) cancelGame(c *gin.Context) {
 	}
 
 	c.Status(http.StatusOK)
+}
+
+func (h *Handler) getGameMembers(c *gin.Context) {
+	gameId, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	members, err := h.services.GetMembers(gameId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, getGameMembersResponse{
+		Members: members,
+	})
 }
 
 //func (h *Handler) addTopicToGame(c *gin.Context) {

@@ -491,6 +491,12 @@ func (h *Handler) inviteMemberToSub(c *gin.Context) {
 		return
 	}
 
+	plan, err := h.services.Plan.GetUserActivePlan(input.UserId)
+	if plan.Id == planId {
+		newErrorResponse(c, http.StatusForbidden, "user is already participant")
+		return
+	}
+
 	err = h.services.InviteUserToSub(planId, input.UserId, holderId)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())

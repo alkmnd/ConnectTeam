@@ -112,12 +112,13 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		game.GET("/:id", h.getGame)
 		game.DELETE("/:id", h.deleteGameFromGameList)
 		game.POST("/:code", h.addUserAsParticipant)
-		game.GET(":id/results", h.getResults)
-		game.GET(":id/results/:user_id/tags", h.getTagsResults)
+		game.GET("/:id/results", h.getResults)
+		game.GET("/:id/results/:user_id/tags", h.getTagsResults)
+		game.GET("/:id/members", h.getGameMembers)
 		game.PATCH("/:id/cancel", h.cancelGame)
 		game.POST("/invite/:id", h.inviteMemberToGame)
-		game.PATCH(":id/date", h.changeGameStartDate)
-		game.PATCH(":id/name", h.changeGameName)
+		game.PATCH("/:id/date", h.changeGameStartDate)
+		game.PATCH("/:id/name", h.changeGameName)
 	}
 
 	tags := router.Group("/tags", h.userIdentity)
