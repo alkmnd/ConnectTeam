@@ -122,7 +122,9 @@ func (r *GamePostgres) CancelGame(gameId uuid.UUID) error {
 }
 
 func (r *GamePostgres) GetGameParticipants(gameId uuid.UUID) (users []connectteam.UserPublic, err error) {
-	query := fmt.Sprintf(`SELECT id FROM %s gu WHERE gu.game_id=$1`, gamesUsersTable)
+	query := fmt.Sprintf(`SELECT u.id FROM %s u 
+    JOIN %s gu ON gu.user_id = u.id
+	 WHERE gu.game_id=$1`, usersTable, gamesUsersTable)
 	err = r.db.Select(&users, query, gameId)
 	return users, err
 }

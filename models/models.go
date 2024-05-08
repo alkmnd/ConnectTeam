@@ -39,17 +39,17 @@ type UserResult struct {
 
 type UserPublic struct {
 	Id    uuid.UUID `json:"id" db:"id"`
-	Email string    `json:"email" db:"email"`
+	Email string    `json:"email,omitempty" db:"email"`
 	// PhoneNumber string `json:"phone_number" db:"phone_number"`
-	FirstName    string `json:"first_name" db:"first_name" binding:"required"`
-	SecondName   string `json:"second_name" db:"second_name" binding:"required"`
-	Description  string `json:"description" db:"description"`
-	Access       string `json:"access" db:"access"`
-	CompanyName  string `json:"company_name" db:"company_name"`
-	CompanyInfo  string `json:"company_info" db:"company_info"`
-	CompanyURL   string `json:"company_url" db:"company_url"`
-	CompanyLogo  string `json:"company_logo" db:"company_logo"`
-	ProfileImage string `json:"profile_image" db:"profile_image"`
+	FirstName    string `json:"first_name,omitempty" db:"first_name" binding:"required"`
+	SecondName   string `json:"second_name,omitempty" db:"second_name" binding:"required"`
+	Description  string `json:"description,omitempty" db:"description"`
+	Access       string `json:"access,omitempty" db:"access"`
+	CompanyName  string `json:"company_name,omitempty" db:"company_name"`
+	CompanyInfo  string `json:"company_info,omitempty" db:"company_info"`
+	CompanyURL   string `json:"company_url,omitempty" db:"company_url"`
+	CompanyLogo  string `json:"company_logo,omitempty" db:"company_logo"`
+	ProfileImage string `json:"profile_image,omitempty" db:"profile_image"`
 }
 
 type UserPersonalInfo struct {
