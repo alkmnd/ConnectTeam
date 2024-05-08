@@ -81,7 +81,9 @@ type Question interface {
 	GetRandWithLimit(topicId uuid.UUID, limit int) ([]connectteam.Question, error)
 	GetQuestionTags(questionId uuid.UUID) ([]models.Tag, error)
 	UpdateQuestionTags(questionId uuid.UUID, tags []models.Tag) ([]models.Tag, error)
+	GetTagsUsers(userId uuid.UUID, gameId uuid.UUID) ([]models.Tag, error)
 	GetAllTags() ([]models.Tag, error)
+	CreateTagsUsers(userId uuid.UUID, gameId uuid.UUID, tagId uuid.UUID) error
 }
 
 type Game interface {

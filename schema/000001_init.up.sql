@@ -107,17 +107,10 @@ CREATE TABLE tags_questions
     primary key (tag_id, question_id)
 );
 
-CREATE OR REPLACE FUNCTION update_subscription()
-RETURNS TRIGGER AS $$
-BEGIN
-  IF NEW.expiry_date < now() AND NEW.status != 'on_confirm' THEN
-    NEW.status := 'expired';
-END IF;
-RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER check_subscription_expiry
-    AFTER INSERT OR UPDATE ON subscriptions
-                        FOR EACH ROW
-                        EXECUTE FUNCTION update_subscription();
+CREATE TABLE users_tags
+(
+        user_id uuid REFERENCES users (id) ON DELETE CASCADE,
+        game_id uuid REFERENCES games (id) ON DELETE CASCADE,
+        tag_id uuid REFERENCES tags(id) ON DELETE CASCADE,
+        primary key (tag_id, game_id, user_id)
+)

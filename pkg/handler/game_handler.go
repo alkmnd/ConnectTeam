@@ -393,6 +393,29 @@ func (h *Handler) validateGameInvitationCode(c *gin.Context) {
 	})
 }
 
+func (h *Handler) getTagsResults(c *gin.Context) {
+	gameId, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	userId, err := uuid.Parse(c.Param("user_id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	tags, err := h.services.GetTagsUsers(userId, gameId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, getTagsResponse{
+		Data: tags,
+	})
+
+}
+
 func (h *Handler) cancelGame(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {

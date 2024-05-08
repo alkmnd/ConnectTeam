@@ -116,6 +116,20 @@ func (r *QuestionPostgres) GetRandWithLimit(topicId uuid.UUID, limit int) ([]con
 	return questions, err
 }
 
+func (r *QuestionPostgres) GetTagsUsers(userId uuid.UUID, gameId uuid.UUID) ([]models.Tag, error) {
+	var tags []models.Tag
+	query := fmt.Sprintf("SELECT t.id, t.name FROM %s t JOIN %s tu ON t.id = tu.tag_id WHERE game_id = $1 AND user_id = $2", tagsTable, tagsUsersTable)
+	err := r.db.Select(&tags, query, gameId, userId)
+	return tags, err
+}
+
+func (r *QuestionPostgres) CreateTagsUsers(userId uuid.UUID, gameId uuid.UUID, tagId uuid.UUID) error {
+	query := fmt.Sprintf("INSERT INTO %s (user_id, game_id, tag_id) values ($1, $2, $3)", tagsUsersTable)
+	_, err := r.db.Exec(query, userId, gameId, tagId)
+	return err
+
+}
+
 func (r *QuestionPostgres) UpdateQuestion(content string, id uuid.UUID) (connectteam.Question, error) {
 	var question connectteam.Question
 	query := fmt.Sprintf(`UPDATE %s SET content = $1 WHERE id = %d RETURNING id, topic_id, content`, questionsTable, id)

@@ -53,6 +53,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		question := httpService.Group("/questions")
 		{
 			question.GET("/{:id}/{:limit}", h.getRandWithLimit)
+			//question.GET("/{:id}/{:limit}", h.getQuestionTags)
 		}
 		user := httpService.Group("/users")
 		{
@@ -139,7 +140,12 @@ func (h *Handler) startGame(c *gin.Context) {
 }
 
 type saveResultsInput struct {
-	Results map[uuid.UUID]int `json:"results"`
+	Results map[uuid.UUID]Rates `json:"results"`
+}
+
+type Rates struct {
+	Value int         `json:"value"`
+	Tags  []uuid.UUID `json:"tags"`
 }
 
 func (h *Handler) saveResults(c *gin.Context) {
@@ -156,10 +162,11 @@ func (h *Handler) saveResults(c *gin.Context) {
 	}
 
 	for i, v := range input.Results {
-		_ = h.services.SaveResults(gameId, i, v)
-		//if err != nil {
-		//
-		//}
+		_ = h.services.SaveResults(gameId, i, v.Value)
+		for k := range input.Results[i].Tags {
+			_ = h.services.CreateTagsUsers(i, gameId, input.Results[i].Tags[k])
+		}
+
 	}
 	c.Status(http.StatusOK)
 }
