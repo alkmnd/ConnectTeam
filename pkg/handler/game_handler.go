@@ -1,7 +1,7 @@
 package handler
 
 import (
-	connectteam "ConnectTeam"
+	connectteam "ConnectTeam/models"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
@@ -444,7 +444,7 @@ func (h *Handler) getGameMembers(c *gin.Context) {
 		return
 	}
 
-	members, err := h.services.GetMembers(gameId)
+	members, err := h.services.Game.GetGameParticipants(gameId)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

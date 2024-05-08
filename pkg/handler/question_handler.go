@@ -1,7 +1,7 @@
 package handler
 
 import (
-	connectteam "ConnectTeam"
+	connectteam "ConnectTeam/models"
 	"ConnectTeam/pkg/service/models"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

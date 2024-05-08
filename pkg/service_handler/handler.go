@@ -1,7 +1,7 @@
 package service_handler
 
 import (
-	connectteam "ConnectTeam"
+	connectteam "ConnectTeam/models"
 	"ConnectTeam/pkg/service"
 	"ConnectTeam/pkg/service/models"
 	"encoding/json"

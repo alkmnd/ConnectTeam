@@ -1,7 +1,7 @@
 package repository
 
 import (
-	connectteam "ConnectTeam"
+	connectteam "ConnectTeam/models"
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -121,7 +121,7 @@ func (r *GamePostgres) CancelGame(gameId uuid.UUID) error {
 	return err
 }
 
-func (r *GamePostgres) GetGameParticipant(gameId uuid.UUID) (users []connectteam.UserPublic, err error) {
+func (r *GamePostgres) GetGameParticipants(gameId uuid.UUID) (users []connectteam.UserPublic, err error) {
 	query := fmt.Sprintf(`SELECT id FROM %s gu gu.game_id=$1`, gamesUsersTable)
 	err = r.db.Select(&users, query, gameId)
 	return users, err

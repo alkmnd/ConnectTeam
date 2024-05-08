@@ -1,4 +1,4 @@
-package connectteam
+package models
 
 import (
 	"errors"

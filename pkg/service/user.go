@@ -1,7 +1,7 @@
 package service
 
 import (
-	connectteam "ConnectTeam"
+	connectteam "ConnectTeam/models"
 	"ConnectTeam/pkg/repository"
 	"crypto/rand"
 	"errors"

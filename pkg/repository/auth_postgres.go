@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"ConnectTeam"
+	"ConnectTeam/models"
 	"fmt"
 	"github.com/google/uuid"
 
@@ -17,7 +17,7 @@ type AuthPostgres struct {
 func NewAuthPostgres(db *sqlx.DB) *AuthPostgres {
 	return &AuthPostgres{db: db}
 }
-func (r *AuthPostgres) CreateUser(user connectteam.User) (uuid.UUID, error) {
+func (r *AuthPostgres) CreateUser(user models.User) (uuid.UUID, error) {
 	var id uuid.UUID
 	query := fmt.Sprintf("INSERT INTO %s (email, first_name, second_name, description, password_hash, access, profile_image, company_name, company_info, company_url, company_logo) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id", usersTable)
 	row := r.db.QueryRow(query, user.Email, user.FirstName, user.SecondName, "", user.Password, "user", "", "", "", "", "")
@@ -33,8 +33,8 @@ func (r *AuthPostgres) CreateVerificationCode(email string, code string) error {
 	return err
 }
 
-func (r *AuthPostgres) GetUserWithEmail(email, password string) (connectteam.User, error) {
-	var user connectteam.User
+func (r *AuthPostgres) GetUserWithEmail(email, password string) (models.User, error) {
+	var user models.User
 	query := fmt.Sprintf("SELECT id, email, first_name, second_name, access FROM %s WHERE email=$1 AND password_hash=$2", usersTable)
 	if err := r.db.Get(&user, query, email, password); err != nil {
 		print(err.Error())

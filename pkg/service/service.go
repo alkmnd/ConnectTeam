@@ -1,7 +1,7 @@
 package service
 
 import (
-	connectteam "ConnectTeam"
+	connectteam "ConnectTeam/models"
 	"ConnectTeam/pkg/repository"
 	"ConnectTeam/pkg/repository/filestorage"
 	"ConnectTeam/pkg/service/models"
@@ -102,6 +102,7 @@ type Game interface {
 	InviteUserToGame(gameId uuid.UUID, userId uuid.UUID, creatorId uuid.UUID) error
 	ChangeStartDate(gameId uuid.UUID, dateString string) error
 	ChangeGameName(gameId uuid.UUID, name string) error
+	GetGameParticipants(gameId uuid.UUID) (users []connectteam.UserPublic, err error)
 }
 
 type Notification interface {

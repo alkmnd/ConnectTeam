@@ -1,7 +1,7 @@
 package service
 
 import (
-	connectteam "ConnectTeam"
+	connectteam "ConnectTeam/models"
 	"ConnectTeam/pkg/repository"
 	"errors"
 	"github.com/google/uuid"
@@ -97,7 +97,7 @@ func (s *GameService) StartGame(gameId uuid.UUID) error {
 		return err
 	}
 
-	users, err := s.gameRepo.GetGameParticipant(gameId)
+	users, err := s.gameRepo.GetGameParticipants(gameId)
 	if err != nil {
 		return nil
 	}
@@ -109,6 +109,10 @@ func (s *GameService) StartGame(gameId uuid.UUID) error {
 	}
 	return nil
 
+}
+
+func (s *GameService) GetGameParticipants(gameId uuid.UUID) (users []connectteam.UserPublic, err error) {
+	return s.gameRepo.GetGameParticipants(gameId)
 }
 
 func (s *GameService) EndGame(gameId uuid.UUID) error {
@@ -153,7 +157,7 @@ func (s *GameService) CancelGame(gameId uuid.UUID, userId uuid.UUID) error {
 		return err
 	}
 
-	users, err := s.gameRepo.GetGameParticipant(gameId)
+	users, err := s.gameRepo.GetGameParticipants(gameId)
 	if err != nil {
 		return nil
 	}

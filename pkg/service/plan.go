@@ -1,7 +1,7 @@
 package service
 
 import (
-	"ConnectTeam"
+	"ConnectTeam/models"
 	"ConnectTeam/pkg/repository"
 	"crypto/rand"
 	"encoding/base64"
@@ -16,7 +16,7 @@ type PlanService struct {
 	notificationRepo repository.Notification
 }
 
-func (s *PlanService) GetPlan(planId uuid.UUID) (sub connectteam.Subscription, err error) {
+func (s *PlanService) GetPlan(planId uuid.UUID) (sub models.Subscription, err error) {
 	return s.planRepo.GetPlan(planId)
 }
 
@@ -41,12 +41,12 @@ func NewPlanService(repo repository.Plan, client repository.Payment, notificatio
 	return &PlanService{planRepo: repo, yooClient: client, notificationRepo: notification}
 }
 
-func (s *PlanService) GetUserActivePlan(userId uuid.UUID) (connectteam.UserPlan, error) {
+func (s *PlanService) GetUserActivePlan(userId uuid.UUID) (models.UserPlan, error) {
 	return s.planRepo.GetUserActivePlan(userId)
 }
 
 func (s *PlanService) CheckIfSubscriptionExists(userId uuid.UUID) (bool, error) {
-	var userPlans []connectteam.UserPlan
+	var userPlans []models.UserPlan
 
 	userPlans, err := s.planRepo.GetUserSubscriptions(userId)
 	if err != nil {
@@ -56,8 +56,8 @@ func (s *PlanService) CheckIfSubscriptionExists(userId uuid.UUID) (bool, error) 
 	return len(userPlans) > 0, nil
 }
 
-func (s *PlanService) GetUserSubscriptions(userId uuid.UUID) ([]connectteam.UserPlan, error) {
-	var userPlans []connectteam.UserPlan
+func (s *PlanService) GetUserSubscriptions(userId uuid.UUID) ([]models.UserPlan, error) {
+	var userPlans []models.UserPlan
 
 	userPlans, err := s.planRepo.GetUserSubscriptions(userId)
 	if err != nil {
@@ -67,16 +67,16 @@ func (s *PlanService) GetUserSubscriptions(userId uuid.UUID) ([]connectteam.User
 	return userPlans, nil
 }
 
-func (s *PlanService) CreateTrialPlan(userId uuid.UUID) (userPlan connectteam.UserPlan, err error) {
+func (s *PlanService) CreateTrialPlan(userId uuid.UUID) (userPlan models.UserPlan, err error) {
 	err = s.planRepo.DeleteOnConfirmPlan(userId)
 	if err != nil {
 		return userPlan, err
 	}
 
-	plan, err := s.planRepo.CreatePlan(connectteam.UserPlan{
+	plan, err := s.planRepo.CreatePlan(models.UserPlan{
 		PlanType:       "basic",
 		HolderId:       userId,
-		Status:         connectteam.Active,
+		Status:         models.Active,
 		Duration:       14,
 		ExpiryDate:     time.Now().Add(14 * 24 * time.Hour),
 		PlanAccess:     "holder",
@@ -97,7 +97,7 @@ func (s *PlanService) CreateTrialPlan(userId uuid.UUID) (userPlan connectteam.Us
 	return plan, nil
 }
 
-func (s *PlanService) AddUserToAdvanced(holderPlan connectteam.UserPlan, userId uuid.UUID) (userPlan connectteam.UserPlan, err error) {
+func (s *PlanService) AddUserToAdvanced(holderPlan models.UserPlan, userId uuid.UUID) (userPlan models.UserPlan, err error) {
 
 	err = s.planRepo.SetExpiredStatusWithUserId(userId)
 	if err != nil {
@@ -112,7 +112,7 @@ func (s *PlanService) AddUserToAdvanced(holderPlan connectteam.UserPlan, userId 
 	return s.planRepo.GetUserActivePlan(userId)
 }
 
-func (s *PlanService) GetMembers(id uuid.UUID) ([]connectteam.UserPublic, error) {
+func (s *PlanService) GetMembers(id uuid.UUID) ([]models.UserPublic, error) {
 	return s.planRepo.GetMembers(id)
 }
 
@@ -158,7 +158,7 @@ func (s *PlanService) UpgradePlan(orderId string, planId uuid.UUID, userId uuid.
 
 }
 
-func (s *PlanService) CreatePlan(orderId string, userId uuid.UUID) (userPlan connectteam.UserPlan, err error) {
+func (s *PlanService) CreatePlan(orderId string, userId uuid.UUID) (userPlan models.UserPlan, err error) {
 	activePlan, _ := s.planRepo.GetUserActivePlan(userId)
 
 	if activePlan.Id != uuid.Nil && !activePlan.IsTrial {
@@ -188,12 +188,12 @@ func (s *PlanService) CreatePlan(orderId string, userId uuid.UUID) (userPlan con
 		}
 	}
 
-	userPlan, err = s.planRepo.CreatePlan(connectteam.UserPlan{
+	userPlan, err = s.planRepo.CreatePlan(models.UserPlan{
 		PlanType:       payment.Metadata.PlanType,
 		HolderId:       userId,
 		ExpiryDate:     time.Now().Add(time.Hour * 24 * 30),
 		Duration:       30,
-		Status:         connectteam.Active,
+		Status:         models.Active,
 		InvitationCode: userPlan.InvitationCode,
 		IsTrial:        false,
 	})
@@ -242,7 +242,7 @@ func (s *PlanService) SetPlanByAdmin(userId uuid.UUID, planType string, expiryDa
 			return err
 		}
 	}
-	var userPlan = connectteam.UserPlan{
+	var userPlan = models.UserPlan{
 		PlanType:       planType,
 		Status:         "active",
 		PlanAccess:     "holder",
@@ -264,7 +264,7 @@ func (s *PlanService) SetPlanByAdmin(userId uuid.UUID, planType string, expiryDa
 
 }
 
-func (s *PlanService) GetUsersPlans() ([]connectteam.UserPlan, error) {
+func (s *PlanService) GetUsersPlans() ([]models.UserPlan, error) {
 	return s.planRepo.GetUsersPlans()
 }
 

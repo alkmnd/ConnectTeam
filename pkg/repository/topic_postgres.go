@@ -1,11 +1,10 @@
 package repository
 
 import (
+	connectteam "ConnectTeam/models"
 	// connectteam "ConnectTeam"
 	"fmt"
 	"github.com/google/uuid"
-
-	connectteam "ConnectTeam"
 
 	"github.com/jmoiron/sqlx"
 )

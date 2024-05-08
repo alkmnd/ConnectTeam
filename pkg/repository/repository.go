@@ -1,7 +1,7 @@
 package repository
 
 import (
-	connectteam "ConnectTeam"
+	connectteam "ConnectTeam/models"
 	"ConnectTeam/pkg/repository/models"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
@@ -99,7 +99,7 @@ type Game interface {
 	GetResults(gameId uuid.UUID) (results []connectteam.UserResult, err error)
 	EndGame(gameId uuid.UUID) error
 	CancelGame(gameId uuid.UUID) error
-	GetGameParticipant(gameId uuid.UUID) (users []connectteam.UserPublic, err error)
+	GetGameParticipants(gameId uuid.UUID) (users []connectteam.UserPublic, err error)
 	ChangeStartDate(gameId uuid.UUID, date time.Time) error
 	ChangeGameName(gameId uuid.UUID, name string) error
 }

@@ -1,7 +1,7 @@
 package handler
 
 import (
-	connectteam "ConnectTeam"
+	connectteam "ConnectTeam/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

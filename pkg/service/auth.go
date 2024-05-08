@@ -1,7 +1,7 @@
 package service
 
 import (
-	"ConnectTeam"
+	"ConnectTeam/models"
 	"ConnectTeam/pkg/repository"
 	"crypto/sha1"
 	"errors"
@@ -35,7 +35,7 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 	return &AuthService{repo: repo}
 }
 
-func (s *AuthService) CreateUser(user connectteam.UserSignUpRequest) (uuid.UUID, error) {
+func (s *AuthService) CreateUser(user models.UserSignUpRequest) (uuid.UUID, error) {
 	user.Password = generatePasswordHash(user.Password)
 	dbCode, err := s.repo.GetVerificationCode(user.Email)
 	if err != nil {
@@ -44,18 +44,18 @@ func (s *AuthService) CreateUser(user connectteam.UserSignUpRequest) (uuid.UUID,
 	if dbCode != user.VerificationCode {
 		return uuid.Nil, errors.New("wrong verification code")
 	}
-	repoUser := connectteam.User{
+	repoUser := models.User{
 		Email:      user.Email,
 		Password:   user.Password,
 		FirstName:  user.FirstName,
 		SecondName: user.SecondName,
-		Access:     string(connectteam.UserAccess),
+		Access:     string(models.UserAccess),
 	}
 	return s.repo.CreateUser(repoUser)
 }
 
 func (s *AuthService) GenerateToken(login, password string, isEmail bool) (string, string, error, uuid.UUID) {
-	var user connectteam.User
+	var user models.User
 	var err error
 	if isEmail {
 		user, err = s.repo.GetUserWithEmail(login, generatePasswordHash(password))
@@ -126,7 +126,7 @@ func CreateVerificationCode(email string) (string, error) {
 
 }
 
-func (s *AuthService) VerifyEmail(verifyEmail connectteam.VerifyEmail) error {
+func (s *AuthService) VerifyEmail(verifyEmail models.VerifyEmail) error {
 
 	//id, err := s.gameRepo.GetIdWithEmail(verifyEmail.Email)
 	//

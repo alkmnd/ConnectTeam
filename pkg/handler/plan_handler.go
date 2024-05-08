@@ -1,7 +1,7 @@
 package handler
 
 import (
-	connectteam "ConnectTeam"
+	connectteam "ConnectTeam/models"
 	"ConnectTeam/pkg/handler/models"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -343,7 +343,13 @@ func (h *Handler) addUserToPlan(c *gin.Context) {
 		return
 	}
 
-	plan, err := h.services.AddUserToAdvanced(holderPlan, id)
+	plan, err := h.services.Plan.GetUserActivePlan(id)
+	if plan.Id == holderPlan.Id {
+		newErrorResponse(c, http.StatusForbidden, "user is already participant")
+		return
+	}
+
+	plan, err = h.services.AddUserToAdvanced(holderPlan, id)
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())

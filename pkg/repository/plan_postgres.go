@@ -1,7 +1,7 @@
 package repository
 
 import (
-	connectteam "ConnectTeam"
+	connectteam "ConnectTeam/models"
 	"fmt"
 	"github.com/google/uuid"
 
