@@ -9,6 +9,7 @@ type Notification struct {
 	Type    string    `json:"type" redis:"type"`
 	Payload string    `json:"payload" redis:"payload"`
 	Date    time.Time `json:"date" redis:"date"`
+	IsRead  bool      `json:"is_read"`
 }
 
 func (n Notification) MarshalBinary() ([]byte, error) {

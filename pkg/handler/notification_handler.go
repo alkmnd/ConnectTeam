@@ -54,3 +54,17 @@ func (h *Handler) createGameStartNotification(c *gin.Context) {
 	c.Status(http.StatusOK)
 
 }
+
+func (h *Handler) readNotifications(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	err = h.services.ReadNotifications(userId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.Status(http.StatusOK)
+}

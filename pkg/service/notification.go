@@ -42,3 +42,6 @@ func NewNotificationService(notificationRepo repository.Notification,
 	gameRepo repository.Game) *NotificationService {
 	return &NotificationService{notificationRepo: notificationRepo, gameRepo: gameRepo}
 }
+func (n *NotificationService) ReadNotifications(userId uuid.UUID) error {
+	return n.notificationRepo.ReadNotifications(userId)
+}

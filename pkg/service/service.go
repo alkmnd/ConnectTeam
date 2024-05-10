@@ -108,6 +108,7 @@ type Game interface {
 type Notification interface {
 	GetUserNotifications(userId uuid.UUID) (notifications []models.Notification, err error)
 	CreateGameStartNotification(gameId uuid.UUID) error
+	ReadNotifications(userId uuid.UUID) error
 }
 
 type Service struct {

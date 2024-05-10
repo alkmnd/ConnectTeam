@@ -111,6 +111,7 @@ type Notification interface {
 	CreateGameInviteNotification(gameId uuid.UUID, userId uuid.UUID) error
 	CreateSubInviteNotification(holderId uuid.UUID, userId uuid.UUID) error
 	CreateDeleteFromSubNotification(holderId uuid.UUID, userId uuid.UUID) error
+	ReadNotifications(userId uuid.UUID) error
 }
 
 type Payment interface {
