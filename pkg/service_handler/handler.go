@@ -259,9 +259,7 @@ func (h *Handler) getTopicsWithLimit(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, getTopicsResponse{
-		Data: topics,
-	})
+	c.JSON(http.StatusOK, topics)
 }
 
 type getTopicsResponse struct {
