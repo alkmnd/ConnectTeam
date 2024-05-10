@@ -3,6 +3,7 @@ package handler
 import (
 	"ConnectTeam/pkg/handler/models"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"net/http"
 )
 
@@ -34,5 +35,22 @@ func (h *Handler) getAllNotifications(c *gin.Context) {
 	c.JSON(http.StatusOK, getAllNotificationsResponse{
 		Data: response,
 	})
+
+}
+
+func (h *Handler) createGameStartNotification(c *gin.Context) {
+	gameId, err := uuid.Parse(c.Param("id"))
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	err = h.services.CreateGameStartNotification(gameId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.Status(http.StatusOK)
 
 }

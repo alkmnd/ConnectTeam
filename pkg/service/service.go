@@ -107,6 +107,7 @@ type Game interface {
 
 type Notification interface {
 	GetUserNotifications(userId uuid.UUID) (notifications []models.Notification, err error)
+	CreateGameStartNotification(gameId uuid.UUID) error
 }
 
 type Service struct {
@@ -131,6 +132,6 @@ func NewService(repos *repository.Repository, fileStorage *filestorage.FileStora
 		Uploader:      uploader.NewUploader(fileStorage),
 		Game:          NewGameService(repos.Game, repos.Notification, repos.Plan),
 		Payment:       NewPaymentService(repos.Payment),
-		Notification:  NewNotificationService(repos.Notification),
+		Notification:  NewNotificationService(repos.Notification, repos.Game),
 	}
 }
