@@ -4,7 +4,6 @@ import (
 	connectteam "ConnectTeam/models"
 	"ConnectTeam/pkg/service"
 	"ConnectTeam/pkg/service/models"
-	"encoding/json"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -52,16 +51,41 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		}
 		question := httpService.Group("/questions")
 		{
-			question.GET("/{:id}/{:limit}", h.getRandWithLimit)
+			question.GET("/", h.getRandWithLimit)
 			//question.GET("/{:id}/{:limit}", h.getQuestionTags)
 		}
 		user := httpService.Group("/users")
 		{
+			user.GET("/:id", h.getUserById)
 			user.GET("/:id/plan", h.getUserActivePlan)
 		}
 	}
 
 	return router
+}
+
+func (h *Handler) getUserById(c *gin.Context) {
+	println("getUserById")
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+	var user connectteam.UserPublic
+
+	user, err = h.services.User.GetUserById(id)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"id":          id,
+		"email":       user.Email,
+		"first_name":  user.FirstName,
+		"second_name": user.SecondName,
+	})
 }
 
 func (h *Handler) getUserActivePlan(c *gin.Context) {
@@ -99,7 +123,7 @@ func (h *Handler) getUserActivePlan(c *gin.Context) {
 }
 
 func (h *Handler) getGame(c *gin.Context) {
-
+	println("getGame")
 	gameId, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -198,31 +222,24 @@ func (h *Handler) getTopic(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	jsonTopic, err := json.Marshal(topic)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	c.JSON(http.StatusOK, jsonTopic)
+	c.JSON(http.StatusOK, topic)
 }
 
 func (h *Handler) getRandWithLimit(c *gin.Context) {
-	topicId, err := uuid.Parse(c.Param("topic_id"))
+	topicId, err := uuid.Parse(c.Query("topic_id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	limit, err := strconv.Atoi(c.Param("limit"))
+	limit, err := strconv.Atoi(c.Query("limit"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 	questions, err := h.services.Question.GetRandWithLimit(topicId, limit)
 
-	c.JSON(http.StatusOK, getQuestionsResponse{
-		Data: questions,
-	})
+	c.JSON(http.StatusOK, questions)
 }
 
 type getQuestionsResponse struct {

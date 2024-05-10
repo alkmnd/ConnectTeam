@@ -337,7 +337,6 @@ func (h *Handler) getGame(c *gin.Context) {
 		"start_date":      game.StartDate,
 		"status":          game.Status,
 		"invitation_code": game.InvitationCode,
-		"max_size":        game.MaxSize,
 	})
 }
 

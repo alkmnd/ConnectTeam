@@ -9,13 +9,13 @@ import (
 	"ConnectTeam/pkg/repository/redis"
 	"ConnectTeam/pkg/service"
 	"ConnectTeam/pkg/service_handler"
-	"github.com/minio/minio-go"
-	"log"
-	"os"
-
 	"github.com/joho/godotenv"
+	"github.com/minio/minio-go"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"log"
+	"os"
+	"sync"
 )
 
 // @title           ConnectTeam API
@@ -88,15 +88,32 @@ func main() {
 	services := service.NewService(repos, fileStorage)
 	handlers := handler.NewHandler(services)
 
-	srv := new(connectteam.Server)
-	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
-		logrus.Fatalf("error %s", err.Error())
-	}
+	var wg sync.WaitGroup
+	wg.Add(3)
 
+	srv1 := new(connectteam.Server)
+	// Запуск первого сервера в отдельной горутине
+	go func() {
+		defer wg.Done()
+		if err := srv1.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
+			logrus.Fatalf("error %s", err.Error())
+		}
+	}()
+
+	// Создание экземпляра сервера для второго сервера
+	srv2 := new(connectteam.Server)
+	// Создание хэндлера для второго сервера
 	serviceHandler := service_handler.NewHandler(services, os.Getenv("SERVICE_API_KEY"))
-	if err := srv.Run(viper.GetString("service_port"), serviceHandler.InitRoutes()); err != nil {
-		logrus.Fatalf("error %s", err.Error())
-	}
+	// Запуск второго сервера в отдельной горутине
+	go func() {
+		defer wg.Done()
+		if err := srv2.Run(viper.GetString("service_port"), serviceHandler.InitRoutes()); err != nil {
+			logrus.Fatalf("error %s", err.Error())
+		}
+	}()
+
+	wg.Wait()
+
 }
 
 func initConfig() error {

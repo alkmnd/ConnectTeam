@@ -43,19 +43,6 @@ func (s *GameService) ChangeGameName(gameId uuid.UUID, name string) error {
 }
 
 func (s *GameService) CreateGame(creatorId uuid.UUID, startDateString string, name string) (game connectteam.Game, err error) {
-	creatorPlan, err := s.planRepo.GetUserActivePlan(creatorId)
-	if err != nil {
-		return game, errors.New("could not get creator active plan")
-	}
-	var maxSize int
-	switch creatorPlan.PlanType {
-	case "basic":
-		maxSize = 3
-	case "advanced":
-		maxSize = 5
-	case "premium":
-		maxSize = 10
-	}
 	game.InvitationCode, err = generateInviteCode()
 	if err != nil {
 		return game, err
@@ -77,7 +64,6 @@ func (s *GameService) CreateGame(creatorId uuid.UUID, startDateString string, na
 		return game, errors.New("incorrect game name")
 	}
 	game.Name = name
-	game.MaxSize = maxSize
 
 	return s.gameRepo.CreateGame(game)
 }
