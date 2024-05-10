@@ -91,7 +91,7 @@ type Game interface {
 	GetCreatedGames(page int, userId uuid.UUID) (games []connectteam.Game, err error)
 	CreateParticipant(userId uuid.UUID, gameId uuid.UUID) error
 	GetGame(gameId uuid.UUID) (game connectteam.Game, err error)
-	DeleteGame(gameId uuid.UUID) error
+	DeleteGameFromGameList(gameId uuid.UUID, userId uuid.UUID) error
 	GetGameWithInvitationCode(code string) (game connectteam.Game, err error)
 	GetGames(page int, userId uuid.UUID) (games []connectteam.Game, err error)
 	StartGame(gameId uuid.UUID) error

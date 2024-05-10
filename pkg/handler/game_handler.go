@@ -212,12 +212,12 @@ func (h *Handler) deleteGameFromGameList(c *gin.Context) {
 		return
 	}
 
-	if id != game.CreatorId {
+	if id == game.CreatorId {
 		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
 		return
 	}
 
-	err = h.services.Game.DeleteGame(gameId)
+	err = h.services.Game.DeleteGameFromGameList(gameId, id)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

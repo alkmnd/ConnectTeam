@@ -117,8 +117,8 @@ func (s *GameService) GetGame(gameId uuid.UUID) (connectteam.Game, error) {
 	return s.gameRepo.GetGame(gameId)
 }
 
-func (s *GameService) DeleteGame(gameId uuid.UUID) error {
-	return s.gameRepo.DeleteGame(gameId)
+func (s *GameService) DeleteGameFromGameList(gameId uuid.UUID, userId uuid.UUID) error {
+	return s.gameRepo.DeleteGameFromGameList(gameId, userId)
 }
 
 func (s *GameService) GetGameWithInvitationCode(code string) (connectteam.Game, error) {

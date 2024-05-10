@@ -94,9 +94,9 @@ func (r *GamePostgres) EndGame(gameId uuid.UUID) error {
 	return err
 }
 
-func (r *GamePostgres) DeleteGame(gameId uuid.UUID) error {
-	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1", gamesTable)
-	_, err := r.db.Exec(query, gameId)
+func (r *GamePostgres) DeleteGameFromGameList(gameId uuid.UUID, userId uuid.UUID) error {
+	query := fmt.Sprintf("DELETE FROM %s WHERE game_id = $1 AND user_id=$2", gamesUsersTable)
+	_, err := r.db.Exec(query, gameId, userId)
 	return err
 }
 
