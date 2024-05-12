@@ -52,6 +52,7 @@ CREATE TABLE subs_holders
     user_id uuid references users (id) on delete cascade,
     sub_id uuid references subscriptions (id) on delete cascade,
     access plan_access
+    primary key (user_id, sub_id),
 );
 
 CREATE TABLE topics
