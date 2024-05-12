@@ -338,7 +338,7 @@ func (h *Handler) addUserToPlan(c *gin.Context) {
 	}
 
 	members, err := h.services.GetMembers(holderPlan.Id)
-	if len(members) == 5 {
+	if len(members) == 3 {
 		newErrorResponse(c, http.StatusForbidden, "max number of members")
 		return
 	}
