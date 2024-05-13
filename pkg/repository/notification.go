@@ -24,7 +24,10 @@ func (n *NotificationManager) ReadNotifications(userId uuid.UUID) error {
 	}
 	for i := range notifications {
 		notifications[i].IsRead = true
-		_ = n.notificationCache.HSet(userId.String(), notifications[i].Id, notifications[i])
+		err = n.notificationCache.HSet(userId.String(), notifications[i].Id, notifications[i])
+		if err != nil {
+			println(err.Error())
+		}
 	}
 
 	return nil

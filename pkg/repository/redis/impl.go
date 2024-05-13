@@ -18,13 +18,13 @@ type NotificationCache struct {
 func (n NotificationCache) HGet(key string) ([]models.Notification, error) {
 	var notifications []models.Notification
 	ctx := context.Background()
-	fields, err := n.Cache.HGetAll(ctx, key).Result()
+	rows, err := n.Cache.HGetAll(ctx, key).Result()
 	if err != nil {
 		return notifications, err
 	}
-	for key, _ := range fields {
+	for _, val := range rows {
 		var notification models.Notification
-		err := json.Unmarshal([]byte(key), &notification)
+		err := json.Unmarshal([]byte(val), &notification)
 		if err != nil {
 			fmt.Printf("unmarshal error: %s\n", err)
 			continue
@@ -36,9 +36,22 @@ func (n NotificationCache) HGet(key string) ([]models.Notification, error) {
 
 }
 
+type FieldValueMapMap map[string]interface{}
+
+func (cm FieldValueMapMap) MarshalBinary() ([]byte, error) {
+	return json.Marshal(cm)
+}
+
+func (cm FieldValueMapMap) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, &cm)
+}
+
 func (n NotificationCache) HSet(key string, value uuid.UUID, notification models.Notification) error {
 	ctx := context.Background()
-	err := n.Cache.HSet(ctx, key, value, notification, n.expiration).Err()
+	err := n.Cache.HSet(ctx, key, value.String(), notification).Err()
+	if err != nil {
+		return err
+	}
 	return err
 }
 

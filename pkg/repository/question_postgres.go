@@ -132,8 +132,8 @@ func (r *QuestionPostgres) CreateTagsUsers(userId uuid.UUID, gameId uuid.UUID, t
 
 func (r *QuestionPostgres) UpdateQuestion(content string, id uuid.UUID) (connectteam.Question, error) {
 	var question connectteam.Question
-	query := fmt.Sprintf(`UPDATE %s SET content = $1 WHERE id = %d RETURNING id, topic_id, content`, questionsTable, id)
-	row := r.db.QueryRow(query, content)
+	query := fmt.Sprintf(`UPDATE %s SET content = $1 WHERE id = $2 RETURNING id, topic_id, content`, questionsTable)
+	row := r.db.QueryRow(query, content, id)
 	err := row.Scan(&question.Id, &question.TopicId, &question.Content)
 
 	return question, err

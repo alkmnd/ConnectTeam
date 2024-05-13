@@ -30,6 +30,7 @@ func (h *Handler) getAllNotifications(c *gin.Context) {
 			Type:    serviceNotifications[i].Type,
 			Payload: serviceNotifications[i].Payload,
 			Date:    serviceNotifications[i].Date,
+			IsRead:  serviceNotifications[i].IsRead,
 		})
 	}
 	c.JSON(http.StatusOK, getAllNotificationsResponse{

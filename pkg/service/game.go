@@ -138,6 +138,10 @@ func (s *GameService) CancelGame(gameId uuid.UUID, userId uuid.UUID) error {
 	if game.CreatorId != userId {
 		return errors.New("permission denied")
 	}
+
+	if game.Status != "not_started" {
+		return errors.New("permission denied")
+	}
 	err = s.gameRepo.CancelGame(gameId)
 	if err != nil {
 		return err
@@ -150,7 +154,7 @@ func (s *GameService) CancelGame(gameId uuid.UUID, userId uuid.UUID) error {
 
 	for i := range users {
 		if users[i].Id != game.CreatorId {
-			_ = s.notificationRepo.CreateGameCancelNotification(gameId, users[i].Id)
+			err = s.notificationRepo.CreateGameCancelNotification(gameId, users[i].Id)
 		}
 	}
 	return nil
