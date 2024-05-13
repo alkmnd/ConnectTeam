@@ -24,7 +24,7 @@ func (n *NotificationManager) ReadNotifications(userId uuid.UUID) error {
 	}
 	for i := range notifications {
 		notifications[i].IsRead = true
-		_ = n.notificationCache.HSet(userId.String(), notifications[i])
+		_ = n.notificationCache.HSet(userId.String(), notifications[i].Id, notifications[i])
 	}
 
 	return nil
@@ -32,56 +32,63 @@ func (n *NotificationManager) ReadNotifications(userId uuid.UUID) error {
 
 func (n *NotificationManager) CreateGameCancelNotification(gameId uuid.UUID, userId uuid.UUID) error {
 	notification := models.Notification{
+		Id:      uuid.New(),
 		Type:    models.CancelGameNotification,
 		Payload: gameId.String(),
 		Date:    time.Now(),
+		IsRead:  false,
 	}
 
-	return n.notificationCache.HSet(userId.String(), notification)
+	return n.notificationCache.HSet(userId.String(), notification.Id, notification)
 }
 
 func (n *NotificationManager) CreateGameStartNotification(gameId uuid.UUID, userId uuid.UUID) error {
+
 	notification := models.Notification{
+		Id:      uuid.New(),
 		Type:    models.StartGameNotification,
 		Payload: gameId.String(),
 		Date:    time.Now(),
 		IsRead:  false,
 	}
 
-	return n.notificationCache.HSet(userId.String(), notification)
+	return n.notificationCache.HSet(userId.String(), notification.Id, notification)
 }
 
 func (n *NotificationManager) CreateGameInviteNotification(gameId uuid.UUID, userId uuid.UUID) error {
 	notification := models.Notification{
+		Id:      uuid.New(),
 		Type:    models.InviteGameNotification,
 		Payload: gameId.String(),
 		Date:    time.Now(),
 		IsRead:  false,
 	}
 
-	return n.notificationCache.HSet(userId.String(), notification)
+	return n.notificationCache.HSet(userId.String(), notification.Id, notification)
 }
 
 func (n *NotificationManager) CreateSubInviteNotification(planId uuid.UUID, userId uuid.UUID) error {
 	notification := models.Notification{
+		Id:      uuid.New(),
 		Type:    models.InviteSubNotification,
 		Payload: planId.String(),
 		Date:    time.Now(),
 		IsRead:  false,
 	}
 
-	return n.notificationCache.HSet(userId.String(), notification)
+	return n.notificationCache.HSet(userId.String(), notification.Id, notification)
 }
 
 func (n *NotificationManager) CreateDeleteFromSubNotification(holderId uuid.UUID, userId uuid.UUID) error {
 	notification := models.Notification{
+		Id:      uuid.New(),
 		Type:    models.DeleteFromSubNotification,
 		Payload: holderId.String(),
 		Date:    time.Now(),
 		IsRead:  false,
 	}
 
-	return n.notificationCache.HSet(userId.String(), notification)
+	return n.notificationCache.HSet(userId.String(), notification.Id, notification)
 }
 
 func NewNotification(client *redis.Client) *NotificationManager {

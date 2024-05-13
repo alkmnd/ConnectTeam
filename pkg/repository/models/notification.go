@@ -2,10 +2,12 @@ package models
 
 import (
 	"encoding/json"
+	"github.com/google/uuid"
 	"time"
 )
 
 type Notification struct {
+	Id      uuid.UUID `json:"id" redis:"id"`
 	Type    string    `json:"type" redis:"type"`
 	Payload string    `json:"payload" redis:"payload"`
 	Date    time.Time `json:"date" redis:"date"`

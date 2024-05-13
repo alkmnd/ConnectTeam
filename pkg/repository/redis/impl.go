@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/goccy/go-json"
+	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 	"time"
 )
@@ -35,9 +36,9 @@ func (n NotificationCache) HGet(key string) ([]models.Notification, error) {
 
 }
 
-func (n NotificationCache) HSet(key string, notification models.Notification) error {
+func (n NotificationCache) HSet(key string, value uuid.UUID, notification models.Notification) error {
 	ctx := context.Background()
-	err := n.Cache.HSet(ctx, key, notification, n.expiration).Err()
+	err := n.Cache.HSet(ctx, key, value, notification, n.expiration).Err()
 	return err
 }
 
