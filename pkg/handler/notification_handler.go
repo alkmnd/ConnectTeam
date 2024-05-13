@@ -40,7 +40,7 @@ func (h *Handler) getAllNotifications(c *gin.Context) {
 }
 
 func (h *Handler) createGameStartNotification(c *gin.Context) {
-	gameId, err := uuid.Parse(c.Param("id"))
+	gameId, err := uuid.Parse(c.Param("game_id"))
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
