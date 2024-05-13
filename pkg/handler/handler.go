@@ -129,7 +129,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	notifications := router.Group("/notifications", h.userIdentity)
 	{
 		notifications.POST("/games/:game_id/start", h.createGameStartNotification)
-		notifications.PATCH("/ч", h.readNotifications)
+		notifications.PATCH("/", h.readNotifications)
 		notifications.GET("/", h.getAllNotifications)
 	}
 
