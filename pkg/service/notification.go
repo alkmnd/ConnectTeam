@@ -22,6 +22,7 @@ func (n *NotificationService) GetUserNotifications(userId uuid.UUID) (notificati
 			Type:    repoNotifications[i].Type,
 			Payload: repoNotifications[i].Payload,
 			Date:    repoNotifications[i].Date,
+			IsRead:  repoNotifications[i].IsRead,
 		})
 	}
 
