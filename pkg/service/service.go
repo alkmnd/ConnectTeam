@@ -16,8 +16,6 @@ type Authorization interface {
 	CreateUser(user connectteam.UserSignUpRequest) (uuid.UUID, error)
 	GenerateToken(login, password string, isEmail bool) (string, string, error, uuid.UUID)
 	ParseToken(token string) (uuid.UUID, string, error)
-	//VerifyPhone(verifyPhone connectteam.VerifyPhone) (string, error)
-	//VerifyUser(verifyUser connectteam.VerifyUser) error
 	VerifyEmail(verifyEmail connectteam.VerifyEmail) error
 	DeleteVerificationCode(email string, code string) error
 }
@@ -123,6 +121,7 @@ type Service struct {
 	Notification
 }
 
+// NewService creates a service instance.
 func NewService(repos *repository.Repository, fileStorage *filestorage.FileStorage) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos.Authorization),

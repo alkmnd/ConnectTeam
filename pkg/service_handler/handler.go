@@ -41,7 +41,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		{
 			game.GET("/:id", h.getGame)
 			game.PATCH("/start/:id", h.startGame)
-			game.POST("/results", h.saveResults)
+			game.POST(":id/results", h.saveResults)
 			game.PATCH("/end/:id", h.endGame)
 		}
 		topic := httpService.Group("/topics")

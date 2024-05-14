@@ -15,6 +15,7 @@ type Handler struct {
 	services *service.Service
 }
 
+// NewHandler creates Handler instance.
 func NewHandler(services *service.Service) *Handler {
 	return &Handler{services: services}
 }

@@ -15,7 +15,6 @@ type Authorization interface {
 	CreateUser(user connectteam.User) (uuid.UUID, error)
 	GetUserWithEmail(email, password string) (connectteam.User, error)
 	GetIdWithEmail(email string) (uuid.UUID, error)
-	//VerifyUser(verifyUser connectteam.VerifyUser) error
 	GetVerificationCode(email string) (string, error)
 	CreateVerificationCode(email string, code string) error
 	CheckIfExist(id uuid.UUID) (bool, error)
