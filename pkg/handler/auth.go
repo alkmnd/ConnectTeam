@@ -4,7 +4,6 @@ import (
 	connectteam "ConnectTeam/models"
 	"net/http"
 
-	_ "ConnectTeam/cmd/docs"
 	"github.com/gin-gonic/gin"
 )
 
