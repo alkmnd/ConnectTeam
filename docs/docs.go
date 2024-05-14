@@ -35,7 +35,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/connectteam.User"
+                            "$ref": "#/definitions/models.User"
                         }
                     }
                 ],
@@ -43,17 +43,11 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/connectteam.UserPublic"
+                            "$ref": "#/definitions/models.UserPublic"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/handler.errorResponse"
                         }
@@ -69,7 +63,15 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "connectteam.User": {
+        "handler.errorResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.User": {
             "type": "object",
             "required": [
                 "email",
@@ -88,7 +90,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "password": {
                     "type": "string"
@@ -98,7 +100,7 @@ const docTemplate = `{
                 }
             }
         },
-        "connectteam.UserPublic": {
+        "models.UserPublic": {
             "type": "object",
             "required": [
                 "first_name",
@@ -131,20 +133,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "profile_image": {
                     "type": "string"
                 },
                 "second_name": {
-                    "type": "string"
-                }
-            }
-        },
-        "handler.errorResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
                     "type": "string"
                 }
             }

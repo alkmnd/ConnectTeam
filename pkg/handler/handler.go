@@ -6,7 +6,6 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"time"
 
-	_ "ConnectTeam/docs"
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/files"
 )

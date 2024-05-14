@@ -4,9 +4,8 @@ import (
 	connectteam "ConnectTeam/models"
 	"net/http"
 
+	_ "ConnectTeam/cmd/docs"
 	"github.com/gin-gonic/gin"
-	//"github.com/swaggo/files"
-	//"github.com/swaggo/gin-swagger"
 )
 
 // @Summary      Sign up
@@ -17,7 +16,6 @@ import (
 // @Param        input body connectteam.User true "User created"
 // @Success      200  {object}  connectteam.UserPublic
 // @Failure      400  {object}  errorResponse
-// @Failure      404  {object}  errorResponse
 // @Failure      500  {object}  errorResponse
 // @Router       /auth/sign-up [post]
 func (h *Handler) signUp(c *gin.Context) {

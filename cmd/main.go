@@ -18,17 +18,6 @@ import (
 	"sync"
 )
 
-// @title           ConnectTeam API
-// @version         1.0
-// @description     API Server for ConnectTeam App
-
-// @host      localhost:8000
-// @BasePath  /
-
-// @securityDefinitions.apiKey  apiKeyAuth
-// @in header
-// @name Authorization
-
 func main() {
 	if err := initConfig(); err != nil {
 		logrus.Fatalf("error")

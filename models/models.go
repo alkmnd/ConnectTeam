@@ -14,7 +14,7 @@ type User struct {
 	FirstName  string    `json:"first_name" db:"first_name" binding:"required"`
 	SecondName string    `json:"second_name" db:"second_name" binding:"required"`
 	Password   string    `json:"password" binding:"required"`
-	Access     string    `json:"access" db:"access" swagger:"_"`
+	Access     string    `json:"access" db:"access" swagger:"access"`
 }
 
 type UserSignUpRequest struct {
@@ -34,7 +34,7 @@ type UserCredentials struct {
 
 type UserResult struct {
 	UserId uuid.UUID `json:"user_id" db:"user_id"`
-	Value  uuid.UUID `json:"value" db:"value"`
+	Value  int       `json:"value" db:"value"`
 }
 
 type UserPublic struct {
