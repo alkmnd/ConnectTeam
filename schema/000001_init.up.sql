@@ -1,4 +1,3 @@
-CREATE TYPE user_role AS ENUM ('user', 'admin', 'plan_user');
 CREATE TYPE plans AS ENUM ('basic', 'advanced', 'premium');
 CREATE TYPE access AS ENUM ('super_admin', 'admin', 'user');
 CREATE TYPE plan_status AS ENUM ('active', 'expired', 'on_confirm', 'not_payed');
