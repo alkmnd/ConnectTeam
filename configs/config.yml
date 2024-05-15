@@ -19,3 +19,7 @@ redis:
 
 yookassa:
   shop_id: "371284"
+
+notification_service:
+  host: "localhost:8081"
+  path: "/ws"

@@ -14,6 +14,7 @@ const (
 	accessCtx           = "access"
 )
 
+// userIdentity save user id and access from token in the context.
 func (h *Handler) userIdentity(c *gin.Context) {
 	header := c.GetHeader(authorizationHeader)
 	if header == "" {
@@ -27,7 +28,7 @@ func (h *Handler) userIdentity(c *gin.Context) {
 		return
 	}
 
-	userId, access, err := h.services.Authorization.ParseToken(headerParts[1])
+	userId, access, err := h.services.Authorization.ParseAccessToken(headerParts[1])
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
@@ -36,6 +37,7 @@ func (h *Handler) userIdentity(c *gin.Context) {
 	c.Set("access", access)
 }
 
+// getUserId returns userId from the context.
 func getUserId(c *gin.Context) (uuid.UUID, error) {
 	id, ok := c.Get(userCtx)
 	if !ok {
@@ -50,6 +52,7 @@ func getUserId(c *gin.Context) (uuid.UUID, error) {
 	return castId, nil
 }
 
+// getUserAccess returns access from the context.
 func getUserAccess(c *gin.Context) (string, error) {
 	access, ok := c.Get(accessCtx)
 	if !ok {

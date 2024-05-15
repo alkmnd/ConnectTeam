@@ -4,7 +4,9 @@ import (
 	connectteam "ConnectTeam/models"
 	"ConnectTeam/pkg/repository"
 	"crypto/rand"
+	"crypto/sha1"
 	"errors"
+	"fmt"
 	"github.com/google/uuid"
 	"log"
 	"math/big"
@@ -110,6 +112,12 @@ func (s *UserService) RestorePasswordAuthorized(id uuid.UUID) error {
 	}
 
 	return nil
+}
+
+func generatePasswordHash(password string) string {
+	hash := sha1.New()
+	hash.Write([]byte(password))
+	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
 }
 
 func (s *UserService) UpdateAccessWithId(id uuid.UUID, access connectteam.AccessLevel) error {

@@ -16,15 +16,21 @@ import (
 )
 
 const (
-	salt       = "hjqrhjqw124617ajfhajs"
-	signingKey = "qrkjk#4#%35FSFJlja#4353KSFjH"
-	tokenTTL   = 12 * time.Hour
+	salt            = "hjqrhjqw124617ajfhajs"
+	signingKey      = "qrkjk#4#%35FSFJlja#4353KSFjH"
+	tokenTTL        = 24 * time.Hour
+	refreshTokenTTL = 24 * time.Hour * 90
 )
 
 type tokenClaims struct {
 	jwt.StandardClaims
 	UserId uuid.UUID `json:"user_id"`
 	Role   string    `json:"access"`
+}
+
+type refreshTokenClaims struct {
+	jwt.StandardClaims
+	UserId uuid.UUID `json:"user_id"`
 }
 
 type AuthService struct {
@@ -36,7 +42,7 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 }
 
 func (s *AuthService) CreateUser(user models.UserSignUpRequest) (uuid.UUID, error) {
-	user.Password = generatePasswordHash(user.Password)
+	user.Password = s.GeneratePasswordHash(user.Password)
 	dbCode, err := s.repo.GetVerificationCode(user.Email)
 	if err != nil {
 		return uuid.Nil, errors.New("wrong verification code")
@@ -54,22 +60,18 @@ func (s *AuthService) CreateUser(user models.UserSignUpRequest) (uuid.UUID, erro
 	return s.repo.CreateUser(repoUser)
 }
 
-func (s *AuthService) GenerateToken(login, password string, isEmail bool) (string, string, error, uuid.UUID) {
+// GenerateAccessToken generate token and returns user id, access and token.
+func (s *AuthService) GenerateAccessToken(login, passwordHash string) (string, string, error, uuid.UUID) {
 	var user models.User
 	var err error
-	if isEmail {
-		user, err = s.repo.GetUserWithEmail(login, generatePasswordHash(password))
-	} else {
-		return "", "", nil, uuid.Nil
-	}
+
+	// Check auth data.
+	user, err = s.repo.GetUserWithEmail(login, passwordHash)
 	if err != nil {
 		return "", "", errors.New("invalid login data"), uuid.Nil
 	}
 
-	if err != nil {
-		return "", "", err, uuid.Nil
-	}
-
+	// Generate token.
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(tokenTTL).Unix(),
@@ -78,6 +80,8 @@ func (s *AuthService) GenerateToken(login, password string, isEmail bool) (strin
 		user.Id,
 		user.Access,
 	})
+
+	// Sign token with signing key.
 	signedString, err := token.SignedString([]byte(signingKey))
 
 	if err != nil {
@@ -87,7 +91,31 @@ func (s *AuthService) GenerateToken(login, password string, isEmail bool) (strin
 	return user.Access, signedString, nil, user.Id
 }
 
-func generatePasswordHash(password string) string {
+// GenerateRefreshToken generates refresh token and returns generated token.
+func (s *AuthService) GenerateRefreshToken(userId uuid.UUID) (string, error) {
+
+	var err error
+
+	// Create a token with claims.
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &refreshTokenClaims{
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(refreshTokenTTL).Unix(),
+			IssuedAt:  time.Now().Unix(),
+		},
+		UserId: userId,
+	})
+
+	// Sign token.
+	signedString, err := token.SignedString([]byte(signingKey))
+
+	if err != nil {
+		return "", err
+	}
+
+	return signedString, nil
+}
+
+func (s *AuthService) GeneratePasswordHash(password string) string {
 	hash := sha1.New()
 	hash.Write([]byte(password))
 	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
@@ -128,13 +156,6 @@ func CreateVerificationCode(email string) (string, error) {
 
 func (s *AuthService) VerifyEmail(verifyEmail models.VerifyEmail) error {
 
-	//id, err := s.gameRepo.GetIdWithEmail(verifyEmail.Email)
-	//
-	//if err != nil {
-	//	log.Printf("smtp error: %s", err)
-	//	return 0, errors.New("no user with such email")
-	//}
-
 	confirmationCode, err := CreateVerificationCode(verifyEmail.Email)
 
 	if err != nil {
@@ -154,26 +175,8 @@ func (s *AuthService) VerifyEmail(verifyEmail models.VerifyEmail) error {
 	return err
 }
 
-//func (s *AuthService) VerifyUser(verifyUser connectteam.VerifyUser) error {
-//	code, err := s.gameRepo.GetVerificationCode(verifyUser.Id)
-//	if err != nil {
-//		return errors.New("wrong verification code")
-//	}
-//
-//	if code != verifyUser.Code {
-//
-//		return errors.New("wrong verification code")
-//	}
-//
-//	err = s.gameRepo.DeleteVerificationCode(verifyUser.Id, verifyUser.Code)
-//	if err != nil {
-//		return errors.New("no such row")
-//	}
-//
-//	return s.gameRepo.VerifyUser(verifyUser)
-//}
-
-func (s *AuthService) ParseToken(accessToken string) (uuid.UUID, string, error) {
+// ParseAccessToken parse token and returns user id and user access.
+func (s *AuthService) ParseAccessToken(accessToken string) (uuid.UUID, string, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
@@ -191,6 +194,27 @@ func (s *AuthService) ParseToken(accessToken string) (uuid.UUID, string, error) 
 	}
 
 	return claims.UserId, claims.Role, nil
+}
+
+// ParseRefreshToken parses token and returns user id.
+func (s *AuthService) ParseRefreshToken(refreshToken string) (uuid.UUID, error) {
+	token, err := jwt.ParseWithClaims(refreshToken, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("invalid signing method")
+		}
+
+		return []byte(signingKey), nil
+	})
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	claims, ok := token.Claims.(*refreshTokenClaims)
+	if !ok {
+		return uuid.Nil, errors.New("token claims are not of type *tokenClaims")
+	}
+
+	return claims.UserId, err
 }
 
 func (s *AuthService) DeleteVerificationCode(email string, code string) error {

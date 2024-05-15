@@ -155,6 +155,7 @@ func (s *GameService) CancelGame(gameId uuid.UUID, userId uuid.UUID) error {
 	for i := range users {
 		if users[i].Id != game.CreatorId {
 			err = s.notificationRepo.CreateGameCancelNotification(gameId, users[i].Id)
+			s.notificationRepo.SendNotification(users[i].Id)
 		}
 	}
 	return nil
@@ -171,5 +172,10 @@ func (s *GameService) InviteUserToGame(gameId uuid.UUID, userId uuid.UUID, creat
 	if game.CreatorId != creatorId {
 		return errors.New("permission denied")
 	}
-	return s.notificationRepo.CreateGameInviteNotification(gameId, userId)
+	err = s.notificationRepo.CreateGameInviteNotification(gameId, userId)
+	if err != nil {
+		return err
+	}
+	s.notificationRepo.SendNotification(userId)
+	return nil
 }

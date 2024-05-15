@@ -2,14 +2,19 @@ package repository
 
 import (
 	"ConnectTeam/pkg/repository/models"
+	"ConnectTeam/pkg/repository/notification_service"
 	cache "ConnectTeam/pkg/repository/redis"
+	"encoding/json"
 	"github.com/google/uuid"
+	"github.com/gorilla/websocket"
 	"github.com/redis/go-redis/v9"
+	"log"
 	"time"
 )
 
 type NotificationManager struct {
-	notificationCache cache.Cache
+	notificationCache   cache.Cache
+	notificationService *notification_service.NotificationService
 }
 
 func (n *NotificationManager) GetNotifications(userId uuid.UUID) ([]models.Notification, error) {
@@ -94,8 +99,29 @@ func (n *NotificationManager) CreateDeleteFromSubNotification(holderId uuid.UUID
 	return n.notificationCache.HSet(userId.String(), notification.Id, notification)
 }
 
-func NewNotification(client *redis.Client) *NotificationManager {
+func (n *NotificationManager) SendNotification(userId uuid.UUID) {
+	data := map[string]interface{}{
+		"user_id": userId.String(),
+	}
+
+	// Преобразование данных в JSON
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		log.Fatal("JSON marshal:", err)
+	}
+
+	// Отправка данных через WebSocket в формате JSON
+	if n.notificationService.Conn != nil {
+		err = n.notificationService.Conn.WriteMessage(websocket.TextMessage, jsonData)
+		if err != nil {
+			println(err.Error())
+		}
+	}
+}
+
+func NewNotification(client *redis.Client, service *notification_service.NotificationService) *NotificationManager {
 	return &NotificationManager{
-		notificationCache: cache.NewNotificationCache(client),
+		notificationCache:   cache.NewNotificationCache(client),
+		notificationService: service,
 	}
 }

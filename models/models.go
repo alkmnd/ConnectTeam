@@ -50,6 +50,7 @@ type UserPublic struct {
 	CompanyURL   string `json:"company_url,omitempty" db:"company_url"`
 	CompanyLogo  string `json:"company_logo,omitempty" db:"company_logo"`
 	ProfileImage string `json:"profile_image,omitempty" db:"profile_image"`
+	PasswordHash string `json:"password_hash,omitempty" db:"password_hash"`
 }
 
 type UserPersonalInfo struct {

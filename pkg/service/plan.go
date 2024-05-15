@@ -34,7 +34,12 @@ func (s *PlanService) InviteUserToSub(planId uuid.UUID, userId uuid.UUID, holder
 	if plan.PlanType != "premium" {
 		return errors.New("permission denied")
 	}
-	return s.notificationRepo.CreateSubInviteNotification(planId, userId)
+	err = s.notificationRepo.CreateSubInviteNotification(planId, userId)
+	if err != nil {
+		return err
+	}
+	s.notificationRepo.SendNotification(userId)
+	return nil
 }
 
 func NewPlanService(repo repository.Plan, client repository.Payment, notification repository.Notification) *PlanService {

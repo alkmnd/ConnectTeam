@@ -5,6 +5,7 @@ import (
 	"ConnectTeam/pkg/handler"
 	"ConnectTeam/pkg/repository"
 	"ConnectTeam/pkg/repository/filestorage"
+	"ConnectTeam/pkg/repository/notification_service"
 	"ConnectTeam/pkg/repository/payment_gateway"
 	"ConnectTeam/pkg/repository/redis"
 	"ConnectTeam/pkg/service"
@@ -51,6 +52,12 @@ func main() {
 		Password: os.Getenv("REDIS_PASSWORD"),
 	})
 
+	notificationService, err := notification_service.NewNotificationService(notification_service.Config{
+		Host:   viper.GetString("notification_service.host"),
+		Path:   viper.GetString("notification_service.path"),
+		ApiKey: os.Getenv("NOTIFICATION_SERVICE_API_KEY"),
+	})
+
 	if err != nil {
 		logrus.Fatalf("error %s", err.Error())
 	}
@@ -73,7 +80,7 @@ func main() {
 		viper.GetString("storage.endpoint"),
 	)
 
-	repos := repository.NewRepository(db, rdb, yooClient)
+	repos := repository.NewRepository(db, rdb, yooClient, notificationService)
 	services := service.NewService(repos, fileStorage)
 	handlers := handler.NewHandler(services)
 

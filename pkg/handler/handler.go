@@ -32,11 +32,12 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	}))
 	auth := router.Group("/auth")
 	{
+		auth.GET("/refresh/:refresh_token")
 		auth.POST("/verify-email", h.verifyEmailOnRegistration)
 		auth.POST("/sign-up", h.signUp)
 		signIn := auth.Group("sign-in")
 		{
-			signIn.POST("/email", h.signInWithEmail)
+			signIn.POST("/email", h.signIn)
 			signIn.POST("/phone", h.signInWithPhoneNumber)
 		}
 
@@ -50,13 +51,13 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		userApi.GET("/me", h.getCurrentUser)
 		userApi.PATCH("/access", h.changeAccessWithId)
 		userApi.GET("/list", h.getUsersList)
-		userApi.PATCH("/change-password", h.changePassword)
-		userApi.GET("/password", h.restorePasswordAuthorized)
+		userApi.PATCH("/password", h.changePassword)
+		userApi.PATCH("/password/restore", h.restorePasswordAuthorized)
 		userApi.POST("/verify-email", h.verifyEmailOnChange)
 		userApi.PATCH("/change-email", h.changeEmail)
 		userApi.PATCH("/info", h.changePersonalData)
 		userApi.PATCH("/company", h.changeCompanyData)
-		userApi.PATCH("/upload-image", h.uploadProfileImage)
+		userApi.PATCH("/image", h.uploadProfileImage)
 	}
 
 	plan := router.Group("/plans", h.userIdentity)
@@ -64,7 +65,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		plan.GET("/current", h.getUserActivePlan)
 		plan.POST("/", h.createPlan)
 		plan.GET("/active", h.getUsersPlans)
-		plan.PATCH("/:id", h.confirmPlan)
 		plan.POST("/:user_id", h.setPlan)
 		plan.DELETE("/cancel/:id", h.deleteUserPlan)
 		plan.POST("/trial", h.getTrial)

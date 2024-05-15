@@ -440,13 +440,13 @@ func (h *Handler) getMembers(c *gin.Context) {
 }
 
 func (h *Handler) deleteUserFromSub(c *gin.Context) {
-	holderId, err := getUserId(c)
+	userId, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	userId, err := uuid.Parse(c.Param("user_id"))
+	memberId, err := uuid.Parse(c.Param("user_id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -457,19 +457,19 @@ func (h *Handler) deleteUserFromSub(c *gin.Context) {
 		return
 	}
 
-	plan, err := h.services.GetUserActivePlan(userId)
+	plan, err := h.services.GetUserActivePlan(memberId)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	if holderId != plan.HolderId || planId != plan.Id ||
-		holderId == userId {
+	if userId != plan.HolderId || planId != plan.Id ||
+		plan.HolderId == memberId {
 		newErrorResponse(c, http.StatusForbidden, "access denied")
 		return
 	}
 
-	err = h.services.DeleteUserFromSub(userId, plan.Id)
+	err = h.services.DeleteUserFromSub(memberId, plan.Id)
 
 	c.JSON(http.StatusOK, statusResponse{"ok"})
 }

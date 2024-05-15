@@ -27,7 +27,7 @@ func (r *PlanPostgres) GetUserActivePlan(userId uuid.UUID) (connectteam.UserPlan
 		"s.status,"+
 		"s.invitation_code,"+
 		"ah.user_id,"+
-		"s.is_trial FROM %s s JOIN %s ah ON ah.sub_id = s.id WHERE ah.user_id=$1 AND s.status='active'", subscriptionsTable, usersSubsTable)
+		"s.is_trial FROM %s s JOIN %s ah ON ah.sub_id = s.id WHERE ah.user_id=$1 AND s.status='active' AND s.expiry_date > NOW()", subscriptionsTable, usersSubsTable)
 	err := r.db.Get(&userPlan, query, userId)
 
 	return userPlan, err

@@ -36,6 +36,7 @@ func (n *NotificationService) CreateGameStartNotification(gameId uuid.UUID) erro
 	}
 	for i := range gameMembers {
 		_ = n.notificationRepo.CreateGameStartNotification(gameId, gameMembers[i].Id)
+		n.notificationRepo.SendNotification(gameMembers[i].Id)
 	}
 	return nil
 }

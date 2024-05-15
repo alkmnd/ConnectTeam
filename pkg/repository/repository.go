@@ -3,6 +3,7 @@ package repository
 import (
 	connectteam "ConnectTeam/models"
 	"ConnectTeam/pkg/repository/models"
+	"ConnectTeam/pkg/repository/notification_service"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 	"github.com/rvinnie/yookassa-sdk-go/yookassa"
@@ -111,6 +112,7 @@ type Notification interface {
 	CreateSubInviteNotification(holderId uuid.UUID, userId uuid.UUID) error
 	CreateDeleteFromSubNotification(holderId uuid.UUID, userId uuid.UUID) error
 	ReadNotifications(userId uuid.UUID) error
+	SendNotification(userId uuid.UUID)
 }
 
 type Payment interface {
@@ -129,7 +131,7 @@ type Repository struct {
 	Payment
 }
 
-func NewRepository(db *sqlx.DB, rdb *redis.Client, yooClient *yookassa.Client) *Repository {
+func NewRepository(db *sqlx.DB, rdb *redis.Client, yooClient *yookassa.Client, notifyService *notification_service.NotificationService) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
 		User:          NewUserPostgres(db),
@@ -137,7 +139,7 @@ func NewRepository(db *sqlx.DB, rdb *redis.Client, yooClient *yookassa.Client) *
 		Topic:         NewTopicPostgres(db),
 		Question:      NewQuestionPostgres(db),
 		Game:          NewGamePostgres(db),
-		Notification:  NewNotification(rdb),
+		Notification:  NewNotification(rdb, notifyService),
 		Payment:       NewYookassaClient(yooClient),
 	}
 }

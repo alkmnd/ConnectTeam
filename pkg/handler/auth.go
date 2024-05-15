@@ -36,6 +36,33 @@ func (h *Handler) signUp(c *gin.Context) {
 	})
 }
 
+func (h *Handler) refreshToken(c *gin.Context) {
+	refreshToken := c.Param("refresh_token")
+	id, err := h.services.Authorization.ParseRefreshToken(refreshToken)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	user, err := h.services.User.GetUserById(id)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// Create access token.
+	_, token, err, _ := h.services.Authorization.GenerateAccessToken(user.Email, user.PasswordHash)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// Send response.
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"access_token": token,
+	})
+
+}
+
 type restorePasswordInput struct {
 	Email string `json:"email" binding:"required"`
 }
@@ -88,67 +115,46 @@ func (h *Handler) verifyEmailOnRegistration(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-//func (h *Handler) verifyUser(c *gin.Context) {
-//	var input connectteam.VerifyUser
-//
-//	if err := c.BindJSON(&input); err != nil {
-//		newErrorResponse(c, http.StatusBadRequest, err.Error())
-//		return
-//	}
-//
-//	println(input.Id)
-//
-//	err := h.services.Authorization.VerifyUser(input)
-//	if err != nil {
-//		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-//		return
-//	}
-//
-//	if err != nil {
-//		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-//		return
-//	}
-//
-//	c.JSON(http.StatusOK, map[string]interface{}{
-//		"id": input.Id,
-//	})
-//}
-
-// func (h *Handler) signUpWithPhone(c *gin.Context) {
-// 	var input connectteam.User
-
-// 	if err := c.BindJSON(&input); err != nil {
-// 		newErrorResponse(c, http.StatusBadRequest, err.Error())
-// 	}
-// }
+type signInWithPhoneNumInput struct {
+	PhoneNumber string `json:"phone_number" binding:"required"`
+	Password    string `json:"password" binding:"required"`
+}
 
 type signInWithEmailInput struct {
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
 
-type signInWithPhoneNumInput struct {
-	PhoneNumber string `json:"phone_number" binding:"required"`
-	Password    string `json:"password" binding:"required"`
-}
-
-func (h *Handler) signInWithEmail(c *gin.Context) {
+// signIn process sign in request.
+func (h *Handler) signIn(c *gin.Context) {
 	var input signInWithEmailInput
 
+	// Validate input.
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	access, token, err, id := h.services.Authorization.GenerateToken(input.Email, input.Password, true)
+
+	// Create access token.
+	access, token, err, id := h.services.Authorization.GenerateAccessToken(input.Email, h.services.GeneratePasswordHash(input.Password))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
+	// Creates refresh token.
+	refreshToken, err := h.services.Authorization.GenerateRefreshToken(id)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// Send response.
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"token":   token,
-		"access":  access,
-		"user_id": id,
+		"access_token":  token,
+		"refresh_token": refreshToken,
+		"access":        access,
+		"user_id":       id,
 	})
 }
 
@@ -159,7 +165,7 @@ func (h *Handler) signInWithPhoneNumber(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	access, token, err, _ := h.services.Authorization.GenerateToken(input.PhoneNumber, input.Password, false)
+	access, token, err, _ := h.services.Authorization.GenerateAccessToken(input.PhoneNumber, h.services.Authorization.GeneratePasswordHash(input.Password))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

@@ -14,10 +14,13 @@ import (
 
 type Authorization interface {
 	CreateUser(user connectteam.UserSignUpRequest) (uuid.UUID, error)
-	GenerateToken(login, password string, isEmail bool) (string, string, error, uuid.UUID)
-	ParseToken(token string) (uuid.UUID, string, error)
+	GenerateAccessToken(login, password string) (string, string, error, uuid.UUID)
+	ParseAccessToken(token string) (uuid.UUID, string, error)
 	VerifyEmail(verifyEmail connectteam.VerifyEmail) error
 	DeleteVerificationCode(email string, code string) error
+	GenerateRefreshToken(userId uuid.UUID) (string, error)
+	ParseRefreshToken(refreshToken string) (uuid.UUID, error)
+	GeneratePasswordHash(password string) string
 }
 
 type User interface {
