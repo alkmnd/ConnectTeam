@@ -123,7 +123,6 @@ func (r *PlanPostgres) DeletePlan(id uuid.UUID) error {
 	return err
 }
 
-// change
 func (r *PlanPostgres) GetUsersPlans() ([]connectteam.UserPlan, error) {
 	var plansUsers []connectteam.UserPlan
 
