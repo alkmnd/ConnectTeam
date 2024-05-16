@@ -20,7 +20,7 @@ const (
 	resultsTable       = "results"
 	tagsTable          = "tags"
 	tagsQuestionsTable = "tags_questions"
-	tagsUsersTable     = "users_tags"
+	tagsUsersTable     = "tags_results"
 )
 
 type Config struct {

@@ -32,7 +32,7 @@ func (r *UserPostgres) GetUserCredentials(id uuid.UUID) (connectteam.UserCredent
 }
 
 func (r *UserPostgres) UpdateAccessWithId(id uuid.UUID, access string) error {
-	query := fmt.Sprintf("UPDATE %s SET access = $1 WHERE id = %1", usersTable)
+	query := fmt.Sprintf("UPDATE %s SET access = $1 WHERE id = $2", usersTable)
 
 	_, err := r.db.Exec(query, access, id)
 

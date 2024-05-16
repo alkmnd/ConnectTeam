@@ -15,15 +15,20 @@ type NotificationCache struct {
 	expiration time.Duration
 }
 
+// HGet returns notifications from Redis.
 func (n NotificationCache) HGet(key string) ([]models.Notification, error) {
 	var notifications []models.Notification
 	ctx := context.Background()
+	// Get all raws by the key.
 	rows, err := n.Cache.HGetAll(ctx, key).Result()
 	if err != nil {
 		return notifications, err
 	}
+
+	// Iterate over raws.
 	for _, val := range rows {
 		var notification models.Notification
+		// Unmarshal json object into the notification struct.
 		err := json.Unmarshal([]byte(val), &notification)
 		if err != nil {
 			fmt.Printf("unmarshal error: %s\n", err)

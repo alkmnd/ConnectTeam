@@ -106,7 +106,7 @@ CREATE TABLE tags_questions
     primary key (tag_id, question_id)
 );
 
-CREATE TABLE users_tags
+CREATE TABLE tags_results
 (
         user_id uuid REFERENCES users (id) ON DELETE CASCADE,
         game_id uuid REFERENCES games (id) ON DELETE CASCADE,
