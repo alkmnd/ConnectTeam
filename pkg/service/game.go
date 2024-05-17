@@ -24,7 +24,7 @@ func (s *GameService) SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int) 
 func (s *GameService) ChangeStartDate(gameId uuid.UUID, dateString string) error {
 	date, err := time.Parse(time.RFC3339, dateString)
 	if err != nil {
-		return err
+		return errors.New("incorrect format")
 	}
 	startDate := time.Date(date.Year(), date.Month(), date.Day(), date.Hour(), date.Minute(), 0, 0, date.Location())
 	if !startDate.After(time.Now()) {
@@ -50,7 +50,7 @@ func (s *GameService) CreateGame(creatorId uuid.UUID, startDateString string, na
 
 	date, err := time.Parse(time.RFC3339, startDateString)
 	if err != nil {
-		return game, err
+		return game, errors.New("cannot parse date")
 	}
 	startDate := time.Date(date.Year(), date.Month(), date.Day(), date.Hour(), date.Minute(), 0, 0, date.Location())
 
@@ -76,6 +76,10 @@ func (s *GameService) StartGame(gameId uuid.UUID) error {
 	game, err := s.gameRepo.GetGame(gameId)
 	if err != nil {
 		return err
+	}
+
+	if game.Status != "not_started" {
+		return errors.New("cannot start the game")
 	}
 
 	err = s.gameRepo.StartGame(game.Id)

@@ -9,7 +9,7 @@ import (
 )
 
 type createGameInput struct {
-	Name      string `json:"name" binding:"required"`
+	Name      string `json:"name" binding:"required" binding:"required,min=1,max=50"`
 	StartDate string `json:"start_date" binding:"required"`
 }
 
@@ -33,7 +33,7 @@ func (h *Handler) createGame(c *gin.Context) {
 	}
 
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, "incorrect format")
 		return
 	}
 
@@ -255,13 +255,13 @@ func (h *Handler) changeGameStartDate(c *gin.Context) {
 	}
 
 	if game.CreatorId != id {
-		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
+		newErrorResponse(c, http.StatusForbidden, "insufficient permissions")
 	}
 
 	var input changeGameStartDateInput
 
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, "incorrect format")
 		return
 	}
 
@@ -275,7 +275,7 @@ func (h *Handler) changeGameStartDate(c *gin.Context) {
 }
 
 type changeGameNameInput struct {
-	Name string `json:"name" binding:"required"`
+	Name string `json:"name" binding:"required,min=1,max=50"`
 }
 
 func (h *Handler) changeGameName(c *gin.Context) {
@@ -305,7 +305,7 @@ func (h *Handler) changeGameName(c *gin.Context) {
 	var input changeGameNameInput
 
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, "incorrect format")
 		return
 	}
 
@@ -433,7 +433,7 @@ func (h *Handler) cancelGame(c *gin.Context) {
 
 	err = h.services.CancelGame(gameId, id)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newErrorResponse(c, http.StatusInternalServerError, "cannot cancel game")
 	}
 
 	c.Status(http.StatusOK)

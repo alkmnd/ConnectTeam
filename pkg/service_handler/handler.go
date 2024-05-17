@@ -16,11 +16,11 @@ import (
 
 type Handler struct {
 	services *service.Service
-	ApiKey   string
+	apiKey   string
 }
 
 func NewHandler(services *service.Service, apiKey string) *Handler {
-	return &Handler{services: services, ApiKey: apiKey}
+	return &Handler{services: services, apiKey: apiKey}
 }
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
@@ -52,7 +52,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		question := httpService.Group("/questions")
 		{
 			question.GET("/", h.getRandWithLimit)
-			//question.GET("/{:id}/{:limit}", h.getQuestionTags)
 		}
 		user := httpService.Group("/users")
 		{
@@ -123,7 +122,6 @@ func (h *Handler) getUserActivePlan(c *gin.Context) {
 }
 
 func (h *Handler) getGame(c *gin.Context) {
-	println("getGame")
 	gameId, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())

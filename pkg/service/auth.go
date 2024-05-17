@@ -198,7 +198,7 @@ func (s *AuthService) ParseAccessToken(accessToken string) (uuid.UUID, string, e
 
 // ParseRefreshToken parses token and returns user id.
 func (s *AuthService) ParseRefreshToken(refreshToken string) (uuid.UUID, error) {
-	token, err := jwt.ParseWithClaims(refreshToken, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(refreshToken, &refreshTokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
 		}

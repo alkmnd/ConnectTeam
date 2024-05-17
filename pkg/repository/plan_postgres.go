@@ -126,7 +126,7 @@ func (r *PlanPostgres) DeletePlan(id uuid.UUID) error {
 func (r *PlanPostgres) GetUsersPlans() ([]connectteam.UserPlan, error) {
 	var plansUsers []connectteam.UserPlan
 
-	query := fmt.Sprintf(`SELECT id, holder_id, plan_type, expiry_date, duration, status FROM %s WHERE status='active' or status='on_confirm'`, subscriptionsTable)
+	query := fmt.Sprintf(`SELECT id, holder_id, plan_type, expiry_date, duration, invitation_code, status, is_trial FROM %s WHERE status='active'`, subscriptionsTable)
 	err := r.db.Select(&plansUsers, query)
 	return plansUsers, err
 }

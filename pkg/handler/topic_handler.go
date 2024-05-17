@@ -28,7 +28,7 @@ func (h *Handler) createTopic(c *gin.Context) {
 
 	var input connectteam.Topic
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, "incorrect format")
 		return
 	}
 
@@ -99,7 +99,7 @@ func (h *Handler) deleteTopic(c *gin.Context) {
 }
 
 type updateTopicInput struct {
-	Title string `json:"title" binding:"required"`
+	Title string `json:"title" binding:"required,min=1,max=20"`
 }
 
 func (h *Handler) updateTopic(c *gin.Context) {
@@ -129,12 +129,7 @@ func (h *Handler) updateTopic(c *gin.Context) {
 
 	var input updateTopicInput
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	if len([]rune(input.Title)) < 3 {
-		newErrorResponse(c, http.StatusInternalServerError, "Incorrect title")
+		newErrorResponse(c, http.StatusBadRequest, "incorrect format")
 		return
 	}
 

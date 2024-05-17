@@ -2,26 +2,14 @@ package handler
 
 import (
 	connectteam "ConnectTeam/models"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
-// @Summary      Sign up
-// @Description  create user
-// @Tags         auth
-// @Accept       json
-// @Produce      json
-// @Param        input body connectteam.User true "User created"
-// @Success      200  {object}  connectteam.UserPublic
-// @Failure      400  {object}  errorResponse
-// @Failure      500  {object}  errorResponse
-// @Router       /auth/sign-up [post]
 func (h *Handler) signUp(c *gin.Context) {
 	var input connectteam.UserSignUpRequest
-
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error()+"Incorrect format")
+		newErrorResponse(c, http.StatusBadRequest, "incorrect format")
 		return
 	}
 
@@ -43,7 +31,7 @@ func (h *Handler) refreshToken(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	user, err := h.services.User.GetUserById(id)
+	user, err := h.services.User.GetUserCredentials(id)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

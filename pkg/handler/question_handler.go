@@ -22,20 +22,20 @@ func (h *Handler) createQuestion(c *gin.Context) {
 	}
 
 	if access != string(connectteam.Admin) && access != string(connectteam.SuperAdmin) {
-		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
+		newErrorResponse(c, http.StatusForbidden, "insufficient permissions")
 		return
 	}
 
 	var input connectteam.Question
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, "incorrect format")
 		return
 	}
 
 	topicId, err := uuid.Parse(c.Param("id"))
 
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "Invalid id param")
+		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
 	}
 
@@ -107,7 +107,7 @@ func (h *Handler) getAllQuestions(c *gin.Context) {
 }
 
 type updateQuestionInput struct {
-	NewContent string `json:"new_content" binding:"required"`
+	NewContent string `json:"new_content" binding:"required,max=1,min=50"`
 }
 
 func (h *Handler) updateQuestion(c *gin.Context) {
@@ -124,7 +124,7 @@ func (h *Handler) updateQuestion(c *gin.Context) {
 	}
 
 	if access != string(connectteam.Admin) && access != string(connectteam.SuperAdmin) {
-		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
+		newErrorResponse(c, http.StatusForbidden, "insufficient permissions")
 		return
 	}
 
@@ -137,12 +137,7 @@ func (h *Handler) updateQuestion(c *gin.Context) {
 
 	var input updateQuestionInput
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	if len([]rune(input.NewContent)) < 0 {
-		newErrorResponse(c, http.StatusInternalServerError, "Incorrect title")
+		newErrorResponse(c, http.StatusBadRequest, "incorrect format")
 		return
 	}
 

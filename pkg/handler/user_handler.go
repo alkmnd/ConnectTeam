@@ -101,12 +101,22 @@ func (h *Handler) changeAccessWithId(c *gin.Context) {
 	}
 
 	if input.Id == id {
-		newErrorResponse(c, http.StatusForbidden, "Insufficient permissions")
+		newErrorResponse(c, http.StatusForbidden, "insufficient permissions")
 		return
 	}
 
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, "incorrect input")
+		return
+	}
+
+	user, err := h.services.GetUserById(id)
+	if err := h.services.Plan.DeletePlan(input.Id); err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if user.Access == string(connectteam.SuperAdmin) {
+		newErrorResponse(c, http.StatusForbidden, "insufficient permissions")
 		return
 	}
 
@@ -235,7 +245,7 @@ func (h *Handler) changePersonalData(c *gin.Context) {
 	}
 
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, "incorrect format")
 		return
 	}
 

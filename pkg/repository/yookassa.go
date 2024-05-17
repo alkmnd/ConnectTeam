@@ -2,6 +2,7 @@ package repository
 
 import (
 	"ConnectTeam/pkg/repository/models"
+	"errors"
 	"github.com/rvinnie/yookassa-sdk-go/yookassa"
 	yoocommon "github.com/rvinnie/yookassa-sdk-go/yookassa/common"
 	yoopayment "github.com/rvinnie/yookassa-sdk-go/yookassa/payment"
@@ -58,7 +59,9 @@ func (c *YooClient) CreatePayment(paymentRequest models.PaymentRequest) (models.
 func (c *YooClient) GetPayment(orderId string) (models.PaymentResponse, error) {
 	paymentHandler := yookassa.NewPaymentHandler(c.yooClient)
 	payment, _ := paymentHandler.FindPayment(orderId)
-
+	if payment == nil {
+		return models.PaymentResponse{}, errors.New("payment not found")
+	}
 	m := payment.Metadata.(map[string]interface{})
 	var metadata models.MetaData
 	if userId, ok := m["user_id"].(string); ok {

@@ -4,17 +4,14 @@ import (
 	connectteam "ConnectTeam"
 	"ConnectTeam/pkg/handler"
 	"ConnectTeam/pkg/repository"
-	"ConnectTeam/pkg/repository/filestorage"
 	"ConnectTeam/pkg/repository/notification_service"
 	"ConnectTeam/pkg/repository/payment_gateway"
 	"ConnectTeam/pkg/repository/redis"
 	"ConnectTeam/pkg/service"
 	"ConnectTeam/pkg/service_handler"
 	"github.com/joho/godotenv"
-	"github.com/minio/minio-go"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"log"
 	"os"
 	"sync"
 )
@@ -62,33 +59,20 @@ func main() {
 		logrus.Fatalf("error %s", err.Error())
 	}
 
-	accessKey := os.Getenv("ACCESS_KEY")
-	secretKey := os.Getenv("SECRET_KEY")
-
 	yooClient := payment_gateway.NewYookassaClient(payment_gateway.Config{
 		ShopId: viper.GetString("yookassa.shop_id"),
 		ApiKey: os.Getenv("INTEGRATION_API_KEY"),
 	})
-	client, err := minio.New(viper.GetString("storage.endpoint"), accessKey, secretKey, false)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fileStorage := filestorage.NewFileStorage(
-		client,
-		viper.GetString("storage.bucket"),
-		viper.GetString("storage.endpoint"),
-	)
 
 	repos := repository.NewRepository(db, rdb, yooClient, notificationService)
-	services := service.NewService(repos, fileStorage)
+	services := service.NewService(repos)
 	handlers := handler.NewHandler(services)
 
 	var wg sync.WaitGroup
 	wg.Add(3)
 
 	srv1 := new(connectteam.Server)
-	// Запуск первого сервера в отдельной горутине
+	// Запуск первого сервера в отдельной горутине.
 	go func() {
 		defer wg.Done()
 		if err := srv1.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
@@ -96,11 +80,11 @@ func main() {
 		}
 	}()
 
-	// Создание экземпляра сервера для второго сервера
+	// Создание экземпляра сервера для второго сервера.
 	srv2 := new(connectteam.Server)
-	// Создание хэндлера для второго сервера
+	// Создание хэндлера для второго сервера.
 	serviceHandler := service_handler.NewHandler(services, os.Getenv("SERVICE_API_KEY"))
-	// Запуск второго сервера в отдельной горутине
+	// Запуск второго сервера в отдельной горутине.
 	go func() {
 		defer wg.Done()
 		if err := srv2.Run(viper.GetString("service_port"), serviceHandler.InitRoutes()); err != nil {

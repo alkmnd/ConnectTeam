@@ -32,7 +32,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	}))
 	auth := router.Group("/auth")
 	{
-		auth.GET("/refresh/:refresh_token")
+		auth.GET("/refresh/:refresh_token", h.refreshToken)
 		auth.POST("/verify-email", h.verifyEmailOnRegistration)
 		auth.POST("/sign-up", h.signUp)
 		signIn := auth.Group("sign-in")

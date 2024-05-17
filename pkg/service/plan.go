@@ -122,8 +122,10 @@ func (s *PlanService) GetMembers(id uuid.UUID) ([]models.UserPublic, error) {
 }
 
 func (s *PlanService) UpgradePlan(orderId string, planId uuid.UUID, userId uuid.UUID) error {
-	activePlan, _ := s.planRepo.GetUserActivePlan(userId)
-
+	activePlan, err := s.planRepo.GetUserActivePlan(userId)
+	if err != nil {
+		return errors.New("subscription is mot found")
+	}
 	if activePlan.HolderId != userId {
 		return errors.New("permission denied")
 	}
@@ -139,9 +141,6 @@ func (s *PlanService) UpgradePlan(orderId string, planId uuid.UUID, userId uuid.
 	}
 	if !payment.Paid {
 		return errors.New("order is not paid")
-	}
-	if payment.Status == "succeeded" {
-		return errors.New("order is already succeeded")
 	}
 	if payment.Metadata.UserId != userId.String() {
 		return errors.New("permission denied")

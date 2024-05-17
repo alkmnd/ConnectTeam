@@ -3,9 +3,7 @@ package service
 import (
 	connectteam "ConnectTeam/models"
 	"ConnectTeam/pkg/repository"
-	"ConnectTeam/pkg/repository/filestorage"
 	"ConnectTeam/pkg/service/models"
-	"ConnectTeam/pkg/service/uploader"
 	"context"
 	"github.com/google/uuid"
 	"io"
@@ -25,6 +23,7 @@ type Authorization interface {
 
 type User interface {
 	GetUserById(id uuid.UUID) (connectteam.UserPublic, error)
+	GetUserCredentials(id uuid.UUID) (connectteam.UserCredentials, error)
 	UpdateAccessWithId(id uuid.UUID, access connectteam.AccessLevel) error
 	GetUsersList() ([]connectteam.UserPublic, error)
 	UpdatePassword(oldPassword string, newPassword string, id uuid.UUID) error
@@ -125,14 +124,13 @@ type Service struct {
 }
 
 // NewService creates a service instance.
-func NewService(repos *repository.Repository, fileStorage *filestorage.FileStorage) *Service {
+func NewService(repos *repository.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos.Authorization),
 		User:          NewUserService(repos.User),
 		Plan:          NewPlanService(repos.Plan, repos.Payment, repos.Notification),
 		Topic:         NewTopicService(repos.Topic),
 		Question:      NewQuestionService(repos.Question),
-		Uploader:      uploader.NewUploader(fileStorage),
 		Game:          NewGameService(repos.Game, repos.Notification, repos.Plan),
 		Payment:       NewPaymentService(repos.Payment),
 		Notification:  NewNotificationService(repos.Notification, repos.Game),

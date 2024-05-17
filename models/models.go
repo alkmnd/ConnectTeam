@@ -19,9 +19,9 @@ type User struct {
 
 type UserSignUpRequest struct {
 	Id               uuid.UUID `json:"id" db:"id" swagger:"_"`
-	Email            string    `json:"email" db:"email" binding:"required"`
-	FirstName        string    `json:"first_name" db:"first_name" binding:"required"`
-	SecondName       string    `json:"second_name" db:"second_name" binding:"required"`
+	Email            string    `json:"email" db:"email"`
+	FirstName        string    `json:"first_name" db:"first_name" binding:"required,min=2,max=20"`
+	SecondName       string    `json:"second_name" db:"second_name" binding:"required,min=1,max=20"`
 	Password         string    `json:"password" binding:"required"`
 	VerificationCode string    `json:"verification_code" binding:"required"`
 	Access           string    `json:"access" db:"access" swagger:"_"`
@@ -41,21 +41,21 @@ type UserPublic struct {
 	Id    uuid.UUID `json:"id" db:"id"`
 	Email string    `json:"email,omitempty" db:"email"`
 	// PhoneNumber string `json:"phone_number" db:"phone_number"`
-	FirstName    string `json:"first_name,omitempty" db:"first_name" binding:"required"`
-	SecondName   string `json:"second_name,omitempty" db:"second_name" binding:"required"`
-	Description  string `json:"description,omitempty" db:"description"`
+	FirstName    string `json:"first_name,omitempty" db:"first_name" binding:"required,min=2,max=20"`
+	SecondName   string `json:"second_name,omitempty" db:"second_name" binding:"required,min=1,max=20"`
+	Description  string `json:"description,omitempty" db:"description" binding:"max=50"`
 	Access       string `json:"access,omitempty" db:"access"`
-	CompanyName  string `json:"company_name,omitempty" db:"company_name"`
-	CompanyInfo  string `json:"company_info,omitempty" db:"company_info"`
-	CompanyURL   string `json:"company_url,omitempty" db:"company_url"`
-	CompanyLogo  string `json:"company_logo,omitempty" db:"company_logo"`
-	ProfileImage string `json:"profile_image,omitempty" db:"profile_image"`
+	CompanyName  string `json:"company_name,omitempty" db:"company_name" binding:"max=20"`
+	CompanyInfo  string `json:"company_info,omitempty" db:"company_info" binding:"max=50"`
+	CompanyURL   string `json:"company_url,omitempty" db:"company_url" binding:"max=50"`
+	CompanyLogo  string `json:"company_logo,omitempty" db:"company_logo" binding:"max=100"`
+	ProfileImage string `json:"profile_image,omitempty" db:"profile_image"  binding:"max=100"`
 	PasswordHash string `json:"password_hash,omitempty" db:"password_hash"`
 }
 
 type UserPersonalInfo struct {
-	FirstName   string `json:"first_name" db:"first_name" binding:"required"`
-	SecondName  string `json:"second_name" db:"second_name" binding:"required"`
+	FirstName   string `json:"first_name" db:"first_name" binding:"required,min=2,max=20"`
+	SecondName  string `json:"second_name" db:"second_name" binding:"required,min=1,max=20"`
 	Description string `json:"description" db:"description"`
 }
 type UserCompanyData struct {
@@ -142,13 +142,13 @@ const (
 
 type Topic struct {
 	Id    uuid.UUID `json:"id" db:"id"`
-	Title string    `json:"title" db:"title" binding:"required"`
+	Title string    `json:"title" db:"title" binding:"required,min=1,max=20"`
 }
 
 type Question struct {
 	Id      uuid.UUID `json:"id" db:"id"`
 	TopicId uuid.UUID `json:"topic_id" db:"topic_id"`
-	Content string    `json:"content" db:"content"`
+	Content string    `json:"content" db:"content" binding:"required,min=1,max=50"`
 }
 
 type Game struct {

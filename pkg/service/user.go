@@ -130,7 +130,9 @@ func (s *UserService) UpdateAccessWithId(id uuid.UUID, access connectteam.Access
 func (s *UserService) GetUsersList() ([]connectteam.UserPublic, error) {
 	return s.repo.GetUsersList()
 }
-
+func (s *UserService) GetUserCredentials(id uuid.UUID) (connectteam.UserCredentials, error) {
+	return s.repo.GetUserCredentials(id)
+}
 func (s *UserService) UpdatePassword(oldPassword string, newPassword string, id uuid.UUID) error {
 	dbPassword, err := s.repo.GetPassword(id)
 	if err != nil {
