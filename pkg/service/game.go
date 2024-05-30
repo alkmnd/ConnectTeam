@@ -158,7 +158,7 @@ func (s *GameService) CancelGame(gameId uuid.UUID, userId uuid.UUID) error {
 
 	for i := range users {
 		if users[i].Id != game.CreatorId {
-			err = s.notificationRepo.CreateGameCancelNotification(gameId, users[i].Id)
+			_ = s.notificationRepo.CreateGameCancelNotification(gameId, users[i].Id)
 			s.notificationRepo.SendNotification(users[i].Id)
 		}
 	}
