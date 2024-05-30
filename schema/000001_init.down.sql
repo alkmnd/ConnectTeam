@@ -11,3 +11,8 @@ DROP TABLE IF EXISTS subscriptions;
 DROP TABLE IF EXISTS plan_invitation_codes;
 DROP TABLE IF EXISTS verification_codes;
 DROP TABLE IF EXISTS users;
+DROP TYPE IF EXISTS plans;
+DROP TYPE IF EXISTS access;
+DROP TYPE IF EXISTS plan_status;
+DROP TYPE IF EXISTS game_status;
+DROP TYPE IF EXISTS plan_access;
