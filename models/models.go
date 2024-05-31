@@ -20,8 +20,8 @@ type User struct {
 type UserSignUpRequest struct {
 	Id               uuid.UUID `json:"id" db:"id" swagger:"_"`
 	Email            string    `json:"email" db:"email"`
-	FirstName        string    `json:"first_name" db:"first_name" binding:"required,min=2,max=20"`
-	SecondName       string    `json:"second_name" db:"second_name" binding:"required,min=1,max=20"`
+	FirstName        string    `json:"first_name" db:"first_name" binding:"required,min=2,max=50"`
+	SecondName       string    `json:"second_name" db:"second_name" binding:"required,min=1,max=50"`
 	Password         string    `json:"password" binding:"required"`
 	VerificationCode string    `json:"verification_code" binding:"required"`
 	Access           string    `json:"access" db:"access" swagger:"_"`
@@ -142,13 +142,13 @@ const (
 
 type Topic struct {
 	Id    uuid.UUID `json:"id" db:"id"`
-	Title string    `json:"title" db:"title" binding:"required,min=1,max=20"`
+	Title string    `json:"title" db:"title" binding:"required,min=1,max=50"`
 }
 
 type Question struct {
 	Id      uuid.UUID `json:"id" db:"id"`
 	TopicId uuid.UUID `json:"topic_id" db:"topic_id"`
-	Content string    `json:"content" db:"content" binding:"required,min=1,max=50"`
+	Content string    `json:"content" db:"content" binding:"required,min=1,max=300"`
 }
 
 type Game struct {
