@@ -107,7 +107,7 @@ func (h *Handler) getAllQuestions(c *gin.Context) {
 }
 
 type updateQuestionInput struct {
-	NewContent string `json:"new_content" binding:"required,min=1,max=50"`
+	NewContent string `json:"new_content" binding:"required,min=1,max=300"`
 }
 
 func (h *Handler) updateQuestion(c *gin.Context) {
