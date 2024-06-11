@@ -56,7 +56,7 @@ func main() {
 	})
 
 	if err != nil {
-		logrus.Fatalf("error %s", err.Error())
+		logrus.Println("error %s", err.Error())
 	}
 
 	yooClient := payment_gateway.NewYookassaClient(payment_gateway.Config{
