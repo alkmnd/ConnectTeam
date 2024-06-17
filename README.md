@@ -1,23 +1,15 @@
 # ConnectTeam server app 
 
 ## Run 
-1. First, install go and golang-migrate. For macOS:
-``` bash
-brew install golang-migrate
-```
-2. Add .env file in the project.
-3. Run docker container. Example:
-``` bash
-docker run --name=ct-db -e POSTGRES_PASSWORD='qwerty' -p 5436:5432 -d --rm postgres
-```
-4. Run migrations:
-``` bash
-migrate -path ./schema -database 'postgres://postgres:qwerty@localhost:5436/postgres?sslmode=disable' up
-```
-5. Run app:
+1. First, deploy database. Use .sql file in ./schema directory to create database.
+2. Deploy Notification Service.
+3. Add .env and update config.yml files in the project.
+4. Run app:
 ``` bash
 go run cmd/main.go
 ```
+#### .env 
+#### config.yml
 ## API Documentation
 
 ### Contents
