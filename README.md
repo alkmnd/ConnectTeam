@@ -12,7 +12,7 @@ ConnectTeam server app is HTTP-server app accepting HTTP requests from web app (
 ``` bash
 go run cmd/main.go
 ```
-#### .env 
+### .env 
 
 Example:
 
@@ -38,7 +38,7 @@ NOTIFICATION_SERVICE_API_KEY=YkH8H0LOsoqk6ZZ0MQYkte7proV8Y3QZ
 
 
 
-#### config.yml
+### config.yml
 Example:
 ``` yml
 port: "8000"
