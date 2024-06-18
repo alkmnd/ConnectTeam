@@ -1,15 +1,71 @@
 # ConnectTeam server app 
 
 ## Run 
-1. First, deploy database. Use .sql file in ./schema directory to create database.
-2. Deploy Notification Service.
-3. Add .env and update config.yml files in the project.
-4. Run app:
+1. First, deploy database (postgres). Use .sql file in ./schema directory to create database.
+2. Deploy Redis database.
+3. Deploy Notification Service.
+4. Add .env and update config.yml files in the project.
+5. Run app:
 ``` bash
 go run cmd/main.go
 ```
 #### .env 
+
+**Example:**
+``` bash 
+DB_PASSWORD=qwerty
+REDIS_PASSWORD=redis
+EMAIL=connectteam66@gmail.com
+EMAIL_PASSWORD=pktx fgtm fmwp vjfk
+YOOCASSA_API_KEY=test_Mr8jjMiIVtUbPTviWuz8Dv7taCv2SRmnoqxWXey3yvg
+SERVICE_API_KEY=YkH8H0LOsoqk6ZZ0MQYkte7proV8Y3QZ
+NOTIFICATION_SERVICE_API_KEY=YkH8H0LOsoqk6ZZ0MQYkte7proV8Y3QZ
+```
+* DB_PASSWORD: database password
+* REDIS_PASSWORD: redis password
+* EMAIL: email for sending messages
+* EMAIL_PASSWORD: email password
+* YOOCASSA_API_KEY: yoocassa api key
+* SERVICE_API_KEY: server api key (used by Game Service)
+* NOTIFICATION_SERVICE_API_KEY: Notification Service api key (used by ConnectTeam HTTP-server)
+
 #### config.yml
+**Example:**
+``` bash
+port: "8000"
+
+service_port: "8001"
+
+db:
+  username: "postgres"
+  host: "localhost"
+  port: "5436"
+  dbname: "postgres"
+  sslmode: "disable"
+
+redis:
+  host: "localhost"
+  port: "6379"
+
+yookassa:
+  shop_id: "371284"
+
+notification_service:
+  host: "localhost:8081"
+  path: "/ws"
+
+client_origin: "http://localhost:5173"
+```
+* port: ConnectTeam HTTP-server port (used by client web app)
+* service_port: ConnectTeam HTTP-server port (used by Game Service)
+* db: database info for connecting
+* redis: redis info for connecting
+* yookassa.shop_id: shop id from yookassa
+* notification_service: notification_service info for connectng
+
+
+---
+
 ## API Documentation
 
 ### Contents
