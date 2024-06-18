@@ -1,5 +1,8 @@
 # ConnectTeam server app 
 
+ConnectTeam server app is HTTP-server app accepting HTTP requests from web app (client side of the project) and Game Service (WebSocket server app). Also, ConnectTeam server app sends messages to NotificationService via WebSocket connection.
+
+
 ## Run 
 1. First, deploy database (postgres). Use .sql file in ./schema directory to create database.
 2. Deploy Redis database.
