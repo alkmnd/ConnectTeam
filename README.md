@@ -11,7 +11,7 @@ go run cmd/main.go
 ```
 #### .env 
 
-**Example:**
+Example:
 ``` bash 
 DB_PASSWORD=qwerty
 REDIS_PASSWORD=redis
@@ -30,7 +30,7 @@ NOTIFICATION_SERVICE_API_KEY=YkH8H0LOsoqk6ZZ0MQYkte7proV8Y3QZ
 * NOTIFICATION_SERVICE_API_KEY: Notification Service api key (used by ConnectTeam HTTP-server)
 
 #### config.yml
-**Example:**
+Example:
 ``` bash
 port: "8000"
 
