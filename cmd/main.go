@@ -61,7 +61,7 @@ func main() {
 
 	yooClient := payment_gateway.NewYookassaClient(payment_gateway.Config{
 		ShopId: viper.GetString("yookassa.shop_id"),
-		ApiKey: os.Getenv("INTEGRATION_API_KEY"),
+		ApiKey: os.Getenv("YOOCASSA_API_KEY"),
 	})
 
 	repos := repository.NewRepository(db, rdb, yooClient, notificationService)
