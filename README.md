@@ -15,7 +15,9 @@ go run cmd/main.go
 #### .env 
 
 Example:
-``` bash 
+
+
+``` .env
 DB_PASSWORD=qwerty
 REDIS_PASSWORD=redis
 EMAIL=connectteam66@gmail.com
@@ -23,7 +25,9 @@ EMAIL_PASSWORD=pktx fgtm fmwp vjfk
 YOOCASSA_API_KEY=test_Mr8jjMiIVtUbPTviWuz8Dv7taCv2SRmnoqxWXey3yvg
 SERVICE_API_KEY=YkH8H0LOsoqk6ZZ0MQYkte7proV8Y3QZ
 NOTIFICATION_SERVICE_API_KEY=YkH8H0LOsoqk6ZZ0MQYkte7proV8Y3QZ
-```
+``` 
+
+
 * DB_PASSWORD: database password
 * REDIS_PASSWORD: redis password
 * EMAIL: email for sending messages
@@ -32,9 +36,11 @@ NOTIFICATION_SERVICE_API_KEY=YkH8H0LOsoqk6ZZ0MQYkte7proV8Y3QZ
 * SERVICE_API_KEY: server api key (used by Game Service)
 * NOTIFICATION_SERVICE_API_KEY: Notification Service api key (used by ConnectTeam HTTP-server)
 
+
+
 #### config.yml
 Example:
-``` bash
+``` yml
 port: "8000"
 
 service_port: "8001"
