@@ -4,14 +4,10 @@ import (
 	connectteam "ConnectTeam/models"
 	"ConnectTeam/pkg/service"
 	"ConnectTeam/pkg/service/models"
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 type Handler struct {
@@ -24,16 +20,14 @@ func NewHandler(services *service.Service, apiKey string) *Handler {
 }
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
-
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:8080"},
-		AllowMethods:     []string{"PUT", "PATCH", "POST", "GET", "DELETE"},
-		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type", "Accept-Encoding", "Access-Control-Allow-Origin"},
-		ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods"},
-		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
-	}))
+	//router.Use(cors.New(cors.Config{
+	//	AllowOrigins:     []string{"http://localhost:8080"},
+	//	AllowMethods:     []string{"PUT", "PATCH", "POST", "GET", "DELETE"},
+	//	AllowHeaders:     []string{"Origin", "Authorization", "Content-Type", "Accept-Encoding", "Access-Control-Allow-Origin"},
+	//	ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods"},
+	//	AllowCredentials: true,
+	//	MaxAge:           12 * time.Hour,
+	//}))
 
 	httpService := router.Group("/api", h.clientIdentity)
 	{

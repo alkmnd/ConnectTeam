@@ -75,7 +75,7 @@ func main() {
 	// Запуск первого сервера в отдельной горутине.
 	go func() {
 		defer wg.Done()
-		if err := srv1.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
+		if err := srv1.Run(viper.GetString("port"), handlers.InitRoutes(viper.GetString("client_origin"))); err != nil {
 			logrus.Fatalf("error %s", err.Error())
 		}
 	}()
