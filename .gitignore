@@ -4,4 +4,3 @@
 /.localstack/
 /.idea/
 .DS_Store
-.env
