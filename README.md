@@ -71,6 +71,7 @@ client_origin: "http://localhost:5173"
 * redis: redis info for connecting
 * yookassa.shop_id: shop id from yookassa
 * notification_service: notification_service info for connectng
+* client_origin: web app domen 
 
 
 ---
