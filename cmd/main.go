@@ -10,6 +10,7 @@ import (
 	"ConnectTeam/pkg/service"
 	"ConnectTeam/pkg/service_handler"
 	"github.com/joho/godotenv"
+	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"os"
@@ -18,18 +19,19 @@ import (
 
 func main() {
 	if err := initConfig(); err != nil {
-		logrus.Fatalf("error")
+		logrus.Fatalf("error initializing config: %s", err.Error())
 	}
 
 	if err := godotenv.Load(); err != nil {
-		logrus.Fatalf("error")
+		logrus.Fatalf("error loading .env file: %s", err.Error())
 	}
 
-	logrus.Println(viper.GetString("db.username"))
-	logrus.Println(viper.GetString("db.name"))
-	logrus.Println(viper.GetString("db.port"))
-	logrus.Println(viper.GetString("db.host"))
-	logrus.Println(os.Getenv("DB_PASSWORD"))
+	logrus.Println("DB Username:", viper.GetString("db.username"))
+	logrus.Println("DB Name:", viper.GetString("db.name"))
+	logrus.Println("DB Port:", viper.GetString("db.port"))
+	logrus.Println("DB Host:", viper.GetString("db.host"))
+	logrus.Println("DB Password:", os.Getenv("DB_PASSWORD"))
+
 	db, err := repository.NewPostgresDB(repository.Config{
 		Host:     viper.GetString("db.host"),
 		Port:     viper.GetString("db.port"),
@@ -40,7 +42,7 @@ func main() {
 	})
 
 	if err != nil {
-		logrus.Fatalf("error %s", err.Error())
+		logrus.Fatalf("error connecting to the database: %s", err.Error())
 	}
 
 	rdb, err := redis.NewRedisClient(redis.Config{
@@ -49,6 +51,10 @@ func main() {
 		Password: os.Getenv("REDIS_PASSWORD"),
 	})
 
+	if err != nil {
+		logrus.Fatalf("error connecting to Redis: %s", err.Error())
+	}
+
 	notificationService, err := notification_service.NewNotificationService(notification_service.Config{
 		Host:   viper.GetString("notification_service.host"),
 		Path:   viper.GetString("notification_service.path"),
@@ -56,7 +62,7 @@ func main() {
 	})
 
 	if err != nil {
-		logrus.Println("error %s", err.Error())
+		logrus.Fatalf("error initializing notification service: %s", err.Error())
 	}
 
 	yooClient := payment_gateway.NewYookassaClient(payment_gateway.Config{
@@ -68,15 +74,22 @@ func main() {
 	services := service.NewService(repos)
 	handlers := handler.NewHandler(services)
 
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
+		AllowedHeaders:   []string{"Authorization", "Content-Type"},
+		AllowCredentials: true,
+	})
+
 	var wg sync.WaitGroup
-	wg.Add(3)
+	wg.Add(2)
 
 	srv1 := new(connectteam.Server)
 	// Запуск первого сервера в отдельной горутине.
 	go func() {
 		defer wg.Done()
-		if err := srv1.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
-			logrus.Fatalf("error %s", err.Error())
+		if err := srv1.Run(viper.GetString("port"), c.Handler(handlers.InitRoutes())); err != nil {
+			logrus.Fatalf("error running server 1: %s", err.Error())
 		}
 	}()
 
@@ -87,13 +100,12 @@ func main() {
 	// Запуск второго сервера в отдельной горутине.
 	go func() {
 		defer wg.Done()
-		if err := srv2.Run(viper.GetString("service_port"), serviceHandler.InitRoutes()); err != nil {
-			logrus.Fatalf("error %s", err.Error())
+		if err := srv2.Run(viper.GetString("service_port"), c.Handler(serviceHandler.InitRoutes())); err != nil {
+			logrus.Fatalf("error running server 2: %s", err.Error())
 		}
 	}()
 
 	wg.Wait()
-
 }
 
 func initConfig() error {
