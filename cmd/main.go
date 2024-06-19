@@ -74,14 +74,6 @@ func main() {
 	services := service.NewService(repos)
 	handlers := handler.NewHandler(services)
 
-	corsHandler := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
-		AllowedMethods:   []string{"GET", "POST", "OPTIONS", "PUT", "DELETE"},
-		AllowedHeaders:   []string{"Authorization", "Content-Type"},
-		AllowCredentials: true,
-		Debug:            true,
-	}).Handler
-
 	var wg sync.WaitGroup
 	wg.Add(2)
 
@@ -89,7 +81,7 @@ func main() {
 	// Запуск первого сервера в отдельной горутине.
 	go func() {
 		defer wg.Done()
-		if err := srv1.Run(viper.GetString("port"), corsHandler(handlers.InitRoutes())); err != nil {
+		if err := srv1.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
 			logrus.Fatalf("error running server 1: %s", err.Error())
 		}
 	}()
@@ -101,7 +93,7 @@ func main() {
 	// Запуск второго сервера в отдельной горутине.
 	go func() {
 		defer wg.Done()
-		if err := srv2.Run(viper.GetString("service_port"), corsHandler(serviceHandler.InitRoutes())); err != nil {
+		if err := srv2.Run(viper.GetString("service_port"), serviceHandler.InitRoutes()); err != nil {
 			logrus.Fatalf("error running server 2: %s", err.Error())
 		}
 	}()
