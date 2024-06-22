@@ -10,7 +10,6 @@ import (
 	"ConnectTeam/pkg/service"
 	"ConnectTeam/pkg/service_handler"
 	"github.com/joho/godotenv"
-	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"os"
@@ -74,13 +73,6 @@ func main() {
 	services := service.NewService(repos)
 	handlers := handler.NewHandler(services)
 
-	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
-		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
-		AllowedHeaders:   []string{"Authorization", "Content-Type"},
-		AllowCredentials: true,
-	})
-
 	var wg sync.WaitGroup
 	wg.Add(3)
 
@@ -88,8 +80,8 @@ func main() {
 	// Запуск первого сервера в отдельной горутине.
 	go func() {
 		defer wg.Done()
-		if err := srv1.Run(viper.GetString("port"), c.Handler(handlers.InitRoutes())); err != nil {
-			logrus.Fatalf("error running server 1: %s", err.Error())
+		if err := srv1.Run(viper.GetString("port"), handlers.InitRoutes(viper.GetString("client_origin"))); err != nil {
+			logrus.Fatalf("error %s", err.Error())
 		}
 	}()
 
@@ -100,8 +92,8 @@ func main() {
 	// Запуск второго сервера в отдельной горутине.
 	go func() {
 		defer wg.Done()
-		if err := srv2.Run(viper.GetString("service_port"), c.Handler(serviceHandler.InitRoutes())); err != nil {
-			logrus.Fatalf("error running server 2: %s", err.Error())
+		if err := srv2.Run(viper.GetString("service_port"), serviceHandler.InitRoutes()); err != nil {
+			logrus.Fatalf("error %s", err.Error())
 		}
 	}()
 

@@ -16,10 +16,10 @@ type Handler struct {
 func NewHandler(services *service.Service) *Handler {
 	return &Handler{services: services}
 }
-func (h *Handler) InitRoutes() *gin.Engine {
+func (h *Handler) InitRoutes(clientOrigin string) *gin.Engine {
 	router := gin.New()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://connecteam.ru"},
+		AllowOrigins:     []string{clientOrigin},
 		AllowMethods:     []string{"PUT", "PATCH", "POST", "GET", "DELETE"},
 		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type", "Accept-Encoding", "Access-Control-Allow-Origin"},
 		ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods"},
