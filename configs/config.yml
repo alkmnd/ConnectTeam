@@ -9,10 +9,6 @@ db:
   dbname: "connecteam"
   sslmode: "disable"
 
-storage:
-  endpoint: "localstack:4563"
-  bucket: "file-storage"
-
 redis:
   host: "localhost"
   port: "6379"
@@ -23,3 +19,5 @@ yookassa:
 notification_service:
   host: "localhost:8081"
   path: "/ws"
+
+client_origin: "https://connecteam.ru"

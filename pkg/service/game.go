@@ -86,17 +86,6 @@ func (s *GameService) StartGame(gameId uuid.UUID) error {
 	if err != nil {
 		return err
 	}
-
-	//users, err := s.gameRepo.GetGameParticipants(gameId)
-	//if err != nil {
-	//	return nil
-	//}
-
-	//for i := range users {
-	//	if users[i].Id != game.CreatorId {
-	//		_ = s.notificationRepo.CreateGameStartNotification(gameId, users[i].Id)
-	//	}
-	//}
 	return nil
 
 }
