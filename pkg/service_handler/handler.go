@@ -187,9 +187,9 @@ func (h *Handler) saveResults(c *gin.Context) {
 
 	for i := range input.Results {
 		_ = h.services.SaveResults(gameId, input.Results[i].UserId, input.Results[i].Value, input.Results[i].Name)
-		//for k := range input.Results[i].Tags {
-		//	_ = h.services.CreateTagsUsers(i, gameId, input.Results[i].Tags[k])
-		//}
+		for k := range input.Results[i].Tags {
+			_ = h.services.SaveTagsResults(input.Results[i].UserId, gameId, input.Results[i].Tags[k], input.Results[i].Name)
+		}
 
 	}
 	c.Status(http.StatusOK)

@@ -123,11 +123,16 @@ func (r *QuestionPostgres) GetTagsUsers(userId uuid.UUID, gameId uuid.UUID) ([]m
 	return tags, err
 }
 
-func (r *QuestionPostgres) CreateTagsUsers(userId uuid.UUID, gameId uuid.UUID, tagId uuid.UUID) error {
-	query := fmt.Sprintf("INSERT INTO %s (user_id, game_id, tag_id) values ($1, $2, $3)  ON CONFLICT (user_id, tag_id, game_id) DO NOTHING", tagsUsersTable)
-	_, err := r.db.Exec(query, userId, gameId, tagId)
-	return err
-
+func (r *QuestionPostgres) SaveTagsResults(userId uuid.UUID, gameId uuid.UUID, tagId uuid.UUID, name string) error {
+	if userId != uuid.Nil {
+		query := fmt.Sprintf("INSERT INTO %s (user_id, game_id, tag_id, name) values ($1, $2, $3, $4)", tagsUsersTable)
+		_, err := r.db.Exec(query, userId, gameId, tagId, name)
+		return err
+	} else {
+		query := fmt.Sprintf("INSERT INTO %s (user_id, game_id, tag_id, name) values ($1, $2, $3, $4)", tagsUsersTable)
+		_, err := r.db.Exec(query, nil, gameId, tagId, name)
+		return err
+	}
 }
 
 func (r *QuestionPostgres) UpdateQuestion(content string, id uuid.UUID) (connectteam.Question, error) {

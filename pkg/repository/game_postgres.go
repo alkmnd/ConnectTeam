@@ -46,9 +46,17 @@ func (r *GamePostgres) ChangeGameName(gameId uuid.UUID, name string) error {
 }
 
 func (r *GamePostgres) SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int, name string) error {
-	query := fmt.Sprintf("INSERT INTO %s (game_id, user_id, value, name) values ($1, $2, $3, $4)", resultsTable)
-	_, err := r.db.Exec(query, gameId, userId, rate, name)
-	return err
+	if userId != uuid.Nil {
+		query := fmt.Sprintf("INSERT INTO %s (game_id, user_id, value, name) values ($1, $2, $3, $4)", resultsTable)
+		_, err := r.db.Exec(query, gameId, userId, rate, name)
+
+		return err
+	} else {
+		query := fmt.Sprintf("INSERT INTO %s (game_id, user_id, value, name) values ($1, $2, $3, $4)", resultsTable)
+		_, err := r.db.Exec(query, gameId, nil, rate, name)
+
+		return err
+	}
 }
 
 func (r *GamePostgres) GetCreatedGames(page int, userId uuid.UUID) (games []connectteam.Game, err error) {
