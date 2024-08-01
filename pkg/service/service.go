@@ -97,7 +97,7 @@ type Game interface {
 	GetResults(gameId uuid.UUID) (results []connectteam.UserResult, err error)
 	StartGame(gameId uuid.UUID) error
 	EndGame(gameId uuid.UUID) error
-	SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int) error
+	SaveResults(gameId uuid.UUID, userId uuid.UUID, value int, name string) error
 	CancelGame(gameId uuid.UUID, userId uuid.UUID) error
 	InviteUserToGame(gameId uuid.UUID, userId uuid.UUID, creatorId uuid.UUID) error
 	ChangeStartDate(gameId uuid.UUID, dateString string) error

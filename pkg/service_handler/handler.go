@@ -162,12 +162,14 @@ func (h *Handler) startGame(c *gin.Context) {
 }
 
 type saveResultsInput struct {
-	Results map[uuid.UUID]Rates `json:"results"`
+	Results []Rates
 }
 
 type Rates struct {
-	Value int         `json:"value"`
-	Tags  []uuid.UUID `json:"tags"`
+	Value  int         `json:"value"`
+	Tags   []uuid.UUID `json:"tags"`
+	UserId uuid.UUID   `json:"user_id"`
+	Name   string      `json:"name"`
 }
 
 func (h *Handler) saveResults(c *gin.Context) {
@@ -183,11 +185,11 @@ func (h *Handler) saveResults(c *gin.Context) {
 		return
 	}
 
-	for i, v := range input.Results {
-		_ = h.services.SaveResults(gameId, i, v.Value)
-		for k := range input.Results[i].Tags {
-			_ = h.services.CreateTagsUsers(i, gameId, input.Results[i].Tags[k])
-		}
+	for i := range input.Results {
+		_ = h.services.SaveResults(gameId, input.Results[i].UserId, input.Results[i].Value, input.Results[i].Name)
+		//for k := range input.Results[i].Tags {
+		//	_ = h.services.CreateTagsUsers(i, gameId, input.Results[i].Tags[k])
+		//}
 
 	}
 	c.Status(http.StatusOK)

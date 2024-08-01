@@ -45,9 +45,9 @@ func (r *GamePostgres) ChangeGameName(gameId uuid.UUID, name string) error {
 	return err
 }
 
-func (r *GamePostgres) SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int) error {
-	query := fmt.Sprintf("INSERT INTO %s (game_id, user_id, value) values ($1, $2, $3) ON CONFLICT (user_id, game_id) DO NOTHING", resultsTable)
-	_, err := r.db.Exec(query, gameId, userId, rate)
+func (r *GamePostgres) SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int, name string) error {
+	query := fmt.Sprintf("INSERT INTO %s (game_id, user_id, value, name) values ($1, $2, $3, $4)", resultsTable)
+	_, err := r.db.Exec(query, gameId, userId, rate, name)
 	return err
 }
 
