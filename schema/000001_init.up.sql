@@ -6,7 +6,7 @@ CREATE TYPE plan_access AS ENUM ('additional', 'holder');
 
 CREATE TABLE users
 (
-    id uuid DEFAULT gen_random_uuid() PRIMARY KEY ,
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     email varchar(256) UNIQUE,
     first_name varchar(256),
     second_name varchar(256),
@@ -89,7 +89,7 @@ CREATE TABLE results
 (
     user_id uuid REFERENCES users (id) ON DELETE CASCADE,
     game_id uuid REFERENCES games (id) ON DELETE CASCADE,
-    primary key (game_id, user_id),
+    name varchar(256)
     value int
 );
 
