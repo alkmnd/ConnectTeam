@@ -75,7 +75,7 @@ type Question interface {
 	GetAllTags() ([]models.Tag, error)
 	UpdateQuestionTags(questionId uuid.UUID, tags []models.Tag) ([]models.Tag, error)
 	GetTagsUsers(userId uuid.UUID, gameId uuid.UUID) ([]models.Tag, error)
-	CreateTagsUsers(userId uuid.UUID, gameId uuid.UUID, tagId uuid.UUID) error
+	SaveTagsResults(userId uuid.UUID, gameId uuid.UUID, tagId uuid.UUID, name string) error
 }
 
 type Payment interface {

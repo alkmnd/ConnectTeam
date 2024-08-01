@@ -136,8 +136,8 @@ func (s *QuestionService) GetAllTags() ([]models.Tag, error) {
 	return tags, nil
 }
 
-func (s *QuestionService) CreateTagsUsers(userId uuid.UUID, gameId uuid.UUID, tagId uuid.UUID) error {
-	return s.repo.CreateTagsUsers(userId, gameId, tagId)
+func (s *QuestionService) SaveTagsResults(userId uuid.UUID, gameId uuid.UUID, tagId uuid.UUID, name string) error {
+	return s.repo.SaveTagsResults(userId, gameId, tagId, name)
 }
 
 func (s *QuestionService) UpdateQuestionTags(questionId uuid.UUID, tags []models.Tag) ([]models.Tag, error) {
