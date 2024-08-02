@@ -20,14 +20,6 @@ func NewHandler(services *service.Service, apiKey string) *Handler {
 }
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
-	//router.Use(cors.New(cors.Config{
-	//	AllowOrigins:     []string{"http://localhost:8080"},
-	//	AllowMethods:     []string{"PUT", "PATCH", "POST", "GET", "DELETE"},
-	//	AllowHeaders:     []string{"Origin", "Authorization", "Content-Type", "Accept-Encoding", "Access-Control-Allow-Origin"},
-	//	ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods"},
-	//	AllowCredentials: true,
-	//	MaxAge:           12 * time.Hour,
-	//}))
 
 	httpService := router.Group("/api", h.clientIdentity)
 	{
@@ -37,6 +29,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			game.PATCH("/start/:id", h.startGame)
 			game.POST(":id/results", h.saveResults)
 			game.PATCH("/end/:id", h.endGame)
+			game.GET("/results/:id", h.getResults)
 		}
 		topic := httpService.Group("/topics")
 		{
@@ -217,6 +210,29 @@ func (h *Handler) getTopic(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, topic)
+}
+
+type getResultsResponse struct {
+	Data []models.UserResult `json:"data"`
+}
+
+func (h *Handler) getResults(c *gin.Context) {
+	gameId, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	results, err := h.services.GetResults(gameId)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, getResultsResponse{
+		Data: results,
+	})
 }
 
 func (h *Handler) getRandWithLimit(c *gin.Context) {

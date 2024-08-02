@@ -2,6 +2,7 @@ package handler
 
 import (
 	connectteam "ConnectTeam/models"
+	"ConnectTeam/pkg/service/models"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
@@ -65,11 +66,6 @@ func (h *Handler) createGame(c *gin.Context) {
 	})
 }
 
-//type getUserGamesInput struct {
-//	Limit  int `json:"limit" binding:"required"`
-//	Offset int `json:"offset" binding:"required"`
-//}
-
 type getUserGamesResponse struct {
 	Data []connectteam.Game `json:"data"`
 }
@@ -98,12 +94,6 @@ func (h *Handler) getCreatedGames(c *gin.Context) {
 		return
 	}
 
-	//_, err = h.services.GetUserPlan(id)
-	//if err != nil {
-	//	newErrorResponse(c, http.StatusForbidden, "user has no plan")
-	//	return
-	//}
-
 	games, err := h.services.Game.GetCreatedGames(page, id)
 
 	if err != nil {
@@ -117,7 +107,7 @@ func (h *Handler) getCreatedGames(c *gin.Context) {
 }
 
 type getResultsResponse struct {
-	Data []connectteam.UserResult `json:"data"`
+	Data []models.UserResult `json:"data"`
 }
 
 func (h *Handler) getResults(c *gin.Context) {
@@ -395,28 +385,28 @@ func (h *Handler) validateGameInvitationCode(c *gin.Context) {
 	})
 }
 
-func (h *Handler) getTagsResults(c *gin.Context) {
-	gameId, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	userId, err := uuid.Parse(c.Param("user_id"))
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	tags, err := h.services.GetTagsUsers(userId, gameId)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, getTagsResponse{
-		Data: tags,
-	})
-
-}
+//func (h *Handler) getTagsResults(c *gin.Context) {
+//	gameId, err := uuid.Parse(c.Param("id"))
+//	if err != nil {
+//		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+//		return
+//	}
+//	userId, err := uuid.Parse(c.Param("user_id"))
+//	if err != nil {
+//		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+//		return
+//	}
+//	tags, err := h.services.GetTagsResults(userId, gameId)
+//	if err != nil {
+//		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+//		return
+//	}
+//
+//	c.JSON(http.StatusOK, getTagsResponse{
+//		Data: tags,
+//	})
+//
+//}
 
 type getGameMembersResponse struct {
 	Members []connectteam.UserPublic `json:"members"`

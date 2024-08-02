@@ -4,6 +4,7 @@ import (
 	connectteam "ConnectTeam/models"
 	"ConnectTeam/pkg/repository/models"
 	"ConnectTeam/pkg/repository/notification_service"
+	service_models "ConnectTeam/pkg/service/models"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 	"github.com/rvinnie/yookassa-sdk-go/yookassa"
@@ -81,7 +82,6 @@ type Question interface {
 	GetRandWithLimit(topicId uuid.UUID, limit int) ([]connectteam.Question, error)
 	GetQuestionTags(questionId uuid.UUID) ([]models.Tag, error)
 	UpdateQuestionTags(questionId uuid.UUID, tags []models.Tag) ([]models.Tag, error)
-	GetTagsUsers(userId uuid.UUID, gameId uuid.UUID) ([]models.Tag, error)
 	GetAllTags() ([]models.Tag, error)
 	SaveTagsResults(userId uuid.UUID, gameId uuid.UUID, tagId uuid.UUID, name string) error
 }
@@ -96,12 +96,13 @@ type Game interface {
 	GetGames(page int, userId uuid.UUID) (games []connectteam.Game, err error)
 	StartGame(gameId uuid.UUID) error
 	SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int, name string) error
-	GetResults(gameId uuid.UUID) (results []connectteam.UserResult, err error)
+	GetResults(gameId uuid.UUID) (results []models.UserResult, err error)
 	EndGame(gameId uuid.UUID) error
 	CancelGame(gameId uuid.UUID) error
 	GetGameParticipants(gameId uuid.UUID) (users []connectteam.UserPublic, err error)
 	ChangeStartDate(gameId uuid.UUID, date time.Time) error
 	ChangeGameName(gameId uuid.UUID, name string) error
+	GetTagsResults(resultId int, gameId uuid.UUID) ([]service_models.Tag, error)
 }
 
 type Notification interface {

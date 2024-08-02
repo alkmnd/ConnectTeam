@@ -62,21 +62,21 @@ func (s *QuestionService) DeleteQuestion(id uuid.UUID) error {
 	return s.repo.DeleteQuestion(id)
 }
 
-func (s *QuestionService) GetTagsUsers(userId uuid.UUID, gameId uuid.UUID) ([]models.Tag, error) {
-	var tags []models.Tag
-	repoTags, err := s.repo.GetTagsUsers(userId, gameId)
-	if err != nil {
-		return nil, err
-	}
-	for i := range repoTags {
-		tags = append(tags, models.Tag{
-			Id:   repoTags[i].Id,
-			Name: repoTags[i].Name,
-		})
-	}
-
-	return tags, nil
-}
+//func (s *QuestionService) GetTagsResults(resultId int, gameId uuid.UUID) ([]models.Tag, error) {
+//	var tags []models.Tag
+//	repoTags, err := s.repo.GetTagsResults(resultId, gameId)
+//	if err != nil {
+//		return nil, err
+//	}
+//	for i := range repoTags {
+//		tags = append(tags, models.Tag{
+//			Id:   repoTags[i].Id,
+//			Name: repoTags[i].Name,
+//		})
+//	}
+//
+//	return tags, nil
+//}
 
 func (s *QuestionService) GetAll(topicId uuid.UUID) ([]models.Question, error) {
 	var questions []models.Question
