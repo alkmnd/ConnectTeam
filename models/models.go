@@ -32,11 +32,6 @@ type UserCredentials struct {
 	PasswordHash string `json:"password_hash" db:"password_hash"`
 }
 
-type UserResult struct {
-	UserId uuid.UUID `json:"user_id" db:"user_id"`
-	Value  int       `json:"value" db:"value"`
-}
-
 type UserPublic struct {
 	Id    uuid.UUID `json:"id" db:"id"`
 	Email string    `json:"email,omitempty" db:"email"`

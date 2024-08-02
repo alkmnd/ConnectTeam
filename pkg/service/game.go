@@ -3,6 +3,7 @@ package service
 import (
 	connectteam "ConnectTeam/models"
 	"ConnectTeam/pkg/repository"
+	"ConnectTeam/pkg/service/models"
 	"errors"
 	"github.com/google/uuid"
 	"time"
@@ -98,8 +99,21 @@ func (s *GameService) EndGame(gameId uuid.UUID) error {
 	return s.gameRepo.EndGame(gameId)
 }
 
-func (s *GameService) GetResults(gameId uuid.UUID) (results []connectteam.UserResult, err error) {
-	return s.gameRepo.GetResults(gameId)
+func (s *GameService) GetResults(gameId uuid.UUID) (results []models.UserResult, err error) {
+	usersResults, err := s.gameRepo.GetResults(gameId)
+	if err != nil {
+		return results, err
+	}
+	for i := range usersResults {
+		tags, _ := s.gameRepo.GetTagsResults(usersResults[i].Id, gameId)
+		results = append(results, models.UserResult{
+			UserId: usersResults[i].UserId,
+			Value:  usersResults[i].Value,
+			Name:   usersResults[i].Name,
+			Tags:   tags,
+		})
+	}
+	return results, err
 }
 
 func (s *GameService) GetCreatedGames(page int, userId uuid.UUID) ([]connectteam.Game, error) {

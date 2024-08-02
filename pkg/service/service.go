@@ -74,7 +74,6 @@ type Question interface {
 	GetRandWithLimit(topicId uuid.UUID, limit int) ([]models.Question, error)
 	GetAllTags() ([]models.Tag, error)
 	UpdateQuestionTags(questionId uuid.UUID, tags []models.Tag) ([]models.Tag, error)
-	GetTagsUsers(userId uuid.UUID, gameId uuid.UUID) ([]models.Tag, error)
 	SaveTagsResults(userId uuid.UUID, gameId uuid.UUID, tagId uuid.UUID, name string) error
 }
 
@@ -94,7 +93,7 @@ type Game interface {
 	DeleteGameFromGameList(gameId uuid.UUID, userId uuid.UUID) error
 	GetGameWithInvitationCode(code string) (connectteam.Game, error)
 	GetGames(page int, userId uuid.UUID) ([]connectteam.Game, error)
-	GetResults(gameId uuid.UUID) (results []connectteam.UserResult, err error)
+	GetResults(gameId uuid.UUID) (results []models.UserResult, err error)
 	StartGame(gameId uuid.UUID) error
 	EndGame(gameId uuid.UUID) error
 	SaveResults(gameId uuid.UUID, userId uuid.UUID, value int, name string) error

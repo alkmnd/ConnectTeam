@@ -2,6 +2,8 @@ package repository
 
 import (
 	connectteam "ConnectTeam/models"
+	"ConnectTeam/pkg/repository/models"
+	serviceModels "ConnectTeam/pkg/service/models"
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -79,9 +81,9 @@ func (r *GamePostgres) GetGame(gameId uuid.UUID) (game connectteam.Game, err err
 	return game, err
 }
 
-func (r *GamePostgres) GetResults(gameId uuid.UUID) (results []connectteam.UserResult, err error) {
+func (r *GamePostgres) GetResults(gameId uuid.UUID) (results []models.UserResult, err error) {
 
-	query := fmt.Sprintf(`SELECT user_id, value FROM %s WHERE game_id=$1`, resultsTable)
+	query := fmt.Sprintf(`SELECT id, user_id, value, name FROM %s WHERE game_id=$1`, resultsTable)
 	err = r.db.Select(&results, query, gameId)
 	return results, err
 }
@@ -135,4 +137,11 @@ func (r *GamePostgres) GetGameParticipants(gameId uuid.UUID) (users []connecttea
 	 WHERE gu.game_id=$1`, usersTable, gamesUsersTable)
 	err = r.db.Select(&users, query, gameId)
 	return users, err
+}
+
+func (r *GamePostgres) GetTagsResults(resultId int, gameId uuid.UUID) ([]serviceModels.Tag, error) {
+	var tags []serviceModels.Tag
+	query := fmt.Sprintf("SELECT t.id, t.name FROM %s t JOIN %s tu ON t.id = tu.tag_id WHERE game_id = $1 AND result_id = $2", tagsTable, tagsUsersTable)
+	err := r.db.Select(&tags, query, gameId, resultId)
+	return tags, err
 }

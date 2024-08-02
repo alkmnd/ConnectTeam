@@ -116,10 +116,10 @@ func (r *QuestionPostgres) GetRandWithLimit(topicId uuid.UUID, limit int) ([]con
 	return questions, err
 }
 
-func (r *QuestionPostgres) GetTagsUsers(userId uuid.UUID, gameId uuid.UUID) ([]models.Tag, error) {
+func (r *QuestionPostgres) GetTagsResults(resultId int, gameId uuid.UUID) ([]models.Tag, error) {
 	var tags []models.Tag
-	query := fmt.Sprintf("SELECT t.id, t.name FROM %s t JOIN %s tu ON t.id = tu.tag_id WHERE game_id = $1 AND user_id = $2", tagsTable, tagsUsersTable)
-	err := r.db.Select(&tags, query, gameId, userId)
+	query := fmt.Sprintf("SELECT t.id, t.name FROM %s t JOIN %s tu ON t.id = tu.tag_id WHERE game_id = $1 AND result_id = $2", tagsTable, tagsUsersTable)
+	err := r.db.Select(&tags, query, gameId, resultId)
 	return tags, err
 }
 

@@ -29,6 +29,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			game.PATCH("/start/:id", h.startGame)
 			game.POST(":id/results", h.saveResults)
 			game.PATCH("/end/:id", h.endGame)
+			game.GET("/results/:id", h.getResults)
 		}
 		topic := httpService.Group("/topics")
 		{
@@ -209,6 +210,29 @@ func (h *Handler) getTopic(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, topic)
+}
+
+type getResultsResponse struct {
+	Data []models.UserResult `json:"data"`
+}
+
+func (h *Handler) getResults(c *gin.Context) {
+	gameId, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	results, err := h.services.GetResults(gameId)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, getResultsResponse{
+		Data: results,
+	})
 }
 
 func (h *Handler) getRandWithLimit(c *gin.Context) {
