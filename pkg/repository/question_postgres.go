@@ -123,16 +123,11 @@ func (r *QuestionPostgres) GetTagsResults(resultId int, gameId uuid.UUID) ([]mod
 	return tags, err
 }
 
-func (r *QuestionPostgres) SaveTagsResults(userId uuid.UUID, gameId uuid.UUID, tagId uuid.UUID, name string) error {
-	if userId != uuid.Nil {
-		query := fmt.Sprintf("INSERT INTO %s (user_id, game_id, tag_id, name) values ($1, $2, $3, $4)", tagsUsersTable)
-		_, err := r.db.Exec(query, userId, gameId, tagId, name)
-		return err
-	} else {
-		query := fmt.Sprintf("INSERT INTO %s (user_id, game_id, tag_id, name) values ($1, $2, $3, $4)", tagsUsersTable)
-		_, err := r.db.Exec(query, nil, gameId, tagId, name)
-		return err
-	}
+func (r *QuestionPostgres) SaveTagsResults(gameId uuid.UUID, tagId uuid.UUID, resultId int) error {
+
+	query := fmt.Sprintf("INSERT INTO %s (game_id, tag_id, result_id) values ($1, $2, $3)", tagsUsersTable)
+	_, err := r.db.Exec(query, gameId, tagId, resultId)
+	return err
 }
 
 func (r *QuestionPostgres) UpdateQuestion(content string, id uuid.UUID) (connectteam.Question, error) {

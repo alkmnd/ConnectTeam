@@ -74,7 +74,7 @@ type Question interface {
 	GetRandWithLimit(topicId uuid.UUID, limit int) ([]models.Question, error)
 	GetAllTags() ([]models.Tag, error)
 	UpdateQuestionTags(questionId uuid.UUID, tags []models.Tag) ([]models.Tag, error)
-	SaveTagsResults(userId uuid.UUID, gameId uuid.UUID, tagId uuid.UUID, name string) error
+	SaveTagsResults(gameId uuid.UUID, tagId uuid.UUID, resultId int) error
 }
 
 type Payment interface {
@@ -96,7 +96,7 @@ type Game interface {
 	GetResults(gameId uuid.UUID) (results []models.UserResult, err error)
 	StartGame(gameId uuid.UUID) error
 	EndGame(gameId uuid.UUID) error
-	SaveResults(gameId uuid.UUID, userId uuid.UUID, value int, name string) error
+	SaveResults(gameId uuid.UUID, userId uuid.UUID, value int, name string) (int, error)
 	CancelGame(gameId uuid.UUID, userId uuid.UUID) error
 	InviteUserToGame(gameId uuid.UUID, userId uuid.UUID, creatorId uuid.UUID) error
 	ChangeStartDate(gameId uuid.UUID, dateString string) error

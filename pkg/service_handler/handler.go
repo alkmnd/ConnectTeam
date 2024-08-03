@@ -173,9 +173,13 @@ func (h *Handler) saveResults(c *gin.Context) {
 	}
 
 	for i := range input.Results {
-		_ = h.services.SaveResults(gameId, input.Results[i].UserId, input.Results[i].Value, input.Results[i].Name)
+		id, err := h.services.SaveResults(gameId, input.Results[i].UserId, input.Results[i].Value, input.Results[i].Name)
+		if err != nil {
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
 		for k := range input.Results[i].Tags {
-			_ = h.services.SaveTagsResults(input.Results[i].UserId, gameId, input.Results[i].Tags[k], input.Results[i].Name)
+			_ = h.services.SaveTagsResults(gameId, input.Results[i].Tags[k], id)
 		}
 
 	}

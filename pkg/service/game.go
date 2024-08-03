@@ -19,7 +19,7 @@ func NewGameService(gameRepo repository.Game, notificationRepo repository.Notifi
 	return &GameService{gameRepo: gameRepo, notificationRepo: notificationRepo, planRepo: planRepo}
 }
 
-func (s *GameService) SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int, name string) error {
+func (s *GameService) SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int, name string) (int, error) {
 	return s.gameRepo.SaveResults(gameId, userId, rate, name)
 }
 func (s *GameService) ChangeStartDate(gameId uuid.UUID, dateString string) error {
