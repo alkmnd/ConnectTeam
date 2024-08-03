@@ -83,7 +83,7 @@ type Question interface {
 	GetQuestionTags(questionId uuid.UUID) ([]models.Tag, error)
 	UpdateQuestionTags(questionId uuid.UUID, tags []models.Tag) ([]models.Tag, error)
 	GetAllTags() ([]models.Tag, error)
-	SaveTagsResults(userId uuid.UUID, gameId uuid.UUID, tagId uuid.UUID, name string) error
+	SaveTagsResults(gameId uuid.UUID, tagId uuid.UUID, resultId int) error
 }
 
 type Game interface {
@@ -95,7 +95,7 @@ type Game interface {
 	GetGameWithInvitationCode(code string) (game connectteam.Game, err error)
 	GetGames(page int, userId uuid.UUID) (games []connectteam.Game, err error)
 	StartGame(gameId uuid.UUID) error
-	SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int, name string) error
+	SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int, name string) (int, error)
 	GetResults(gameId uuid.UUID) (results []models.UserResult, err error)
 	EndGame(gameId uuid.UUID) error
 	CancelGame(gameId uuid.UUID) error

@@ -47,17 +47,22 @@ func (r *GamePostgres) ChangeGameName(gameId uuid.UUID, name string) error {
 	return err
 }
 
-func (r *GamePostgres) SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int, name string) error {
+func (r *GamePostgres) SaveResults(gameId uuid.UUID, userId uuid.UUID, rate int, name string) (id int, err error) {
 	if userId != uuid.Nil {
-		query := fmt.Sprintf("INSERT INTO %s (game_id, user_id, value, name) values ($1, $2, $3, $4)", resultsTable)
-		_, err := r.db.Exec(query, gameId, userId, rate, name)
-
-		return err
+		query := fmt.Sprintf("INSERT INTO %s (game_id, user_id, value, name) values ($1, $2, $3, $4) RETURNING id", resultsTable)
+		row := r.db.QueryRow(query, gameId, userId, rate, name)
+		if err := row.Scan(&id); err != nil {
+			return 0, err
+		}
+		return id, err
 	} else {
 		query := fmt.Sprintf("INSERT INTO %s (game_id, user_id, value, name) values ($1, $2, $3, $4)", resultsTable)
-		_, err := r.db.Exec(query, gameId, nil, rate, name)
+		row := r.db.QueryRow(query, gameId, nil, rate, name)
+		if err := row.Scan(&id); err != nil {
+			return 0, err
+		}
 
-		return err
+		return id, err
 	}
 }
 
