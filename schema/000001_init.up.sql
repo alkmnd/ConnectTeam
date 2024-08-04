@@ -111,5 +111,5 @@ CREATE TABLE tags_results
 (
     game_id uuid REFERENCES games (id) ON DELETE CASCADE,
     tag_id uuid REFERENCES tags(id) ON DELETE CASCADE,
-    result_id int REFERENCES results (id) ON DELETE CASCADE
+    result_id int REFERENCES results(id) ON DELETE CASCADE
 )
