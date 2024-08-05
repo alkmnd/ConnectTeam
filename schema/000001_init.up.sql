@@ -90,7 +90,7 @@ CREATE TABLE results
     id serial PRIMARY KEY,
     user_id uuid REFERENCES users (id) ON DELETE CASCADE,
     game_id uuid REFERENCES games (id) ON DELETE CASCADE,
-    name varchar(256)
+    name varchar(256),
     value int
 );
 
@@ -106,10 +106,3 @@ CREATE TABLE tags_questions
     question_id uuid REFERENCES questions(id) ON DELETE CASCADE,
     primary key (tag_id, question_id)
 );
-
-CREATE TABLE tags_results
-(
-    game_id uuid REFERENCES games (id) ON DELETE CASCADE,
-    tag_id uuid REFERENCES tags(id) ON DELETE CASCADE,
-    result_id int REFERENCES results(id) ON DELETE CASCADE
-)
