@@ -3,10 +3,10 @@ port: "8000"
 service_port: "8001"
 
 db:
-  username: "postgres"
-  host: "localhost"
-  port: "5436"
-  dbname: "postgres"
+  username: "twocubes"
+  host: "80.90.185.79"
+  port: "5432"
+  dbname: "connecteam"
   sslmode: "disable"
 
 redis:
