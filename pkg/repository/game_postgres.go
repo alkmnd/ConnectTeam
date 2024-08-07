@@ -88,7 +88,7 @@ func (r *GamePostgres) GetGame(gameId uuid.UUID) (game connectteam.Game, err err
 
 func (r *GamePostgres) GetResults(gameId uuid.UUID) (results []models.UserResult, err error) {
 
-	query := fmt.Sprintf(`SELECT id, user_id, value, name FROM %s WHERE game_id=$1`, resultsTable)
+	query := fmt.Sprintf(`SELECT id, user_id, user_temp_id, value, name FROM %s WHERE game_id=$1`, resultsTable)
 	err = r.db.Select(&results, query, gameId)
 	return results, err
 }

@@ -1,6 +1,6 @@
 CREATE TYPE plans AS ENUM ('basic', 'advanced', 'premium');
 CREATE TYPE access AS ENUM ('super_admin', 'admin', 'user');
-CREATE TYPE plan_status AS ENUM ('active', 'expired', 'on_confirm', 'not_payed');
+CREATE TYPE plan_status AS ENUM ('active', 'expired', 'not_payed');
 CREATE TYPE game_status AS ENUM ('not_started', 'in_progress', 'ended', 'cancelled');
 CREATE TYPE plan_access AS ENUM ('additional', 'holder');
 
@@ -41,7 +41,7 @@ CREATE TABLE subscriptions
     holder_id uuid references users (id) on delete cascade,
     expiry_date timestamp,
     duration int,
-    status plan_status not null DEFAULT 'on_confirm',
+    status plan_status not null DEFAULT 'active',
     invitation_code varchar(256),
     is_trial boolean DEFAULT false
 );
@@ -112,4 +112,4 @@ CREATE TABLE tags_results
     game_id uuid REFERENCES games (id) ON DELETE CASCADE,
     tag_id uuid REFERENCES tags(id) ON DELETE CASCADE,
     result_id int REFERENCES results(id) ON DELETE CASCADE
-)
+);
