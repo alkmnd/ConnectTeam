@@ -61,7 +61,7 @@ func main() {
 	})
 
 	if err != nil {
-		logrus.Fatalf("error initializing notification service: %s", err.Error())
+		logrus.Println("error initializing notification service: %s", err.Error())
 	}
 
 	yooClient := payment_gateway.NewYookassaClient(payment_gateway.Config{
