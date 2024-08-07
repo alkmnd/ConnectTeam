@@ -153,10 +153,11 @@ type saveResultsInput struct {
 }
 
 type Rates struct {
-	Value  int         `json:"value"`
-	Tags   []uuid.UUID `json:"tags"`
-	UserId uuid.UUID   `json:"user_id"`
-	Name   string      `json:"name"`
+	Value           int         `json:"value"`
+	UserTemporaryId uuid.UUID   `json:"user_temp_id"`
+	Tags            []uuid.UUID `json:"tags"`
+	UserId          uuid.UUID   `json:"user_id"`
+	Name            string      `json:"name"`
 }
 
 func (h *Handler) saveResults(c *gin.Context) {
@@ -173,7 +174,7 @@ func (h *Handler) saveResults(c *gin.Context) {
 	}
 
 	for i := range input.Results {
-		id, err := h.services.SaveResults(gameId, input.Results[i].UserId, input.Results[i].Value, input.Results[i].Name)
+		id, err := h.services.SaveResults(gameId, input.Results[i].UserId, input.Results[i].UserTemporaryId, input.Results[i].Value, input.Results[i].Name)
 		if err != nil {
 			newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
