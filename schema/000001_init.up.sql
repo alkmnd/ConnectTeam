@@ -89,6 +89,7 @@ CREATE TABLE results
 (
     id serial PRIMARY KEY,
     user_id uuid REFERENCES users (id) ON DELETE CASCADE,
+    user_temp_id uuid,
     game_id uuid REFERENCES games (id) ON DELETE CASCADE,
     name varchar(256),
     value int
