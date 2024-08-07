@@ -56,13 +56,13 @@ func (r *GamePostgres) SaveResults(gameId uuid.UUID, userId uuid.UUID, userTempI
 		}
 		return id, err
 	} else {
-		query := fmt.Sprintf("INSERT INTO %s (game_id, user_id, value, name) values ($1, $2, $3, $4)", resultsTable)
-		row := r.db.QueryRow(query, gameId, nil, rate, name)
+		query := fmt.Sprintf("INSERT INTO %s (game_id, user_id, user_temp_id, value, name) values ($1, $2, $3, $4, $5) RETURNING id", resultsTable)
+		row := r.db.QueryRow(query, gameId, nil, userTempId, rate, name)
 		if err := row.Scan(&id); err != nil {
 			return 0, err
 		}
-
 		return id, err
+
 	}
 }
 
