@@ -96,7 +96,7 @@ type Game interface {
 	GetResults(gameId uuid.UUID) (results []models.UserResult, err error)
 	StartGame(gameId uuid.UUID) error
 	EndGame(gameId uuid.UUID) error
-	SaveResults(gameId uuid.UUID, userId uuid.UUID, value int, name string) (int, error)
+	SaveResults(gameId uuid.UUID, userId uuid.UUID, userTempId uuid.UUID, value int, name string) (int, error)
 	CancelGame(gameId uuid.UUID, userId uuid.UUID) error
 	InviteUserToGame(gameId uuid.UUID, userId uuid.UUID, creatorId uuid.UUID) error
 	ChangeStartDate(gameId uuid.UUID, dateString string) error
