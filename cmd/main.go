@@ -26,7 +26,7 @@ func main() {
 	}
 
 	logrus.Println("DB Username:", viper.GetString("db.username"))
-	logrus.Println("DB Name:", viper.GetString("db.name"))
+	logrus.Println("DB Name:", viper.GetString("db.dbname"))
 	logrus.Println("DB Port:", viper.GetString("db.port"))
 	logrus.Println("DB Host:", viper.GetString("db.host"))
 	logrus.Println("DB Password:", os.Getenv("DB_PASSWORD"))
