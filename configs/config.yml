@@ -3,7 +3,7 @@ port: "8000"
 service_port: "8001"
 
 db:
-  username: "postgres"
+  username: "twocubes"
   host: "localhost"
   port: "5432"
   dbname: "connecteam"
