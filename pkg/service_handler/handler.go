@@ -217,7 +217,7 @@ func (h *Handler) getTopic(c *gin.Context) {
 }
 
 type getResultsResponse struct {
-	Data []models.UserResult `json:"data"`
+	Data []models.UserResult `json:"results"`
 }
 
 func (h *Handler) getResults(c *gin.Context) {
