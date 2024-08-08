@@ -117,7 +117,7 @@ func (h *Handler) InitRoutes(clientOrigin string) *gin.Engine {
 		game.PATCH("/:id/name", h.changeGameName)
 	}
 
-	tags := router.Group("/tags", h.userIdentity)
+	tags := router.Group("/tags")
 	{
 		tags.GET("/", h.getAllTags)
 	}

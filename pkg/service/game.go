@@ -107,10 +107,11 @@ func (s *GameService) GetResults(gameId uuid.UUID) (results []models.UserResult,
 	for i := range usersResults {
 		tags, _ := s.gameRepo.GetTagsResults(usersResults[i].Id, gameId)
 		results = append(results, models.UserResult{
-			UserId: usersResults[i].UserId,
-			Value:  usersResults[i].Value,
-			Name:   usersResults[i].Name,
-			Tags:   tags,
+			UserId:          usersResults[i].UserId,
+			UserTemporaryId: usersResults[i].UserTemporaryId,
+			Value:           usersResults[i].Value,
+			Name:            usersResults[i].Name,
+			Tags:            tags,
 		})
 	}
 	return results, err
