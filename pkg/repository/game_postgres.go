@@ -62,6 +62,7 @@ func (r *GamePostgres) SaveResults(gameId uuid.UUID, userId uuid.UUID, userTempI
 			return 0, err
 		}
 		return id, err
+
 	}
 }
 
