@@ -203,11 +203,7 @@ func (h *Handler) deleteGameFromGameList(c *gin.Context) {
 	}
 
 	if id == game.CreatorId {
-		err = h.services.CancelGame(gameId, id)
-		if err != nil {
-			newErrorResponse(c, http.StatusInternalServerError, err.Error())
-			return
-		}
+		_ = h.services.CancelGame(gameId, id)
 	}
 
 	err = h.services.Game.DeleteGameFromGameList(gameId, id)
