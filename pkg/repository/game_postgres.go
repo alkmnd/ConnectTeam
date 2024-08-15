@@ -67,7 +67,7 @@ func (r *GamePostgres) SaveResults(gameId uuid.UUID, userId uuid.UUID, userTempI
 }
 
 func (r *GamePostgres) GetCreatedGames(page int, userId uuid.UUID) (games []connectteam.Game, err error) {
-	query := fmt.Sprintf(`SELECT * FROM %s WHERE creator_id=$1 ORDER BY start_date DESC LIMIT $2 OFFSET $3`, gamesTable)
+	query := fmt.Sprintf(`SELECT id, creator_id, invitation_code, name, start_date, status FROM %s g JOIN %s gu ON g.creator_id = gu.user_id and g.id = gu.game_id WHERE g.creator_id=$1 ORDER BY g.start_date DESC LIMIT $2 OFFSET $3`, gamesTable, gamesUsersTable)
 	err = r.db.Select(&games, query, userId, limit, page*limit)
 	return games, err
 }
