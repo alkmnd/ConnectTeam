@@ -175,7 +175,7 @@ func (h *Handler) inviteMemberToGame(c *gin.Context) {
 
 }
 
-func (h *Handler) hdeleteGameFromGameList(c *gin.Context) {
+func (h *Handler) deleteGameFromGameList(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
