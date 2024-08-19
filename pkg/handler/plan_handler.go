@@ -408,6 +408,7 @@ func (h *Handler) validateInvitationCode(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
+		"id":        userPlan.Id,
 		"holder_id": id,
 	})
 }
